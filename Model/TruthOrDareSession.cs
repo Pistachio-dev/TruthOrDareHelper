@@ -14,5 +14,7 @@ namespace Model
         {
             return PlayerInfo.ContainsKey(name) ? PlayerInfo[name] : throw new Exception("Player not found.");
         }
+
+        public bool ArePlayersPaired() => PlayingPairs.Any();
     }
 }

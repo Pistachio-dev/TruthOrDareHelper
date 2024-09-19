@@ -39,6 +39,71 @@ public class MainWindow : Window, IDisposable
     public override void Draw()
     {
         DrawPlayerTable();
+        ImGui.Separator();
+        ImGui.TextUnformatted("This round");
+        if (session.ArePlayersPaired())
+        {
+            DrawPlayingPairsTable();
+        }
+        else
+        {
+            ImGui.TextUnformatted("Player pairs not yet formed.");
+        }
+    }
+
+    private void DrawPlayingPairsTable()
+    {
+        bool[] check = session.PlayingPairs.Select(p => p.Done).ToArray();
+        const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
+        if (ImGui.BeginTable("##PairedPlayerTable", 4, flags))
+        {
+            ImGui.TableSetupColumn("Asker", ImGuiTableColumnFlags.WidthStretch, 0.3f);
+            ImGui.TableSetupColumn("Target", ImGuiTableColumnFlags.WidthStretch, 0.3f);
+            ImGui.TableSetupColumn("Choice", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+            ImGui.TableSetupColumn("Done", ImGuiTableColumnFlags.WidthStretch, 0.1f); // Use a checkbox here
+
+            ImGui.TableHeadersRow();
+
+            for (int i = 0; i < session.PlayingPairs.Count; i++)
+            {
+                var pair = session.PlayingPairs[i];
+
+                ImGui.TableNextRow();
+                ImGui.TableNextColumn();
+                DrawPairedPlayerCell(pair.Winner);
+
+                ImGui.TableNextColumn();
+                DrawPairedPlayerCell(pair.Loser);
+
+
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted("Truth"); // Truth/Dare/Any/Pending
+
+                ImGui.TableNextColumn();
+
+                bool referenceableDone = pair.Done;
+                ImGui.Checkbox("## " + i, ref referenceableDone);
+                pair.Done = referenceableDone;
+            }
+
+            ImGui.EndTable();
+
+        }
+    }
+    private void DrawPairedPlayerCell(PlayerInfo? player)
+    {
+        bool playerNotChosenByRoll = player == null;
+        string playerName = playerNotChosenByRoll ? "Not autodetected yet" : RemoveWorldFromName(player.FullName);
+        ImGui.TextUnformatted(playerName);
+        if (!playerNotChosenByRoll)
+        {
+            ImGui.SameLine();
+            if (ImGui.Button(""))
+            {
+            }
+            Tooltip("Reroll player, if this one is afk or passes.");
+
+        }
     }
 
     private void DrawPlayerTable()
@@ -82,5 +147,13 @@ public class MainWindow : Window, IDisposable
     private string RemoveWorldFromName(string name)
     {
         return name.Split("@").First();
+    }
+
+    private void Tooltip(string tooltip)
+    {
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip(tooltip);
+        }
     }
 }
