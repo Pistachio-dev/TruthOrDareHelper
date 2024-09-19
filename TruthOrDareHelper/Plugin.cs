@@ -5,6 +5,9 @@ using System.IO;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using SamplePlugin.Windows;
+using TruthOrDareHelper.Configuration;
+using Model;
+using TruthOrDareHelper.TestData;
 
 namespace SamplePlugin;
 
@@ -22,8 +25,12 @@ public sealed class Plugin : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
+    public TruthOrDareSession Session { get; set; }
+
     public Plugin()
     {
+        Session = new TruthOrDareSession().AddDummyPlayers();
+
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
         // you might normally want to embed resources and load them from the manifest stream

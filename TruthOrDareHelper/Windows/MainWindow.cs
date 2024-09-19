@@ -1,22 +1,27 @@
 using System;
+using System.Linq;
 using System.Numerics;
 using Dalamud.Interface.Internal;
 using Dalamud.Interface.Utility;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
+using Model;
 
 namespace SamplePlugin.Windows;
 
 public class MainWindow : Window, IDisposable
 {
     private Plugin Plugin;
+    private Configuration configuration;
+    private TruthOrDareSession session;
+    private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
+    private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
+    private static readonly Vector4 Gray = new Vector4(0.3f, 0.3f, 0.3f, 1f);
+    private const string RoundSymbol = "♦";
 
-    // We give this window a hidden ID using ##
-    // So that the user will see "My Amazing Window" as window title,
-    // but for ImGui the ID is "My Amazing Window##With a hidden ID"
     public MainWindow(Plugin plugin)
-        : base("My Amazing Window##With a hidden ID", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+        : base("Truth or Dare helper", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -25,19 +30,57 @@ public class MainWindow : Window, IDisposable
         };
 
         Plugin = plugin;
+        configuration = plugin.Configuration;
+        session = Plugin.Session;
     }
 
     public void Dispose() { }
 
     public override void Draw()
     {
-        ImGui.Text($"The random config bool is {Plugin.Configuration.SomePropertyToBeSavedAndWithADefault}");
+        DrawPlayerTable();
+    }
 
-        if (ImGui.Button("Show Settings"))
+    private void DrawPlayerTable()
+    {
+        const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
+        if (ImGui.BeginTable("##PlayerTable", 5, flags))
         {
-            Plugin.ToggleConfigUI();
-        }
+            ImGui.TableSetupColumn("Player", ImGuiTableColumnFlags.WidthStretch, 0.8f);
+            ImGui.TableSetupColumn("Wins", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+            ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+            ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
+            ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
 
-        ImGui.Spacing();
+            ImGui.TableHeadersRow();
+
+            foreach (var player in session.PlayerInfo.Values)
+            {
+                ImGui.TableNextRow();
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted(RemoveWorldFromName(player.FullName));
+
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted("5");
+
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted("3");
+
+                ImGui.TableNextColumn();
+                ImGui.BeginGroup();
+                ImGui.TextUnformatted("♦♦♦♦♦♦♦♦♦");
+                ImGui.EndGroup();
+
+                ImGui.TableNextColumn();
+                ImGui.TextUnformatted("✓"); // use "x" for "no".
+            }
+
+            ImGui.EndTable();
+        }
+    }
+
+    private string RemoveWorldFromName(string name)
+    {
+        return name.Split("@").First();
     }
 }

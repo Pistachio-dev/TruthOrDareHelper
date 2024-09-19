@@ -11,5 +11,12 @@ namespace Model
         public string FullName { get; set; }
         public ParticipationCounter TruthParticipation { get; set; }
         public ParticipationCounter DareParticipation { get; set; }        
+
+        public PlayerInfo(string fullName)
+        {
+            this.FullName = fullName;
+            TruthParticipation = new ParticipationCounter();
+            DareParticipation = new ParticipationCounter();
+        }
     }
 }
