@@ -1,15 +1,10 @@
+using Dalamud.Interface.Windowing;
+using ImGuiNET;
+using Model;
 using System;
 using System.Linq;
 using System.Numerics;
-using Dalamud.Interface.Internal;
-using Dalamud.Interface.Utility;
-using Dalamud.Interface.Windowing;
-using Dalamud.Plugin.Services;
-using ImGuiNET;
-using Model;
-using TruthOrDareHelper;
 using TruthOrDareHelper.Settings;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace TruthOrDareHelper.Windows;
 
@@ -38,7 +33,8 @@ public class MainWindow : Window, IDisposable
         session = Plugin.Session;
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    { }
 
     public override void Draw()
     {
@@ -79,7 +75,6 @@ public class MainWindow : Window, IDisposable
                 ImGui.TableNextColumn();
                 DrawPairedPlayerCell(pair.Loser);
 
-
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("Truth"); // Truth/Dare/Any/Pending
 
@@ -91,9 +86,9 @@ public class MainWindow : Window, IDisposable
             }
 
             ImGui.EndTable();
-
         }
     }
+
     private void DrawPairedPlayerCell(PlayerInfo? player)
     {
         bool playerNotChosenByRoll = player == null;
@@ -106,7 +101,6 @@ public class MainWindow : Window, IDisposable
             {
             }
             Tooltip("Reroll player, if this one is afk or passes.");
-
         }
     }
 
@@ -146,7 +140,6 @@ public class MainWindow : Window, IDisposable
                 else
                 {
                     ImGui.TextColored(Gray, "x");
-
                 }
             }
 
@@ -160,7 +153,6 @@ public class MainWindow : Window, IDisposable
         ImGui.BeginGroup();
         foreach (RoundParticipationRecord roundRecord in player.ParticipationRecords.Skip(roundsToSkip))
         {
-            
             Vector4 color = roundRecord.Participation switch
             {
                 RoundParticipation.Winner => Green,
@@ -172,6 +164,7 @@ public class MainWindow : Window, IDisposable
         }
 
         ImGui.EndGroup();
+        Tooltip("Last 8 rounds. Green means being the asker, red the asked, gray not participating.");
     }
 
     private string RemoveWorldFromName(string name)
