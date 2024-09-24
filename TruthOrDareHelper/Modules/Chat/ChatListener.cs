@@ -1,31 +1,70 @@
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
-using ECommons.ChatMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using static Dalamud.Plugin.Services.IChatGui;
 
 namespace TruthOrDareHelper.Modules.Chat
 {
     public class ChatListener
-    {       
+    {
+        public List<ConditionalDelegatePayload> triggers = new();
+
         public void AttachListener()
         {
+            triggers.Add(new ConditionalDelegatePayload("asdf.*gg", true, "Pist", EchoMessage));
             Plugin.Chat.ChatMessage += OnChatMessage;
         }
 
         private void OnChatMessage(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
         {
             string playerName = GetFullPlayerNameFromSenderData(sender);
-
+            string messageString = message.ToString();
             ChatChannelType channelType = XivChatTypeToOwn(type);
             DateTime dateTime = DateTime.Now; // Let's just use local time for this.
 
-            EchoMessage(channelType, dateTime, playerName, message.ToString());
+            foreach (var trigger in triggers)
+            {
+                if (DoesMessageTriggerPayload(playerName, messageString, trigger))
+                {
+                    Plugin.Log.Information($"Payload with ID {trigger.Id} triggered.");
+                    trigger.OnMessageWithValidTriggers(channelType, dateTime, playerName, messageString);
+                }
+            }
+        }
+        
+        private bool DoesMessageTriggerPayload(string sender, string message, ConditionalDelegatePayload payload)
+        {
+            bool triggered = true;
+            if (payload.MessageContentTrigger != null)
+            {
+                if (payload.IsMessageContentTriggerARegEx)
+                {
+                    // TODO: Consider precompiling this RegEx
+                    triggered &= new Regex(payload.MessageContentTrigger).IsMatch(message);
+                }
+                else
+                {
+                    triggered &= message.Contains(payload.MessageContentTrigger, StringComparison.InvariantCultureIgnoreCase);
+                }
+            }
+            if (payload.PlayerNameTrigger != null)
+            {
+                if (payload.PlayerNameTrigger.Contains("@"))
+                {
+                    Plugin.Log.Warning($"A player message trigger contains @, would should have been removed at this point, shouldn't it?");
+                }
+
+                triggered &= sender.Contains(payload.PlayerNameTrigger, StringComparison.InvariantCultureIgnoreCase);
+            }
+
+            return triggered;
+        }
+
+        public void AddConditionalDelegate(ConditionalDelegatePayload payload)
+        {
+            triggers.Add(payload);
         }
 
         private string GetFullPlayerNameFromSenderData(SeString messageSender)
@@ -47,7 +86,7 @@ namespace TruthOrDareHelper.Modules.Chat
             else
             {
                 // I'm going to assume this is always the mod runner, since it only applies to me when testing.
-                playerName = $"{Plugin.ClientState.LocalPlayer?.Name ?? "None"}@{Plugin.ClientState.LocalPlayer?.HomeWorld.GetWithLanguage(Dalamud.Game.ClientLanguage.English)?.Name ?? "None"}";
+                playerName = $"{Plugin.ClientState.LocalPlayer?.Name ?? "None"}@{Plugin.ClientState.LocalPlayer?.HomeWorld.GameData?.Name ?? "None"}";
             }
 
             return playerName;
