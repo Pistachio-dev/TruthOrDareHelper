@@ -15,6 +15,11 @@ namespace Model
             return PlayerInfo.ContainsKey(name) ? PlayerInfo[name] : throw new Exception("Player not found.");
         }
 
+        public bool IsPlayerPlaying(PlayerInfo player)
+        {
+            return PlayingPairs.FirstOrDefault(p => p.Winner == player || p.Loser == player) != null;
+        }
+
         public bool ArePlayersPaired() => PlayingPairs.Any();
     }
 }

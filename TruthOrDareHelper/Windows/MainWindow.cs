@@ -7,6 +7,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
 using Model;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace SamplePlugin.Windows;
 
@@ -19,6 +20,7 @@ public class MainWindow : Window, IDisposable
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
     private static readonly Vector4 Gray = new Vector4(0.3f, 0.3f, 0.3f, 1f);
     private const string RoundSymbol = "♦";
+    private const int RoundsToShowInHistory = 8;
 
     public MainWindow(Plugin plugin)
         : base("Truth or Dare helper", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
@@ -132,16 +134,42 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextUnformatted(player.Losses.ToString());
 
                 ImGui.TableNextColumn();
-                ImGui.BeginGroup();
-                ImGui.TextUnformatted("♦♦♦♦♦♦♦♦♦");
-                ImGui.EndGroup();
+                DrawRoundHistory(player);
 
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("✓"); // use "x" for "no".
+                if (session.IsPlayerPlaying(player))
+                {
+                    ImGui.TextColored(Green, "✓");
+                }
+                else
+                {
+                    ImGui.TextColored(Gray, "x");
+
+                }
             }
 
             ImGui.EndTable();
         }
+    }
+
+    private void DrawRoundHistory(PlayerInfo player)
+    {
+        int roundsToSkip = Math.Max(player.ParticipationRecords.Count - RoundsToShowInHistory, 0);
+        ImGui.BeginGroup();
+        foreach (RoundParticipationRecord roundRecord in player.ParticipationRecords.Skip(roundsToSkip))
+        {
+            
+            Vector4 color = roundRecord.Participation switch
+            {
+                RoundParticipation.Winner => Green,
+                RoundParticipation.Loser => Red,
+                _ => Gray,
+            };
+            ImGui.SameLine();
+            ImGui.TextColored(color, "♦");
+        }
+
+        ImGui.EndGroup();
     }
 
     private string RemoveWorldFromName(string name)
