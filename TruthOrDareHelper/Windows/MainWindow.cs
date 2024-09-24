@@ -126,10 +126,10 @@ public class MainWindow : Window, IDisposable
                 ImGui.TextUnformatted(RemoveWorldFromName(player.FullName));
 
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("5");
+                ImGui.TextUnformatted(player.Wins.ToString());
 
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("3");
+                ImGui.TextUnformatted(player.Losses.ToString());
 
                 ImGui.TableNextColumn();
                 ImGui.BeginGroup();

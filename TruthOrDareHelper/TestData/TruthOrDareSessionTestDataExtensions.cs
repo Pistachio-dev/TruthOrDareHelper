@@ -24,5 +24,34 @@ namespace TruthOrDareHelper.TestData
 
             return session;
         }
+
+        public static TruthOrDareSession AddRandomSessionParticipation(this TruthOrDareSession session)
+        {
+            Random rng = new Random();
+            foreach (var player in session.PlayerInfo.Values)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    RoundParticipation type;
+                    int random = rng.Next(10);
+                    if (random < 2)
+                    {
+                        type = RoundParticipation.Winner;
+                    }
+                    else if (random >= 2 && random < 4)
+                    {
+                        type = RoundParticipation.Loser;
+                    }
+                    else
+                    {
+                        type = RoundParticipation.NotParticipating;
+                    }
+
+                    player.ParticipationRecords.Add(new RoundParticipationRecord(i, type));
+                }
+            }
+
+            return session;
+        }
     }
 }

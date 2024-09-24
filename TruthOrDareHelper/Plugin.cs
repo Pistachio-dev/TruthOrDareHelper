@@ -29,7 +29,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public Plugin()
     {
-        Session = new TruthOrDareSession().AddDummyPlayers();
+        Session = new TruthOrDareSession().AddDummyPlayers().AddRandomSessionParticipation();
 
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
