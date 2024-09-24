@@ -1,12 +1,7 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TruthOrDareHelper.DalamudWrappers;
-using static FFXIVClientStructs.FFXIV.Client.UI.AddonRelicNoteBook;
 
 namespace TruthOrDareHelper.Modules.Targeting
 {
@@ -22,23 +17,23 @@ namespace TruthOrDareHelper.Modules.Targeting
             this.targeting = targeting;
         }
 
-        public bool AddTargetReference()
+        public string? AddReferenceToCurrentTarget()
         {
             var target = targeting.GetTarget();
-            string targetName = GetTargetName(target);
-            if (string.IsNullOrEmpty(targetName))
+            string targetFullName = GetTargetFullName(target);
+            if (string.IsNullOrEmpty(targetFullName))
             {
                 log.Error("Cannot save target player reference. Nothing is targeted, or it is not a player.");
-                return false;
+                return null;
             }
 
             IPlayerCharacter targetedPlayer = (IPlayerCharacter)Plugin.TargetManager.Target!;
-            references[targetName] = targetedPlayer;
+            references[targetFullName] = targetedPlayer;
 
-            return true;
+            return targetFullName;
         }
 
-        public bool RemoveTargetReference(string targetFullName)
+        public bool TryRemoveTargetReference(string targetFullName)
         {
             if (references.ContainsKey(targetFullName))
             {
@@ -78,10 +73,10 @@ namespace TruthOrDareHelper.Modules.Targeting
 
         private bool VerifyTargetingIntendedPlayer(string fullPlayerName)
         {
-            return fullPlayerName == GetTargetName(targeting.GetTarget());
+            return fullPlayerName == GetTargetFullName(targeting.GetTarget());
         }
 
-        private string GetTargetName(IGameObject? target)
+        private string GetTargetFullName(IGameObject? target)
         {
             if (target == null || target is not IPlayerCharacter pc || pc.HomeWorld.GameData == null)
                 return string.Empty;

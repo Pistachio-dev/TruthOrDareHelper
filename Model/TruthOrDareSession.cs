@@ -10,9 +10,22 @@ namespace Model
 
         public List<PlayerPair> PlayingPairs { get; set; } = new();
 
-        public PlayerInfo GetPlayer(string name)
+        public PlayerInfo? GetPlayer(string name)
         {
-            return PlayerInfo.ContainsKey(name) ? PlayerInfo[name] : throw new Exception("Player not found.");
+            return PlayerInfo.ContainsKey(name) ? PlayerInfo[name] : null;
+        }
+
+        public void AddNewPlayer(string fullName)
+        {
+            PlayerInfo[fullName] = new PlayerInfo(fullName);
+        }
+
+        public void TryRemovePlayer(string fullName)
+        {
+            if (PlayerInfo.ContainsKey(fullName))
+            {
+                PlayerInfo.Remove(fullName);
+            }
         }
 
         public bool IsPlayerPlaying(PlayerInfo player)

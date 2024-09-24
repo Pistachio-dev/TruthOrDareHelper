@@ -4,7 +4,11 @@ using Dalamud.Interface.Windowing;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using ECommons;
 using Model;
+using TruthOrDareHelper.DalamudWrappers;
+using TruthOrDareHelper.Modules.Chat;
+using TruthOrDareHelper.Modules.Targeting;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
 using TruthOrDareHelper.Windows;
@@ -32,13 +36,25 @@ public sealed class Plugin : IDalamudPlugin
     private MainWindow MainWindow { get; init; }
 
     public TruthOrDareSession Session { get; set; }
+    public TargetManager targetManager { get; set; }
+    public ChatOutput chatOutput { get; set; }
+    public LogWrapper logWrapper { get; set; }
+    public ChatWrapper chatWrapper { get; set; }
+    public TargetWrapper targetWrapper { get; set; }
 
-    public Plugin()
+    public Plugin(IDalamudPluginInterface pluginInterface)
     {
+        ECommonsMain.Init(pluginInterface, this);
+
         Session = new TruthOrDareSession().AddDummyPlayers().AddRandomSessionParticipation();
 
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
+        logWrapper = new LogWrapper();
+        chatWrapper = new ChatWrapper();
+        targetWrapper = new TargetWrapper();
+        targetManager = new TargetManager(logWrapper, targetWrapper);
+        chatOutput = new ChatOutput(Configuration, chatWrapper, logWrapper);
         // you might normally want to embed resources and load them from the manifest stream
 
         ConfigWindow = new ConfigWindow(this);

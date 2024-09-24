@@ -1,10 +1,15 @@
 using Dalamud.Interface.Windowing;
+using ECommons.GameHelpers;
 using ImGuiNET;
 using Model;
 using System;
 using System.Linq;
 using System.Numerics;
+using TruthOrDareHelper.DalamudWrappers;
+using TruthOrDareHelper.Modules.Chat;
+using TruthOrDareHelper.Modules.Targeting;
 using TruthOrDareHelper.Settings;
+using TruthOrDareHelper.TestData;
 
 namespace TruthOrDareHelper.Windows;
 
@@ -13,6 +18,11 @@ public class MainWindow : Window, IDisposable
     private Plugin Plugin;
     private Configuration configuration;
     private TruthOrDareSession session;
+    private TargetManager targetManager;
+    private ChatOutput chatOutput;
+    private LogWrapper logWrapper;
+    private ChatWrapper chatWrapper;
+
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
     private static readonly Vector4 Gray = new Vector4(0.3f, 0.3f, 0.3f, 1f);
@@ -31,6 +41,10 @@ public class MainWindow : Window, IDisposable
         Plugin = plugin;
         configuration = plugin.Configuration;
         session = Plugin.Session;
+        chatWrapper = Plugin.chatWrapper;
+        logWrapper = Plugin.logWrapper;
+        targetManager = Plugin.targetManager;
+        chatOutput = Plugin.chatOutput;
     }
 
     public void Dispose()
@@ -39,6 +53,11 @@ public class MainWindow : Window, IDisposable
     public override void Draw()
     {
         DrawPlayerTable();
+        if (ImGui.Button("Add target to the game"))
+        {
+            AddTargetPlayer();
+        }
+
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
         if (session.ArePlayersPaired())
@@ -122,6 +141,24 @@ public class MainWindow : Window, IDisposable
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted(RemoveWorldFromName(player.FullName));
+                if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
+                {
+                    if (targetManager.Target(player.FullName))
+                    {
+                        chatWrapper.Print($"Targeting {player.FullName}.");
+                    }
+                    else
+                    {
+                        chatWrapper.Print($"Could not target {player.FullName}.");
+                    }
+                }
+                if (ImGui.IsItemClicked(ImGuiMouseButton.Right) && ImGui.GetIO().KeyShift)
+                {
+                    session.TryRemovePlayer(player.FullName);
+                    targetManager.TryRemoveTargetReference(player.FullName);
+                    chatOutput.WriteChat($"{player.FullName} leaves the game.");
+                }
+                Tooltip("Click to target the player, shift + right click to remove them.");
 
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted(player.Wins.ToString());
@@ -145,6 +182,28 @@ public class MainWindow : Window, IDisposable
 
             ImGui.EndTable();
         }
+    }
+
+    private bool AddTargetPlayer()
+    {
+        string? targetFullName = targetManager.AddReferenceToCurrentTarget();
+        
+        if (targetFullName == null)
+        {
+            chatWrapper.Print("Could not add target to the players. It's either nothing or not a player.");
+            return false;
+        }
+
+        if (session.GetPlayer(targetFullName) != null)
+        {
+            chatWrapper.Print("Target player is already in the game.");
+            return true;
+        }
+
+        session.AddNewPlayer(targetFullName);
+        chatOutput.WriteChat($"{targetFullName} joins the game.");
+
+        return true;
     }
 
     private void DrawRoundHistory(PlayerInfo player)
