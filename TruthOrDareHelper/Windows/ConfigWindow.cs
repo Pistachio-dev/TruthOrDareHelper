@@ -1,10 +1,11 @@
-using System;
-using System.Numerics;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
-using TruthOrDareHelper.Configuration;
+using System;
+using System.Numerics;
+using TruthOrDareHelper;
+using TruthOrDareHelper.Settings;
 
-namespace SamplePlugin.Windows;
+namespace TruthOrDareHelper.Windows;
 
 public class ConfigWindow : Window, IDisposable
 {

@@ -1,9 +1,9 @@
 using Dalamud.Configuration;
 using Dalamud.Plugin;
 using System;
-using TruthOrDareHelper.Configuration;
+using TruthOrDareHelper.Modules.Chat;
 
-namespace SamplePlugin;
+namespace TruthOrDareHelper.Settings;
 
 [Serializable]
 public class Configuration : IPluginConfiguration
@@ -13,6 +13,8 @@ public class Configuration : IPluginConfiguration
     public RollingType RollingType { get; set; } = RollingType.PluginRng;
 
     public int SimultaneousPlays { get; set; } = 1;
+
+    public ChatChannelType DefaultChatChannel { get; set; } = ChatChannelType.Echo;
 
     // the below exist just to make saving less cumbersome
     public void Save()

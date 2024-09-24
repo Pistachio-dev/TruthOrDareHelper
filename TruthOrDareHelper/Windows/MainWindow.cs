@@ -7,9 +7,11 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
 using ImGuiNET;
 using Model;
+using TruthOrDareHelper;
+using TruthOrDareHelper.Settings;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace SamplePlugin.Windows;
+namespace TruthOrDareHelper.Windows;
 
 public class MainWindow : Window, IDisposable
 {

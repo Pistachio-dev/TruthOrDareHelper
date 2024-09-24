@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TruthOrDareHelper.Configuration
+namespace TruthOrDareHelper.Settings
 {
     public enum RollingType
     {
