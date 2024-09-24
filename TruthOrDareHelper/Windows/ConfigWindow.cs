@@ -2,7 +2,6 @@ using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using System;
 using System.Numerics;
-using TruthOrDareHelper;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Windows;
@@ -25,7 +24,8 @@ public class ConfigWindow : Window, IDisposable
         Configuration = plugin.Configuration;
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    { }
 
     public override void PreDraw()
     {

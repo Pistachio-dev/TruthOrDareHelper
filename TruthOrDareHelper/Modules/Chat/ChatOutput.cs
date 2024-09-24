@@ -1,12 +1,6 @@
 using Dalamud.Utility;
-using SamplePlugin;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TruthOrDareHelper.DalamudWrappers;
-using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Modules.Chat

@@ -76,5 +76,6 @@ public sealed class Plugin : IDalamudPlugin
     private void DrawUI() => WindowSystem.Draw();
 
     public void ToggleConfigUI() => ConfigWindow.Toggle();
+
     public void ToggleMainUI() => MainWindow.Toggle();
 }
