@@ -24,6 +24,8 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] internal static IChatGui Chat { get; private set; } = null!;
     [PluginService] public static ITargetManager TargetManager { get; private set; } = null!;
     [PluginService] public static IObjectTable ObjectTable { get; private set; } = null!;
+    [PluginService] public static IClientState ClientState { get; private set; } = null!;
+
 
 
 
@@ -38,6 +40,7 @@ public sealed class Plugin : IDalamudPlugin
     public TruthOrDareSession Session { get; set; }
     public TargetManager targetManager { get; set; }
     public ChatOutput chatOutput { get; set; }
+    public ChatListener chatListener { get; set; }
     public LogWrapper logWrapper { get; set; }
     public ChatWrapper chatWrapper { get; set; }
     public TargetWrapper targetWrapper { get; set; }
@@ -55,6 +58,8 @@ public sealed class Plugin : IDalamudPlugin
         targetWrapper = new TargetWrapper();
         targetManager = new TargetManager(logWrapper, targetWrapper);
         chatOutput = new ChatOutput(Configuration, chatWrapper, logWrapper);
+        chatListener = new ChatListener();
+        chatListener.AttachListener();
         // you might normally want to embed resources and load them from the manifest stream
 
         ConfigWindow = new ConfigWindow(this);
