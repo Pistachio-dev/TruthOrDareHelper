@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
 {
     public class TimerTimedAction : TimedAction
-    {
-        public override bool HasCompleted()
+    {        
+        private TimeSpan duration;
+        public override bool HasElapsed()
         {
-            throw new NotImplementedException();
+            return DateTime.Now - StartTime >= duration;
         }
 
         public override void OnElapsed()

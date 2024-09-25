@@ -8,7 +8,10 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
 {
     public abstract class TimedAction
     {
-        public abstract bool HasCompleted();
+        public Guid Id { get; set; } = Guid.NewGuid();
+        protected DateTime StartTime { get; set; } // Useful for logging, even if it's not really used on the RoundTimedAction
+
+        public abstract bool HasElapsed();
         public abstract void OnElapsed();
     }
 }
