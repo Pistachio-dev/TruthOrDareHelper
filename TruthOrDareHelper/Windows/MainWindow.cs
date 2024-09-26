@@ -1,4 +1,5 @@
 using Dalamud.Interface.Windowing;
+using ECommons.GameHelpers;
 using ImGuiNET;
 using Model;
 using System;
@@ -21,7 +22,9 @@ public class MainWindow : Window, IDisposable
     private ITruthOrDareSession session;
     private ITimeKeeper timeKeeper;
     private IChatOutput chatOutput;
+    private IChatListener chatListener;
     private IChatWrapper chatRaw;
+    private ILogWrapper log;
     private ITargetingHandler targetManager;
     private IRollManager rollManager;
 
@@ -44,9 +47,14 @@ public class MainWindow : Window, IDisposable
         session = Plugin.Resolve<ITruthOrDareSession>();
         timeKeeper = Plugin.Resolve<ITimeKeeper>();
         chatOutput = Plugin.Resolve<IChatOutput>();
+        chatListener = Plugin.Resolve<IChatListener>();
         chatRaw = Plugin.Resolve<IChatWrapper>();
         targetManager = Plugin.Resolve<ITargetingHandler>();
         rollManager = Plugin.Resolve<IRollManager>();
+        log = Plugin.Resolve<ILogWrapper>();
+        
+        chatListener.AttachListener();
+
 
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
@@ -70,6 +78,7 @@ public class MainWindow : Window, IDisposable
             else if (pairs.FirstOrDefault(p => p.Loser == player) != null)
             {
                 player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Loser));
+                AddToDChoiceDetection(ChatOutput.RemoveWorldFromName(player.FullName));
             }
             else
             {
@@ -79,12 +88,58 @@ public class MainWindow : Window, IDisposable
 
         session.PlayingPairs = pairs;
         chatOutput.WriteChat($"-------------ROLLING--------------");
-        chatOutput.WritePairs(pairs);
+        chatOutput.WritePairs(pairs);        
+    }
+
+    private void AddToDChoiceDetection(string playerName)
+    {
+        ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectTruthOrDare);
+        chatListener.AddConditionalDelegate(payload);
+    }
+
+    private bool DetectTruthOrDare(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
+    {
+        PlayerPair? pair = session.PlayingPairs.FirstOrDefault(p => (p.Loser?.FullName.Contains(sender) ?? false));
+        if (pair == null)
+        {
+            return false;
+        }
+
+        if (message.Equals("t", StringComparison.InvariantCultureIgnoreCase)
+            || message.Contains("truth", StringComparison.InvariantCultureIgnoreCase)
+            || message.Contains("truht", StringComparison.InvariantCultureIgnoreCase))
+        {
+            pair.ChallengeType = ChallengeType.Truth;
+            log.Info($"{pair.Loser.FullName} chose TRUTH");
+            return true;
+        }
+        if (message.Equals("d", StringComparison.InvariantCultureIgnoreCase)
+            || message.Contains("dare", StringComparison.InvariantCultureIgnoreCase)
+            || message.Contains("daer", StringComparison.InvariantCultureIgnoreCase))
+        {
+            pair.ChallengeType = ChallengeType.Dare;
+            log.Info($"{pair.Loser.FullName} chose DARE");
+
+            return true;
+        }
+        if (message.Contains("choice", StringComparison.InvariantCultureIgnoreCase)
+            || message.Contains("decide", StringComparison.InvariantCultureIgnoreCase)
+            || message.Contains("dealer", StringComparison.InvariantCultureIgnoreCase))
+        {
+            pair.ChallengeType = ChallengeType.DealersChoice;
+            log.Info($"{pair.Loser.FullName} chose Dealer's choice");
+
+
+            return true;
+        }
+
+        return false;
     }
 
     private void ReRoll(PlayerPair pair, bool rerollTheLoser)
     {
-        chatOutput.WriteChat($"Rerolling {(rerollTheLoser ? pair.Loser?.FullName ?? "Nobody? This should not be possible." : pair.Winner.FullName)}");
+        string rerrolledName = rerollTheLoser ? pair.Loser?.FullName ?? "Nobody? This should not be possible." : pair.Winner.FullName;
+        chatOutput.WriteChat($"Rerolling {rerrolledName}.");
         PlayerInfo? replacement = rollManager.Reroll(session);
         if (replacement == null)
         {
@@ -99,18 +154,28 @@ public class MainWindow : Window, IDisposable
         {
             pair.Winner = replacement;
         }
+
+        chatOutput.WriteChat($"{replacement.FullName} replaces {rerrolledName}.");
     }
 
     public override void Draw()
     {
         timeKeeper.Tick(session.Round);
 
-        if (ImGui.Button("Roll"))
-        {
-            Roll();
-        }
         DrawPlayerTable();
-        if (ImGui.Button("Add target to the game"))
+
+        ImGui.TextUnformatted($"Round {session.Round}");
+        if (session.PlayerInfo.Count > 2)
+        {
+            ImGui.SameLine();
+            if (ImGui.Button("New round, rrrrrolll the dice!"))
+            {
+                Roll();
+            }
+        }
+
+        ImGui.SameLine();
+        if (ImGui.Button("Add target player to the game"))
         {
             AddTargetPlayer();
         }

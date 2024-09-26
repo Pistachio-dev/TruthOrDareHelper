@@ -10,6 +10,7 @@ namespace Model
     {
         None,
         Truth,
-        Dare
+        Dare,
+        DealersChoice
     }
 }

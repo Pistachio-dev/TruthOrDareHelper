@@ -32,14 +32,21 @@ namespace TruthOrDareHelper.Modules.Chat
             ChatChannelType channelType = XivChatTypeToOwn(type);
             DateTime dateTime = DateTime.Now; // Let's just use local time for this.
 
+            List<ConditionalDelegatePayload> triggersToRemove = new();
             foreach (var trigger in triggers)
             {
                 if (DoesMessageTriggerPayload(playerName, messageString, trigger))
                 {
                     log.Info($"Payload with ID {trigger.Id} triggered.");
-                    trigger.OnMessageWithValidTriggers(channelType, dateTime, playerName, messageString);
+                    bool success = trigger.OnMessageWithValidTriggers(channelType, dateTime, playerName, messageString);
+                    if (success)
+                    {
+                        triggersToRemove.Add(trigger);
+                    }
                 }
             }
+
+            triggers = triggers.Where(t => !triggersToRemove.Contains(t)).ToList();
         }
 
         private bool DoesMessageTriggerPayload(string sender, string message, ConditionalDelegatePayload payload)
@@ -47,15 +54,17 @@ namespace TruthOrDareHelper.Modules.Chat
             bool triggered = true;
             if (payload.MessageContentTrigger != null)
             {
-                if (payload.IsMessageContentTriggerARegEx)
+                foreach (var filter in payload.MessageContentTrigger)
                 {
-                    // TODO: Consider precompiling this RegEx
-                    triggered &= new Regex(payload.MessageContentTrigger).IsMatch(message);
-                }
-                else
-                {
-                    triggered &= message.Contains(payload.MessageContentTrigger, StringComparison.InvariantCultureIgnoreCase);
-                }
+                    if (payload.IsMessageContentTriggerARegEx)
+                    {
+                        triggered &= new Regex(filter).IsMatch(message);
+                    }
+                    else
+                    {
+                        triggered &= message.Contains(filter, StringComparison.InvariantCultureIgnoreCase);
+                    }
+                }                
             }
             if (payload.PlayerNameTrigger != null)
             {
@@ -100,13 +109,15 @@ namespace TruthOrDareHelper.Modules.Chat
             return playerName;
         }
 
-        private void EchoMessage(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
+        private bool EchoMessage(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
         {
             if (chatChannel == ChatChannelType.None)
             {
-                return;
+                return false;
             }
             chatRaw.Print($"[{timeStamp.ToShortDateString()}-{timeStamp.ToShortTimeString()}], by [{sender}] on channel [{chatChannel}]: {message}");
+
+            return true;
         }
 
         // We don't need to handle all types for this.
