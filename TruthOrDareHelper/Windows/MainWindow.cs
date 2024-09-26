@@ -1,3 +1,4 @@
+using Dalamud.Game.ClientState.Objects;
 using Dalamud.Interface.Windowing;
 using ECommons.GameHelpers;
 using ImGuiNET;
@@ -5,9 +6,15 @@ using Model;
 using System;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.CompilerServices;
 using TruthOrDareHelper.DalamudWrappers;
+using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.Chat;
+using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Targeting;
+using TruthOrDareHelper.Modules.Targeting.Interface;
+using TruthOrDareHelper.Modules.TimeKeeping;
+using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
@@ -16,13 +23,12 @@ namespace TruthOrDareHelper.Windows;
 
 public class MainWindow : Window, IDisposable
 {
-    private Plugin Plugin;
-    private Configuration configuration;
-    private TruthOrDareSession session;
-    private TargetManager targetManager;
-    private ChatOutput chatOutput;
-    private LogWrapper logWrapper;
-    private ChatWrapper chatWrapper;
+    private IConfiguration configuration;
+    private ITruthOrDareSession session;
+    private ITimeKeeper timeKeeper;
+    private IChatOutput chatOutput;
+    private IChatWrapper chatRaw;
+    private ITargetingHandler targetManager;
 
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
@@ -39,13 +45,12 @@ public class MainWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
-        Plugin = plugin;
-        configuration = plugin.Configuration;
-        session = Plugin.Session;
-        chatWrapper = Plugin.chatWrapper;
-        logWrapper = Plugin.logWrapper;
-        targetManager = Plugin.targetManager;
-        chatOutput = Plugin.chatOutput;
+        configuration = Plugin.Resolve<IConfiguration>();
+        session = Plugin.Resolve<ITruthOrDareSession>();
+        timeKeeper = Plugin.Resolve<ITimeKeeper>();
+        chatOutput = Plugin.Resolve<IChatOutput>();
+        chatRaw = Plugin.Resolve<IChatWrapper>();
+        targetManager = Plugin.Resolve<ITargetingHandler>();
 
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
@@ -58,7 +63,7 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
-        Plugin.timeKeeper.Tick(session.Round);
+        timeKeeper.Tick(session.Round);
         DrawPlayerTable();
         if (ImGui.Button("Add target to the game"))
         {
@@ -152,11 +157,11 @@ public class MainWindow : Window, IDisposable
                 {
                     if (targetManager.Target(player.FullName))
                     {
-                        chatWrapper.Print($"Targeting {player.FullName}.");
+                        chatRaw.Print($"Targeting {player.FullName}.");
                     }
                     else
                     {
-                        chatWrapper.Print($"Could not target {player.FullName}.");
+                        chatRaw.Print($"Could not target {player.FullName}.");
                     }
                 }
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right) && ImGui.GetIO().KeyShift)
@@ -197,13 +202,13 @@ public class MainWindow : Window, IDisposable
         
         if (targetFullName == null)
         {
-            chatWrapper.Print("Could not add target to the players. It's either nothing or not a player.");
+            chatRaw.Print("Could not add target to the players. It's either nothing or not a player.");
             return false;
         }
 
         if (session.GetPlayer(targetFullName) != null)
         {
-            chatWrapper.Print("Target player is already in the game.");
+            chatRaw.Print("Target player is already in the game.");
             return true;
         }
 
@@ -226,7 +231,7 @@ public class MainWindow : Window, IDisposable
                 _ => Gray,
             };
             ImGui.SameLine();
-            ImGui.TextColored(color, "♦");
+            ImGui.TextColored(color, RoundSymbol);
         }
 
         ImGui.EndGroup();

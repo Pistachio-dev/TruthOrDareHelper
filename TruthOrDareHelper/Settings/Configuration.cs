@@ -5,7 +5,7 @@ using TruthOrDareHelper.Modules.Chat;
 namespace TruthOrDareHelper.Settings;
 
 [Serializable]
-public class Configuration : IPluginConfiguration
+public class Configuration : IPluginConfiguration, IConfiguration
 {
     public int Version { get; set; } = 0;
 

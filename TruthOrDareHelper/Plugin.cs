@@ -5,11 +5,18 @@ using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using ECommons;
+using Microsoft.Extensions.DependencyInjection;
 using Model;
 using TruthOrDareHelper.DalamudWrappers;
+using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.Chat;
+using TruthOrDareHelper.Modules.Chat.Interface;
+using TruthOrDareHelper.Modules.Prompting;
+using TruthOrDareHelper.Modules.Prompting.Interface;
 using TruthOrDareHelper.Modules.Targeting;
+using TruthOrDareHelper.Modules.Targeting.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping;
+using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
 using TruthOrDareHelper.Windows;
@@ -27,9 +34,6 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] public static IObjectTable ObjectTable { get; private set; } = null!;
     [PluginService] public static IClientState ClientState { get; private set; } = null!;
 
-
-
-
     private const string CommandName = "/tod";
 
     public Configuration Configuration { get; init; }
@@ -38,32 +42,21 @@ public sealed class Plugin : IDalamudPlugin
     private ConfigWindow ConfigWindow { get; init; }
     private MainWindow MainWindow { get; init; }
 
-    public TruthOrDareSession Session { get; set; }
-    public TargetManager targetManager { get; set; }
-    public ChatOutput chatOutput { get; set; }
-    public ChatListener chatListener { get; set; }
-    public LogWrapper logWrapper { get; set; }
-    public ChatWrapper chatWrapper { get; set; }
-    public TargetWrapper targetWrapper { get; set; }
-    public TimeKeeper timeKeeper { get; set; }
+    public ITruthOrDareSession Session { get; set; }
+
+    private static ServiceProvider services { get; set; }
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
         ECommonsMain.Init(pluginInterface, this);
 
-        Session = new TruthOrDareSession().AddDummyPlayers().AddRandomSessionParticipation();
-
         Configuration = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
 
-        logWrapper = new LogWrapper();
-        chatWrapper = new ChatWrapper();
-        targetWrapper = new TargetWrapper();
-        targetManager = new TargetManager(logWrapper, targetWrapper);
-        timeKeeper = new TimeKeeper();
-        chatOutput = new ChatOutput(Configuration, chatWrapper, logWrapper);
-        chatListener = new ChatListener();
-        chatListener.AttachListener();
-        // you might normally want to embed resources and load them from the manifest stream
+        services = DependencyInjectionSetup(Configuration);
+
+        Session = Resolve<ITruthOrDareSession>().AddDummyPlayers().AddRandomSessionParticipation();
+       
+        // TODO: remember to attach listener.
 
         ConfigWindow = new ConfigWindow(this);
         MainWindow = new MainWindow(this);
@@ -86,6 +79,11 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
     }
 
+    public static T Resolve<T>() where T: notnull
+    {
+        return services.GetRequiredService<T>();
+    }
+
     public void Dispose()
     {
         WindowSystem.RemoveAllWindows();
@@ -94,6 +92,23 @@ public sealed class Plugin : IDalamudPlugin
         MainWindow.Dispose();
 
         CommandManager.RemoveHandler(CommandName);
+    }
+
+    private ServiceProvider DependencyInjectionSetup(Configuration configuration)
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ITruthOrDareSession, TruthOrDareSession>();
+        services.AddSingleton<IChatWrapper, ChatWrapper>();
+        services.AddSingleton<ILogWrapper, LogWrapper>();
+        services.AddSingleton<ITargetWrapper, TargetWrapper>();
+        services.AddSingleton<IChatListener, ChatListener>();
+        services.AddSingleton<IChatOutput, ChatOutput>();
+        services.AddSingleton<IPrompter, Prompter>();
+        services.AddSingleton<ITargetingHandler, TargetingHandler>();
+        services.AddSingleton<ITimeKeeper, TimeKeeper>();
+        services.AddSingleton<IConfiguration>((services) => configuration);
+
+        return services.BuildServiceProvider();
     }
 
     private void OnCommand(string command, string args)

@@ -1,23 +1,26 @@
 using Dalamud.Utility;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using TruthOrDareHelper.DalamudWrappers;
+using TruthOrDareHelper.DalamudWrappers.Interface;
+using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Modules.Chat
 {
-    public class ChatOutput
+    public class ChatOutput : IChatOutput
     {
-        private readonly Configuration configuration;
-        private readonly ChatWrapper chat;
-        private readonly LogWrapper log;
+        private readonly IConfiguration configuration;
+        private readonly IChatWrapper chat;
+        private readonly ILogWrapper log;
 
         private ChatChannelType DefaultChatOutput => configuration.DefaultChatChannel;
 
-        public ChatOutput(Configuration configuration, ChatWrapper chat, LogWrapper log)
+        public ChatOutput()
         {
-            this.configuration = configuration;
-            this.chat = chat;
-            this.log = log;
+            configuration = Plugin.Resolve<IConfiguration>(); ;
+            chat = Plugin.Resolve<IChatWrapper>();
+            log = Plugin.Resolve<ILogWrapper>();
         }
 
         public void WriteChat(string message, ChatChannelType? chatChannel = null)

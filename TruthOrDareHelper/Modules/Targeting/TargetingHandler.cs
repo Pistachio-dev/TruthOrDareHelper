@@ -2,19 +2,21 @@ using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using System.Collections.Generic;
 using TruthOrDareHelper.DalamudWrappers;
+using TruthOrDareHelper.DalamudWrappers.Interface;
+using TruthOrDareHelper.Modules.Targeting.Interface;
 
 namespace TruthOrDareHelper.Modules.Targeting
 {
-    public class TargetManager
+    public class TargetingHandler : ITargetingHandler
     {
-        private readonly LogWrapper log;
-        private readonly TargetWrapper targeting;
+        private readonly ILogWrapper log;
+        private readonly ITargetWrapper targeting;
         private Dictionary<string, IPlayerCharacter> references = new();
 
-        public TargetManager(LogWrapper log, TargetWrapper targeting)
+        public TargetingHandler()
         {
-            this.log = log;
-            this.targeting = targeting;
+            this.log = Plugin.Resolve<ILogWrapper>();
+            this.targeting = Plugin.Resolve<ITargetWrapper>();
         }
 
         public string? AddReferenceToCurrentTarget()
@@ -46,7 +48,7 @@ namespace TruthOrDareHelper.Modules.Targeting
 
         public bool Target(string targetFullName)
         {
-            if(!references.TryGetValue(targetFullName, out var reference))
+            if (!references.TryGetValue(targetFullName, out var reference))
             {
                 log.Warning("Could not find the stored player reference. Trying to find if it is still spawned for you.");
 

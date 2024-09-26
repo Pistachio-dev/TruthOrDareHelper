@@ -1,6 +1,9 @@
+using Microsoft.Extensions.DependencyInjection;
+using TruthOrDareHelper.DalamudWrappers.Interface;
+
 namespace TruthOrDareHelper.DalamudWrappers
 {
-    public class ChatWrapper
+    public class ChatWrapper : IChatWrapper
     {
         public void SendMessage(string messagePrefix, string message)
         {

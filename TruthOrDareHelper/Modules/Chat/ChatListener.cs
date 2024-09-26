@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TruthOrDareHelper.Modules.Chat.Interface;
 
 namespace TruthOrDareHelper.Modules.Chat
 {
-    public class ChatListener
+    public class ChatListener : IChatListener
     {
         public List<ConditionalDelegatePayload> triggers = new();
 
@@ -33,7 +34,7 @@ namespace TruthOrDareHelper.Modules.Chat
                 }
             }
         }
-        
+
         private bool DoesMessageTriggerPayload(string sender, string message, ConditionalDelegatePayload payload)
         {
             bool triggered = true;
@@ -114,6 +115,6 @@ namespace TruthOrDareHelper.Modules.Chat
             };
         }
 
-        
+
     }
 }

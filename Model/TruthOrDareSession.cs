@@ -1,10 +1,10 @@
 namespace Model
 {
-    public class TruthOrDareSession
+    public class TruthOrDareSession : ITruthOrDareSession
     {
         public Guid SessionId { get; set; } = Guid.NewGuid();
 
-        public int Round = 0;
+        public int Round { get; set; } = 0;
 
         public Dictionary<string, PlayerInfo> PlayerInfo { get; set; } = new();
 

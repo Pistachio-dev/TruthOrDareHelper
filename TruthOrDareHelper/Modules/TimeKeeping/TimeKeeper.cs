@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 
 namespace TruthOrDareHelper.Modules.TimeKeeping
 {
-    public class TimeKeeper
+    public class TimeKeeper : ITimeKeeper
     {
         private int currentRound = 0;
         private LinkedList<TimedAction> timedActions = new();
@@ -42,7 +43,7 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
                     {
                         nodesToRemove.Add(action);
                         Plugin.Log.Debug($"Removed timed action with ID {action.Id}");
-                    }                    
+                    }
                 }
             }
 

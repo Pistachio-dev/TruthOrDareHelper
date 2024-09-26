@@ -1,8 +1,9 @@
 using System;
+using TruthOrDareHelper.DalamudWrappers.Interface;
 
 namespace TruthOrDareHelper.DalamudWrappers
 {
-    public class LogWrapper
+    public class LogWrapper : ILogWrapper
     {
         public void Info(string message)
         {

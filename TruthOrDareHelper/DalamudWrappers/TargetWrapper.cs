@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using TruthOrDareHelper.DalamudWrappers.Interface;
 
 namespace TruthOrDareHelper.DalamudWrappers
 {
-    public class TargetWrapper
+    public class TargetWrapper : ITargetWrapper
     {
         public IGameObject? GetTarget()
         {
@@ -18,6 +19,7 @@ namespace TruthOrDareHelper.DalamudWrappers
 
         public IPlayerCharacter? SearchTargetInObjectList(string targetNameWithoutWorld)
         {
+            // TODO: Separate this?
             return (IPlayerCharacter?)Plugin.ObjectTable.FirstOrDefault(o => o is IPlayerCharacter player && player.Name.ToString() == targetNameWithoutWorld);
         }
 

@@ -5,7 +5,7 @@ namespace TruthOrDareHelper.TestData
 {
     public static class TruthOrDareSessionTestDataExtensions
     {
-        public static TruthOrDareSession AddDummyPlayers(this TruthOrDareSession session)
+        public static ITruthOrDareSession AddDummyPlayers(this ITruthOrDareSession session)
         {
             for (int i = 1; i < 9; i++)
             {
@@ -20,7 +20,7 @@ namespace TruthOrDareHelper.TestData
             return session;
         }
 
-        public static TruthOrDareSession AddRandomSessionParticipation(this TruthOrDareSession session)
+        public static ITruthOrDareSession AddRandomSessionParticipation(this ITruthOrDareSession session)
         {
             Random rng = new Random();
             foreach (var player in session.PlayerInfo.Values)
