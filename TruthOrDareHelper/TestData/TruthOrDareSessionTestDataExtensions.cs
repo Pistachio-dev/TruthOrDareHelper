@@ -48,5 +48,14 @@ namespace TruthOrDareHelper.TestData
 
             return session;
         }
+
+        public static ITruthOrDareSession MakePlayer3BeOnStreak(this ITruthOrDareSession session)
+        {
+            session.PlayerInfo["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2342, RoundParticipation.Winner));
+            session.PlayerInfo["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2343, RoundParticipation.Winner));
+            session.PlayerInfo["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2345, RoundParticipation.Loser));
+
+            return session;
+        }
     }
 }

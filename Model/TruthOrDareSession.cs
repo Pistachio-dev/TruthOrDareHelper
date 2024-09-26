@@ -33,6 +33,6 @@ namespace Model
             return PlayingPairs.FirstOrDefault(p => p.Winner == player || p.Loser == player) != null;
         }
 
-        public bool ArePlayersPaired() => PlayingPairs.Any();
+        public bool ArePlayersPaired() => PlayingPairs.Any();        
     }
 }

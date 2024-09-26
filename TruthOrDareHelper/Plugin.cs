@@ -13,6 +13,7 @@ using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Prompting;
 using TruthOrDareHelper.Modules.Prompting.Interface;
+using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Modules.Targeting;
 using TruthOrDareHelper.Modules.Targeting.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping;
@@ -54,7 +55,7 @@ public sealed class Plugin : IDalamudPlugin
 
         services = DependencyInjectionSetup(Configuration);
 
-        Session = Resolve<ITruthOrDareSession>().AddDummyPlayers().AddRandomSessionParticipation();
+        Session = Resolve<ITruthOrDareSession>().AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();
 
         // TODO: remember to attach listener.
 
@@ -107,6 +108,7 @@ public sealed class Plugin : IDalamudPlugin
         services.AddSingleton<ITargetingHandler, TargetingHandler>();
         services.AddSingleton<ITimeKeeper, TimeKeeper>();
         services.AddSingleton<IConfiguration>((services) => configuration);
+        services.AddSingleton<IRollManager, RollManager>();
 
         return services.BuildServiceProvider();
     }

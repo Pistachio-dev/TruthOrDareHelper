@@ -1,4 +1,4 @@
-﻿using TruthOrDareHelper.Modules.Chat;
+using TruthOrDareHelper.Modules.Chat;
 
 namespace TruthOrDareHelper.Settings
 {
@@ -8,6 +8,7 @@ namespace TruthOrDareHelper.Settings
         RollingType RollingType { get; set; }
         int SimultaneousPlays { get; set; }
         int Version { get; set; }
+        int MaxParticipationStreak { get; set; }
 
         void Save();
     }

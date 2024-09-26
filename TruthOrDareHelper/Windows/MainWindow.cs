@@ -2,10 +2,12 @@ using Dalamud.Interface.Windowing;
 using ImGuiNET;
 using Model;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.Chat.Interface;
+using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Modules.Targeting.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Settings;
@@ -20,6 +22,7 @@ public class MainWindow : Window, IDisposable
     private IChatOutput chatOutput;
     private IChatWrapper chatRaw;
     private ITargetingHandler targetManager;
+    private IRollManager rollManager;
 
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
@@ -42,6 +45,7 @@ public class MainWindow : Window, IDisposable
         chatOutput = Plugin.Resolve<IChatOutput>();
         chatRaw = Plugin.Resolve<IChatWrapper>();
         targetManager = Plugin.Resolve<ITargetingHandler>();
+        rollManager = Plugin.Resolve<IRollManager>();
 
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
@@ -55,6 +59,12 @@ public class MainWindow : Window, IDisposable
     public override void Draw()
     {
         timeKeeper.Tick(session.Round);
+        if (ImGui.Button("Roll"))
+        {
+            List<PlayerPair> pairs = rollManager.RollStandard(session.PlayerInfo.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
+            session.PlayingPairs = pairs;
+        }
+
         DrawPlayerTable();
         if (ImGui.Button("Add target to the game"))
         {
