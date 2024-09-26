@@ -11,7 +11,7 @@ public class Configuration : IPluginConfiguration, IConfiguration
 
     public RollingType RollingType { get; set; } = RollingType.PluginRng;
 
-    public int SimultaneousPlays { get; set; } = 5;
+    public int SimultaneousPlays { get; set; } = 3;
 
     public int MaxParticipationStreak { get; set; } = 3;
 

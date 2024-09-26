@@ -59,10 +59,29 @@ public class MainWindow : Window, IDisposable
     public override void Draw()
     {
         timeKeeper.Tick(session.Round);
+
         if (ImGui.Button("Roll"))
         {
+            // TODO: Before next roll, make sure to add the "truth wins, dare wins, etc" stats if available
             List<PlayerPair> pairs = rollManager.RollStandard(session.PlayerInfo.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
+            foreach (var player in session.PlayerInfo.Select(p => p.Value))
+            {
+                if (pairs.FirstOrDefault(p => p.Winner == player) !=  null)
+                {
+                    player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Winner));
+                }
+                else if (pairs.FirstOrDefault(p => p.Loser == player) != null)
+                {
+                    player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Loser));
+                }
+                else
+                {
+                    player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.NotParticipating));
+                }
+            }
+
             session.PlayingPairs = pairs;
+            
         }
 
         DrawPlayerTable();
