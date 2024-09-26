@@ -1,11 +1,6 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using TruthOrDareHelper.DalamudWrappers.Interface;
 
 namespace TruthOrDareHelper.DalamudWrappers

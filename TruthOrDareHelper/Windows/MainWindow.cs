@@ -1,23 +1,14 @@
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Interface.Windowing;
-using ECommons.GameHelpers;
 using ImGuiNET;
 using Model;
 using System;
 using System.Linq;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using TruthOrDareHelper.DalamudWrappers;
 using TruthOrDareHelper.DalamudWrappers.Interface;
-using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Interface;
-using TruthOrDareHelper.Modules.Targeting;
 using TruthOrDareHelper.Modules.Targeting.Interface;
-using TruthOrDareHelper.Modules.TimeKeeping;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
-using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 using TruthOrDareHelper.Settings;
-using TruthOrDareHelper.TestData;
 
 namespace TruthOrDareHelper.Windows;
 
@@ -199,7 +190,7 @@ public class MainWindow : Window, IDisposable
     private bool AddTargetPlayer()
     {
         string? targetFullName = targetManager.AddReferenceToCurrentTarget();
-        
+
         if (targetFullName == null)
         {
             chatRaw.Print("Could not add target to the players. It's either nothing or not a player.");

@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Transactions;
-
 namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
 {
     public class RoundTimedAction : TimedAction
@@ -12,7 +5,6 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         private int startRound;
         private int durationInRounds;
         private int currentRound;
-
 
         public RoundTimedAction(int startRound, int durationInRounds, TimeEndActionDelegate action)
         {

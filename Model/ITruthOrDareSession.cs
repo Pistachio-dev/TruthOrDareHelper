@@ -1,4 +1,3 @@
-
 namespace Model
 {
     public interface ITruthOrDareSession
@@ -9,9 +8,13 @@ namespace Model
         public int Round { get; set; }
 
         void AddNewPlayer(string fullName);
+
         bool ArePlayersPaired();
+
         PlayerInfo? GetPlayer(string name);
+
         bool IsPlayerPlaying(PlayerInfo player);
+
         void TryRemovePlayer(string fullName);
     }
 }

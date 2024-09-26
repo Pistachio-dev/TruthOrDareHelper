@@ -1,7 +1,5 @@
 using Dalamud.Utility;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using TruthOrDareHelper.DalamudWrappers;
 using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Settings;

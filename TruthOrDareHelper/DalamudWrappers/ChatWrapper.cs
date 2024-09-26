@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using TruthOrDareHelper.DalamudWrappers.Interface;
 using static Dalamud.Plugin.Services.IChatGui;
 

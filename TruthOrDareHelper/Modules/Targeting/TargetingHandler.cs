@@ -1,7 +1,6 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using System.Collections.Generic;
-using TruthOrDareHelper.DalamudWrappers;
 using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.Targeting.Interface;
 

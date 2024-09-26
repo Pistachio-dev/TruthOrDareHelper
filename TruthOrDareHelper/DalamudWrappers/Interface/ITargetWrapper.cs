@@ -6,8 +6,11 @@ namespace TruthOrDareHelper.DalamudWrappers.Interface
     public interface ITargetWrapper
     {
         void ClearTarget();
+
         IGameObject? GetTarget();
+
         IPlayerCharacter? SearchTargetInObjectList(string targetNameWithoutWorld);
+
         void Target(IPlayerCharacter reference);
     }
 }

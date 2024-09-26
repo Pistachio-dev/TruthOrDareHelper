@@ -13,12 +13,12 @@ namespace TruthOrDareHelper.Modules.Chat
     {
         public List<ConditionalDelegatePayload> triggers = new();
 
-        ILogWrapper log;
-        IChatWrapper chatRaw;
+        private ILogWrapper log;
+        private IChatWrapper chatRaw;
 
         public void AttachListener()
         {
-            log = Plugin.Resolve<ILogWrapper>(); 
+            log = Plugin.Resolve<ILogWrapper>();
             chatRaw = Plugin.Resolve<IChatWrapper>();
 
             triggers.Add(new ConditionalDelegatePayload("asdf.*gg", true, "Pist", EchoMessage));
@@ -99,6 +99,7 @@ namespace TruthOrDareHelper.Modules.Chat
 
             return playerName;
         }
+
         private void EchoMessage(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
         {
             if (chatChannel == ChatChannelType.None)
@@ -121,7 +122,5 @@ namespace TruthOrDareHelper.Modules.Chat
                 _ => ChatChannelType.None,
             };
         }
-
-
     }
 }

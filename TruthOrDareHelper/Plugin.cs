@@ -55,7 +55,7 @@ public sealed class Plugin : IDalamudPlugin
         services = DependencyInjectionSetup(Configuration);
 
         Session = Resolve<ITruthOrDareSession>().AddDummyPlayers().AddRandomSessionParticipation();
-       
+
         // TODO: remember to attach listener.
 
         ConfigWindow = new ConfigWindow(this);
@@ -79,7 +79,7 @@ public sealed class Plugin : IDalamudPlugin
         PluginInterface.UiBuilder.OpenMainUi += ToggleMainUI;
     }
 
-    public static T Resolve<T>() where T: notnull
+    public static T Resolve<T>() where T : notnull
     {
         return services.GetRequiredService<T>();
     }
