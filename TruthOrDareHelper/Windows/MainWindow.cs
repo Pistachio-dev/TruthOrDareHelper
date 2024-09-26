@@ -8,6 +8,7 @@ using System.Numerics;
 using TruthOrDareHelper.DalamudWrappers;
 using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Targeting;
+using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
 
@@ -45,6 +46,11 @@ public class MainWindow : Window, IDisposable
         logWrapper = Plugin.logWrapper;
         targetManager = Plugin.targetManager;
         chatOutput = Plugin.chatOutput;
+
+        //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
+        //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
+        //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(5), () => session.TryRemovePlayer("Player4")));
+        //Plugin.timeKeeper.AddTimedAction(new RoundTimedAction(session.Round, 2, () => session.TryRemovePlayer("Player 4")));
     }
 
     public void Dispose()
@@ -52,6 +58,7 @@ public class MainWindow : Window, IDisposable
 
     public override void Draw()
     {
+        Plugin.timeKeeper.Tick(session.Round);
         DrawPlayerTable();
         if (ImGui.Button("Add target to the game"))
         {

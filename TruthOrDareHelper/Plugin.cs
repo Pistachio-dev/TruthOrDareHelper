@@ -9,6 +9,7 @@ using Model;
 using TruthOrDareHelper.DalamudWrappers;
 using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Targeting;
+using TruthOrDareHelper.Modules.TimeKeeping;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
 using TruthOrDareHelper.Windows;
@@ -44,6 +45,7 @@ public sealed class Plugin : IDalamudPlugin
     public LogWrapper logWrapper { get; set; }
     public ChatWrapper chatWrapper { get; set; }
     public TargetWrapper targetWrapper { get; set; }
+    public TimeKeeper timeKeeper { get; set; }
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -57,6 +59,7 @@ public sealed class Plugin : IDalamudPlugin
         chatWrapper = new ChatWrapper();
         targetWrapper = new TargetWrapper();
         targetManager = new TargetManager(logWrapper, targetWrapper);
+        timeKeeper = new TimeKeeper();
         chatOutput = new ChatOutput(Configuration, chatWrapper, logWrapper);
         chatListener = new ChatListener();
         chatListener.AttachListener();
