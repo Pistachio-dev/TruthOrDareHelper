@@ -56,34 +56,56 @@ public class MainWindow : Window, IDisposable
     public void Dispose()
     { }
 
+    private void Roll()
+    {
+        // TODO: Before next roll, make sure to add the "truth wins, dare wins, etc" stats if available
+        List<PlayerPair> pairs = rollManager.RollStandard(session.PlayerInfo.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
+        foreach (var player in session.PlayerInfo.Select(p => p.Value))
+        {
+            if (pairs.FirstOrDefault(p => p.Winner == player) != null)
+            {
+                player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Winner));
+            }
+            else if (pairs.FirstOrDefault(p => p.Loser == player) != null)
+            {
+                player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Loser));
+            }
+            else
+            {
+                player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.NotParticipating));
+            }
+        }
+
+        session.PlayingPairs = pairs;
+    }
+
+    private void ReRoll(PlayerPair pair, bool rerollTheLoser)
+    {
+        chatOutput.WriteChat($"Rerolling {(rerollTheLoser ? pair.Loser?.FullName ?? "Nobody? This should not be possible." : pair.Winner.FullName)}");
+        PlayerInfo? replacement = rollManager.Reroll(session);
+        if (replacement == null)
+        {
+            return;
+        }
+
+        if (rerollTheLoser)
+        {
+            pair.Loser = replacement;
+        }
+        else
+        {
+            pair.Winner = replacement;
+        }
+    }
+
     public override void Draw()
     {
         timeKeeper.Tick(session.Round);
 
         if (ImGui.Button("Roll"))
         {
-            // TODO: Before next roll, make sure to add the "truth wins, dare wins, etc" stats if available
-            List<PlayerPair> pairs = rollManager.RollStandard(session.PlayerInfo.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
-            foreach (var player in session.PlayerInfo.Select(p => p.Value))
-            {
-                if (pairs.FirstOrDefault(p => p.Winner == player) !=  null)
-                {
-                    player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Winner));
-                }
-                else if (pairs.FirstOrDefault(p => p.Loser == player) != null)
-                {
-                    player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Loser));
-                }
-                else
-                {
-                    player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.NotParticipating));
-                }
-            }
-
-            session.PlayingPairs = pairs;
-            
+            Roll();
         }
-
         DrawPlayerTable();
         if (ImGui.Button("Add target to the game"))
         {
@@ -121,10 +143,10 @@ public class MainWindow : Window, IDisposable
 
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
-                DrawPairedPlayerCell(pair.Winner);
+                DrawPairedPlayerCell(pair, isLoser: false, row: i);
 
                 ImGui.TableNextColumn();
-                DrawPairedPlayerCell(pair.Loser);
+                DrawPairedPlayerCell(pair, isLoser: true, row: i);
 
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("Truth"); // Truth/Dare/Any/Pending
@@ -140,17 +162,20 @@ public class MainWindow : Window, IDisposable
         }
     }
 
-    private void DrawPairedPlayerCell(PlayerInfo? player)
+    private void DrawPairedPlayerCell(PlayerPair pair, bool isLoser, int row)
     {
+        PlayerInfo? player = isLoser ? pair.Loser : pair.Winner;
         bool playerNotChosenByRoll = player == null;
         string playerName = playerNotChosenByRoll ? "Not autodetected yet" : RemoveWorldFromName(player.FullName);
         ImGui.TextUnformatted(playerName);
         if (!playerNotChosenByRoll)
         {
             ImGui.SameLine();
-            if (ImGui.Button(""))
+            if (ImGui.Button($"##{row}{isLoser}"))
             {
+                ReRoll(pair, isLoser);
             }
+
             Tooltip("Reroll player, if this one is afk or passes.");
         }
     }

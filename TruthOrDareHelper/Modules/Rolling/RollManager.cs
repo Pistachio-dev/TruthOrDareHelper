@@ -41,5 +41,27 @@ namespace TruthOrDareHelper.Modules.Rolling
 
             return pairs;
         }
+
+        public PlayerInfo? Reroll(ITruthOrDareSession session)
+        {
+            List<PlayerInfo> alreadyUsed = new();
+            foreach (var pair in session.PlayingPairs)
+            {
+                alreadyUsed.Add(pair.Winner);
+                if (pair.Loser != null)
+                {
+                    alreadyUsed.Add(pair.Loser);
+                }                
+            }
+
+            if (alreadyUsed.Count == session.PlayerInfo.Count)
+            {
+                Plugin.Chat.PrintError($"Can't reroll, all players are already playing");
+                return null;
+            }
+
+            List<PlayerInfo> elegiblePlayers = session.PlayerInfo.Select(kvp => kvp.Value).Where(p => !alreadyUsed.Contains(p)).ToList();
+            return elegiblePlayers[new Random().Next(elegiblePlayers.Count)];
+        }
     }
 }

@@ -13,6 +13,11 @@ namespace TruthOrDareHelper.TestData
                 session.PlayerInfo.Add(playerName, new PlayerInfo(playerName));
             }
 
+            return session;
+        }
+
+        public static ITruthOrDareSession AddDummyPairs(this ITruthOrDareSession session)
+        {
             session.PlayingPairs.Add(new PlayerPair(session.GetPlayer("Player1"), session.GetPlayer("Player2")));
             session.PlayingPairs.Add(new PlayerPair(session.GetPlayer("Player3"), session.GetPlayer("Player8")));
             session.PlayingPairs.Add(new PlayerPair(session.GetPlayer("Player4"), session.GetPlayer("Player7")));
