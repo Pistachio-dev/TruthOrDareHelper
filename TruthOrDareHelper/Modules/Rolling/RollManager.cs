@@ -33,10 +33,10 @@ namespace TruthOrDareHelper.Modules.Rolling
             for (int i = 0; i < pairsToForm; i++)
             {
                 PlayerInfo winner = winRolls.First(p => !alreadyTaken.Contains(p.Player)).Player;
-                PlayerInfo loser = lossRolls.First(p => !alreadyTaken.Contains(p.Player)).Player;
-                pairs.Add(new PlayerPair(winner, loser, DateTime.Now));
                 alreadyTaken.Add(winner);
+                PlayerInfo loser = lossRolls.First(p => !alreadyTaken.Contains(p.Player)).Player;
                 alreadyTaken.Add(loser);
+                pairs.Add(new PlayerPair(winner, loser, DateTime.Now));
             }
 
             return pairs;

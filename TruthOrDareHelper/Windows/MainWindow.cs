@@ -67,6 +67,7 @@ public class MainWindow : Window, IDisposable
 
     private void Roll()
     {
+        session.Round++;
         // TODO: Before next roll, make sure to add the "truth wins, dare wins, etc" stats if available
         List<PlayerPair> pairs = rollManager.RollStandard(session.PlayerInfo.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
         foreach (var player in session.PlayerInfo.Select(p => p.Value))
