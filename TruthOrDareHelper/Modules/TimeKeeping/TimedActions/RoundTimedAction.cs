@@ -13,6 +13,14 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         private int durationInRounds;
         private int currentRound;
 
+
+        public RoundTimedAction(int startRound, int durationInRounds, TimeEndActionDelegate action)
+        {
+            this.startRound = startRound;
+            this.durationInRounds = durationInRounds;
+            this.timeEndAction = action;
+        }
+
         public void UpdateRoundCounter(int newValue)
         {
             currentRound = newValue;
@@ -22,11 +30,6 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         {
             // Note: These actions are often assigned at round end, so it's best to have them end at the beginning of startRound + durationInRounds + 1;
             return currentRound >= startRound + durationInRounds + 1;
-        }
-
-        public override void OnElapsed()
-        {
-            throw new NotImplementedException();
         }
     }
 }
