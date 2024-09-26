@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using TruthOrDareHelper.DalamudWrappers.Interface;
+using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Modules.Targeting.Interface;
@@ -77,6 +78,8 @@ public class MainWindow : Window, IDisposable
         }
 
         session.PlayingPairs = pairs;
+        chatOutput.WriteChat($"-------------ROLLING--------------");
+        chatOutput.WritePairs(pairs);
     }
 
     private void ReRoll(PlayerPair pair, bool rerollTheLoser)
@@ -114,8 +117,14 @@ public class MainWindow : Window, IDisposable
 
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
+
         if (session.ArePlayersPaired())
         {
+            ImGui.SameLine();
+            if (ImGui.Button($"Print player pairs to chat"))
+            {
+                chatOutput.WritePairs(session.PlayingPairs);
+            }
             DrawPlayingPairsTable();
         }
         else
@@ -166,7 +175,7 @@ public class MainWindow : Window, IDisposable
     {
         PlayerInfo? player = isLoser ? pair.Loser : pair.Winner;
         bool playerNotChosenByRoll = player == null;
-        string playerName = playerNotChosenByRoll ? "Not autodetected yet" : RemoveWorldFromName(player.FullName);
+        string playerName = playerNotChosenByRoll ? "Not autodetected yet" : ChatOutput.RemoveWorldFromName(player.FullName);
         ImGui.TextUnformatted(playerName);
         if (!playerNotChosenByRoll)
         {
@@ -197,7 +206,7 @@ public class MainWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(RemoveWorldFromName(player.FullName));
+                ImGui.TextUnformatted(ChatOutput.RemoveWorldFromName(player.FullName));
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                 {
                     if (targetManager.Target(player.FullName))
@@ -281,11 +290,6 @@ public class MainWindow : Window, IDisposable
 
         ImGui.EndGroup();
         Tooltip("Last 8 rounds. Green means being the asker, red the asked, gray not participating.");
-    }
-
-    private string RemoveWorldFromName(string name)
-    {
-        return name.Split("@").First();
     }
 
     private void Tooltip(string tooltip)
