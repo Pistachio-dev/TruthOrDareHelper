@@ -102,7 +102,8 @@ public class MainWindow : Window, IDisposable
         PlayerPair? pair = session.PlayingPairs.FirstOrDefault(p => (p.Loser?.FullName.Contains(sender) ?? false));
         if (pair == null)
         {
-            return false;
+            // This would happen in case of rerrolls.
+            return true;
         }
 
         if (message.Equals("t", StringComparison.InvariantCultureIgnoreCase)
@@ -223,7 +224,15 @@ public class MainWindow : Window, IDisposable
                 DrawPairedPlayerCell(pair, isLoser: true, row: i);
 
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("Truth"); // Truth/Dare/Any/Pending
+                string challengeText = pair.ChallengeType switch
+                {
+                    ChallengeType.None => "?",
+                    ChallengeType.DealersChoice => "Any",
+                    ChallengeType.Dare => "Dare",
+                    ChallengeType.Truth => "Truth"
+                };
+
+                ImGui.TextUnformatted(challengeText);
 
                 ImGui.TableNextColumn();
 
