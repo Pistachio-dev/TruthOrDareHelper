@@ -95,6 +95,7 @@ public class MainWindow : Window, IDisposable
     {
         ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectTruthOrDare);
         chatListener.AddConditionalDelegate(payload);
+        log.Info($"Added ToD choice chat listener for {playerName}");
     }
 
     private bool DetectTruthOrDare(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
@@ -157,6 +158,12 @@ public class MainWindow : Window, IDisposable
         }
 
         chatOutput.WriteChat($"{replacement.FullName} replaces {rerrolledName}.");
+
+        if (pair.ChallengeType != ChallengeType.None && rerollTheLoser)
+        {
+            AddToDChoiceDetection(ChatOutput.RemoveWorldFromName(replacement.FullName));
+            
+        }
     }
 
     public override void Draw()
