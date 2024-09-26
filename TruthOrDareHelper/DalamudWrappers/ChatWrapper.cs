@@ -1,10 +1,16 @@
 using Microsoft.Extensions.DependencyInjection;
 using TruthOrDareHelper.DalamudWrappers.Interface;
+using static Dalamud.Plugin.Services.IChatGui;
 
 namespace TruthOrDareHelper.DalamudWrappers
 {
     public class ChatWrapper : IChatWrapper
     {
+        public void AttachMethodToChatMessageReceived(OnMessageDelegate method)
+        {
+            Plugin.Chat.ChatMessage += method;
+        }
+
         public void SendMessage(string messagePrefix, string message)
         {
             string sanitizedText = ECommons.Automation.Chat.Instance.SanitiseText(message);

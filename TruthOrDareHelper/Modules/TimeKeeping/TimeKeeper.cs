@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 
@@ -12,6 +13,13 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
     {
         private int currentRound = 0;
         private LinkedList<TimedAction> timedActions = new();
+        private ILogWrapper log;
+
+
+        public TimeKeeper()
+        {
+            log = Plugin.Resolve<ILogWrapper>();
+        }
 
         public void AddTimedAction(TimedAction action)
         {
@@ -32,17 +40,17 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
                 {
                     try
                     {
-                        Plugin.Log.Debug($"Executing action with ID {action.Id}");
+                        log.Debug($"Executing action with ID {action.Id}");
                         action.OnElapsed();
                     }
                     catch (Exception ex)
                     {
-                        Plugin.Log.Error(ex, $"Timed action with Id {action.Id} failed.");
+                        log.Error(ex, $"Timed action with Id {action.Id} failed.");
                     }
                     finally
                     {
                         nodesToRemove.Add(action);
-                        Plugin.Log.Debug($"Removed timed action with ID {action.Id}");
+                        log.Debug($"Removed timed action with ID {action.Id}");
                     }
                 }
             }

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.Chat.Interface;
 
 namespace TruthOrDareHelper.Modules.Chat
@@ -12,10 +13,16 @@ namespace TruthOrDareHelper.Modules.Chat
     {
         public List<ConditionalDelegatePayload> triggers = new();
 
+        ILogWrapper log;
+        IChatWrapper chatRaw;
+
         public void AttachListener()
         {
+            log = Plugin.Resolve<ILogWrapper>(); 
+            chatRaw = Plugin.Resolve<IChatWrapper>();
+
             triggers.Add(new ConditionalDelegatePayload("asdf.*gg", true, "Pist", EchoMessage));
-            Plugin.Chat.ChatMessage += OnChatMessage;
+            chatRaw.AttachMethodToChatMessageReceived(OnChatMessage);
         }
 
         private void OnChatMessage(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
@@ -29,7 +36,7 @@ namespace TruthOrDareHelper.Modules.Chat
             {
                 if (DoesMessageTriggerPayload(playerName, messageString, trigger))
                 {
-                    Plugin.Log.Information($"Payload with ID {trigger.Id} triggered.");
+                    log.Info($"Payload with ID {trigger.Id} triggered.");
                     trigger.OnMessageWithValidTriggers(channelType, dateTime, playerName, messageString);
                 }
             }
@@ -54,7 +61,7 @@ namespace TruthOrDareHelper.Modules.Chat
             {
                 if (payload.PlayerNameTrigger.Contains("@"))
                 {
-                    Plugin.Log.Warning($"A player message trigger contains @, would should have been removed at this point, shouldn't it?");
+                    log.Warning($"A player message trigger contains @, would should have been removed at this point, shouldn't it?");
                 }
 
                 triggered &= sender.Contains(payload.PlayerNameTrigger, StringComparison.InvariantCultureIgnoreCase);
@@ -98,7 +105,7 @@ namespace TruthOrDareHelper.Modules.Chat
             {
                 return;
             }
-            Plugin.Chat.Print($"[{timeStamp.ToShortDateString()}-{timeStamp.ToShortTimeString()}], by [{sender}] on channel [{chatChannel}]: {message}");
+            chatRaw.Print($"[{timeStamp.ToShortDateString()}-{timeStamp.ToShortTimeString()}], by [{sender}] on channel [{chatChannel}]: {message}");
         }
 
         // We don't need to handle all types for this.
