@@ -20,6 +20,12 @@ namespace TruthOrDareHelper.Modules.Rolling
             {
                 Plugin.Chat.PrintError($"Not enough players to form {pairsToForm} pairs, reducing amount to {elegiblePlayers.Count / 2}.");
                 pairsToForm = elegiblePlayers.Count / 2;
+                if (pairsToForm == 0)
+                {
+                    Plugin.Chat.PrintError($"Not enough playes to form a single pair! Let's lift streak restrictions.");
+                    elegiblePlayers = new List<PlayerInfo>(players);
+                    pairsToForm = elegiblePlayers.Count / 2;
+                }
             }
 
             List<PlayerPair> pairs = new();
