@@ -34,6 +34,7 @@ public sealed class Plugin : IDalamudPlugin
     [PluginService] public static ITargetManager TargetManager { get; private set; } = null!;
     [PluginService] public static IObjectTable ObjectTable { get; private set; } = null!;
     [PluginService] public static IClientState ClientState { get; private set; } = null!;
+    [PluginService] public static IToastGui ToastGui { get; private set; } = null!;
 
     private const string CommandName = "/tod";
 

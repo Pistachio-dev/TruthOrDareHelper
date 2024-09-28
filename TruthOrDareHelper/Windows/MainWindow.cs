@@ -27,6 +27,7 @@ public class MainWindow : Window, IDisposable
     private ILogWrapper log;
     private ITargetingHandler targetManager;
     private IRollManager rollManager;
+    private Plugin plugin;
 
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
@@ -43,6 +44,7 @@ public class MainWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
+        this.plugin = plugin;
         configuration = Plugin.Resolve<IConfiguration>();
         session = Plugin.Resolve<ITruthOrDareSession>();
         timeKeeper = Plugin.Resolve<ITimeKeeper>();
@@ -177,16 +179,36 @@ public class MainWindow : Window, IDisposable
         if (session.PlayerInfo.Count > 2)
         {
             ImGui.SameLine();
+            ImGui.PushID("RollButton");
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0.5f, 0, 0.6f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0.5f, 0, 0.7f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));            
+            
             if (ImGui.Button("New round, rrrrrolll the dice!"))
             {
                 Roll();
             }
+            ImGui.PopStyleColor(3);
+            ImGui.PopID();
         }
 
         ImGui.SameLine();
+        ImGui.PushID("AddTarget");
+        ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0.5f, 0.6f));
+        ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0, 0.5f, 0.7f));
+        ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0, 0.5f, 0.7f));
         if (ImGui.Button("Add target player to the game"))
         {
             AddTargetPlayer();
+        }
+        ImGui.PopStyleColor(3);
+        ImGui.PopID();
+
+
+        ImGui.SameLine();        
+        if (ImGui.Button("Configuration"))
+        {
+            plugin.ToggleConfigUI();
         }
 
         ImGui.Separator();
