@@ -77,6 +77,7 @@ public class MainWindow : Window, IDisposable
             if (pairs.FirstOrDefault(p => p.Winner == player) != null)
             {
                 player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Winner));
+                AddConfirmationDetection(ChatOutput.RemoveWorldFromName(player.FullName));
             }
             else if (pairs.FirstOrDefault(p => p.Loser == player) != null)
             {
@@ -99,6 +100,13 @@ public class MainWindow : Window, IDisposable
         ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectTruthOrDare);
         chatListener.AddConditionalDelegate(payload);
         log.Info($"Added ToD choice chat listener for {playerName}");
+    }
+
+    private void AddConfirmationDetection(string playerName)
+    {
+        ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectConfirmation);
+        chatListener.AddConditionalDelegate(payload);
+        log.Info($"Added ToD confirmation chat listener for {playerName}");
     }
 
     private bool DetectTruthOrDare(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
@@ -141,6 +149,31 @@ public class MainWindow : Window, IDisposable
         return false;
     }
 
+    private bool DetectConfirmation(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
+    {
+        PlayerPair? pair = session.PlayingPairs.FirstOrDefault(p => (p.Winner?.FullName.Contains(sender) ?? false));
+        if (pair == null)
+        {
+            // This would happen in case of rerrolls.
+            return true;
+        }
+
+        if (message.Contains(configuration.ConfirmationKeyword, StringComparison.InvariantCultureIgnoreCase))
+        {
+            pair.Done = true;
+            log.Info($"{pair.Winner.FullName} confirms the answer as valid!");
+
+            if (session.PlayingPairs.FirstOrDefault(pair => !pair.Done) == null)
+            {
+                Roll();
+            }
+
+            return true;
+        }                            
+
+        return false;
+    }
+
     private void ReRoll(PlayerPair pair, bool rerollTheLoser)
     {
         string rerrolledName = rerollTheLoser ? pair.Loser?.FullName ?? "Nobody? This should not be possible." : pair.Winner.FullName;
@@ -176,7 +209,7 @@ public class MainWindow : Window, IDisposable
         DrawPlayerTable();
 
         ImGui.TextUnformatted($"Round {session.Round}");
-        if (session.PlayerInfo.Count > 2)
+        if (session.PlayerInfo.Count >= 2)
         {
             ImGui.SameLine();
             ImGui.PushID("RollButton");
