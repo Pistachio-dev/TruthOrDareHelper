@@ -15,7 +15,11 @@ public class Configuration : IPluginConfiguration, IConfiguration
 
     public int MaxParticipationStreak { get; set; } = 3;
 
-    public ChatChannelType DefaultChatChannel { get; set; } = ChatChannelType.Echo;
+    public ChatChannelType DefaultChatChannel { get; set; } = ChatChannelType.Party;
+
+    public string ConfirmationKeyword { get; set; } = "#nova";
+
+    public bool UseTestData { get; set; } = false;
 
     // the below exist just to make saving less cumbersome
     public void Save()

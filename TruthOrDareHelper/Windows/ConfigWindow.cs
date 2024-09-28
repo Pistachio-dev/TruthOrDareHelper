@@ -15,6 +15,8 @@ public class ConfigWindow : Window, IDisposable
     private int simultaneousPlays;
     private int maxParticipationStreak;
     private int defaultChatChannel;
+    private string confirmationKeyword;
+    private bool useTestData;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
@@ -33,6 +35,8 @@ public class ConfigWindow : Window, IDisposable
         simultaneousPlays = Configuration.SimultaneousPlays;
         maxParticipationStreak = Configuration.MaxParticipationStreak;
         defaultChatChannel = (int)Configuration.DefaultChatChannel;
+        confirmationKeyword = Configuration.ConfirmationKeyword;
+        useTestData = Configuration.UseTestData;
     }
 
     public void Dispose()
@@ -44,6 +48,7 @@ public class ConfigWindow : Window, IDisposable
 
     public override void Draw()
     {
+        DrawSectionHeader("Chat");
         ImGui.BeginGroup();
         ImGui.TextUnformatted("Write to: "); ImGui.SameLine();
         ImGui.RadioButton("/echo", ref defaultChatChannel, (int)ChatChannelType.Echo); ImGui.SameLine();
@@ -55,6 +60,7 @@ public class ConfigWindow : Window, IDisposable
             ImGui.SetTooltip("What chat channel the plugin will write to.");
         }
 
+        DrawSectionHeader("Game");
         ImGui.InputInt("How many pairs are formed in a round", ref simultaneousPlays);
         if (ImGui.IsItemHovered())
         {
@@ -65,6 +71,19 @@ public class ConfigWindow : Window, IDisposable
         if (ImGui.IsItemHovered())
         {
             ImGui.SetTooltip("Players that have won or lost these amount of rounds in a row won't roll for the next round");
+        }
+
+        ImGui.InputText("Confirmation keyword", ref confirmationKeyword, 50);
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");
+        }
+
+        DrawSectionHeader("Testing");
+        ImGui.Checkbox("Use test data", ref useTestData);
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip("Starts the plugin with some dummy data. Only for testing the plugin.");
         }
 
         //ImGui.BeginGroup();
@@ -94,9 +113,17 @@ public class ConfigWindow : Window, IDisposable
             Configuration.SimultaneousPlays = simultaneousPlays;
             Configuration.MaxParticipationStreak = maxParticipationStreak;
             Configuration.DefaultChatChannel = (ChatChannelType)defaultChatChannel;
+            Configuration.ConfirmationKeyword = confirmationKeyword;
+            Configuration.UseTestData = useTestData;
             Configuration.Save();
             //Plugin.Chat.PrintError(PasswordManager.GetCharacterPassword());
             Plugin.ToastGui.ShowNormal("Configuration saved.");
         }
+    }
+
+    private void DrawSectionHeader(string title)
+    {
+        ImGui.Separator();
+        ImGui.TextUnformatted(title);
     }
 }

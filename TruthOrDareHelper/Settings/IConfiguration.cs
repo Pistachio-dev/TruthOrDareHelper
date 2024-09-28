@@ -9,6 +9,8 @@ namespace TruthOrDareHelper.Settings
         int SimultaneousPlays { get; set; }
         int Version { get; set; }
         int MaxParticipationStreak { get; set; }
+        string ConfirmationKeyword { get; set; }
+        bool UseTestData { get; set; }
 
         void Save();
     }
