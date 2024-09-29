@@ -226,7 +226,7 @@ public class MainWindow : Window, IDisposable
         }
 
         ImGui.SameLine();
-        ImGui.PushID("AddTarget");
+        ImGui.PushID("AddTarget##1");
         ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0.5f, 0.6f));
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0, 0.5f, 0.7f));
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0, 0.5f, 0.7f));
