@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 
 namespace DalamudBasics.Chat.Output
 {
-    public class ChatOutput : IChatOutput
+    internal class ChatOutput : IChatOutput
     {
         private ConcurrentQueue<ChatOutputQueuedMessage> chatQueue = new();
         private DateTime lastTimeChatWasWritten = DateTime.MinValue;

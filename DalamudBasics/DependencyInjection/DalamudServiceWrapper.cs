@@ -13,7 +13,7 @@ namespace DalamudBasics.DependencyInjection
         [PluginService]
         public T Service { get; private set; } = default!;
 
-        public DalamudServiceWrapper(IDalamudPluginInterface pi)
+        internal DalamudServiceWrapper(IDalamudPluginInterface pi)
         {
             pi.Inject(this);
         }
