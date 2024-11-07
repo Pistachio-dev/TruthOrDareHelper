@@ -9,7 +9,7 @@ using System.Collections.Concurrent;
 
 namespace DalamudBasics.Chat.Output
 {
-    public class ChatOutput
+    public class ChatOutput : IChatOutput
     {
         private ConcurrentQueue<ChatOutputQueuedMessage> chatQueue = new();
         private DateTime lastTimeChatWasWritten = DateTime.MinValue;
@@ -31,14 +31,25 @@ namespace DalamudBasics.Chat.Output
             this.logService = logService;
             this.chatGui = chatGui;
         }
-             
+
 
         public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
         {
             chatQueue.Enqueue(new ChatOutputQueuedMessage(message, chatChannel, minSpacingBeforeInMs));
         }
 
-        public void Tick(IFramework framework)
+        public void SendTell(string message, string playerFullName, string playerHomeWorld, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
+        {
+            string messageWithRecipient = $"{playerFullName}@{playerHomeWorld} {message}";
+            WriteChat(messageWithRecipient, chatChannel, minSpacingBeforeInMs);
+        }
+
+        public void AttachToGameLogicLoop(IFramework framework)
+        {
+            framework.Update += Tick;
+        }
+
+        private void Tick(IFramework framework)
         {
             while (chatQueue.TryPeek(out ChatOutputQueuedMessage? nextChatPayload))
             {
@@ -93,7 +104,7 @@ namespace DalamudBasics.Chat.Output
                     XivChatType.Ls6 => "/linkshell6",
                     XivChatType.Ls7 => "/linkshell7",
                     XivChatType.Ls8 => "/linkshell8",
-                    
+
                     XivChatType.None => string.Empty, // I use this to trigger emotes. The actual XivChatType.Emote is the displayed message in /emotelog
                     _ => throw new Exception("Unsupported output chat channel.")
                 };

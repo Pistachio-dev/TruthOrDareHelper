@@ -7,14 +7,13 @@ using System.Threading.Tasks;
 
 namespace DalamudBasics.Chat.Output
 {
-    public class ChatOutputQueuedMessage
+    internal class ChatOutputQueuedMessage
     {
         public string Message { get; set; }
 
         public XivChatType? ChatChannel { get; set; }
 
         public int SpacingBeforeInMs { get; set; }
-
 
         public ChatOutputQueuedMessage(string message, XivChatType? chatOutputType = null, int spacingBeforeInMs = 0)
         {
