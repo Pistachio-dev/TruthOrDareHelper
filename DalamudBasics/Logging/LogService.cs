@@ -11,6 +11,7 @@ namespace DalamudBasics.Logging
 {
     internal class LogService : ILogService
     {
+        private bool initialized = false;
         private ConcurrentQueue<LogEntryParam> queuedLogEntries = new();
 
         private readonly IFileLogger fileLogger;
@@ -19,6 +20,7 @@ namespace DalamudBasics.Logging
         public void AttachToGameLogicLoop(IFramework framework)
         {
             framework.Update += Tick;
+            initialized = true;
         }
 
         public LogService(IFileLogger fileLogger, IPluginLog pluginLog)
@@ -29,6 +31,12 @@ namespace DalamudBasics.Logging
 
         private void QueueEntry(string message, LogLevel logLevel, Exception? exception = null)
         {
+            if (!initialized)
+            {
+                pluginLog.Error($"You forgot to call {nameof(AttachToGameLogicLoop)}!");
+                return;
+            }
+
             queuedLogEntries.Enqueue(new LogEntryParam
             {
                 message = message,

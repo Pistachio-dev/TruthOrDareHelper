@@ -3,7 +3,7 @@ using System;
 
 namespace DalamudBasics.Logging
 {
-    public interface ILogService : IGameLoopLogicAttachedService
+    public interface ILogService
     {
         void Debug(string message);
         void Error(Exception ex, string message);

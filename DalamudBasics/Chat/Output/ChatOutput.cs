@@ -4,6 +4,7 @@ using Dalamud.Utility;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
+using ECommons.Logging;
 using System;
 using System.Collections.Concurrent;
 
@@ -11,6 +12,7 @@ namespace DalamudBasics.Chat.Output
 {
     internal class ChatOutput : IChatOutput
     {
+        private bool initialized = false;
         private ConcurrentQueue<ChatOutputQueuedMessage> chatQueue = new();
         private DateTime lastTimeChatWasWritten = DateTime.MinValue;
         private readonly IConfiguration configuration;
@@ -35,18 +37,36 @@ namespace DalamudBasics.Chat.Output
 
         public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
         {
+            if (!initialized)
+            {
+                NotifyNotAttachedToGame();
+                return;
+            }
+
             chatQueue.Enqueue(new ChatOutputQueuedMessage(message, chatChannel, minSpacingBeforeInMs));
         }
 
         public void SendTell(string message, string playerFullName, string playerHomeWorld, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
         {
+            if (!initialized)
+            {
+                NotifyNotAttachedToGame();
+                return;
+            }
+
             string messageWithRecipient = $"{playerFullName}@{playerHomeWorld} {message}";
             WriteChat(messageWithRecipient, chatChannel, minSpacingBeforeInMs);
+        }
+
+        private void NotifyNotAttachedToGame()
+        {
+            logService.Error($"You forgot to call {nameof(AttachToGameLogicLoop)}!");
         }
 
         public void AttachToGameLogicLoop(IFramework framework)
         {
             framework.Update += Tick;
+            initialized = true;
         }
 
         private void Tick(IFramework framework)

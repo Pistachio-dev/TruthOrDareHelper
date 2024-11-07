@@ -1,4 +1,4 @@
-﻿namespace DalamudBasics.Chat.Listener
+namespace DalamudBasics.Chat.Listener
 {
     internal interface IChatListener
     {
