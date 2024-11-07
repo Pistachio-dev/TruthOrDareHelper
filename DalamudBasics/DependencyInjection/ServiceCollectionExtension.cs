@@ -4,6 +4,7 @@ using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Logging;
+using DalamudBasics.Targeting;
 using DalamudBasics.Time;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -23,7 +24,8 @@ namespace DalamudBasics.DependencyInjection
                 .AddSingleton<IChatOutput, ChatOutput>()
                 .AddSingleton<ITimeUtils, TimeUtils>()
                 .AddSingleton<IClientChatGui, ClientChatGui>()
-                .AddSingleton<ILogService, LogService>(); ;
+                .AddSingleton<ILogService, LogService>()
+                .AddSingleton<ITargetingService, TargetingService>();
         }
 
         private static IServiceCollection AddDalamudServices(this IServiceCollection services, IDalamudPluginInterface pi)

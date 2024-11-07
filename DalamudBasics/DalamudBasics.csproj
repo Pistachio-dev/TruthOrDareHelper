@@ -15,7 +15,6 @@
 
     <ItemGroup>
       <Folder Include="Chat\Reader\" />
-      <Folder Include="Targeting\" />
     </ItemGroup>
 
     <ItemGroup>
