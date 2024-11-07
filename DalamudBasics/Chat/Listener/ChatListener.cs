@@ -3,6 +3,7 @@ using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Extensions;
+using DalamudBasics.Logging;
 using DalamudBasics.Time;
 using System;
 using System.Collections.Generic;
@@ -18,31 +19,54 @@ namespace DalamudBasics.Chat.Listener
     /// </summary>
     internal class ChatListener : IChatListener
     {
+        private string pluginMessageMark;
         private readonly IChatGui chatGui;
         private readonly IClientState gameClient;
         private readonly ITimeUtils timeUtils;
+        private readonly ILogService logService;
 
-        public ChatListener(IChatGui chatGui, IClientState gameClient, ITimeUtils timeUtils)
+        public ChatListener(IChatGui chatGui, IClientState gameClient, ITimeUtils timeUtils, ILogService logService)
         {
             this.chatGui = chatGui;
             this.gameClient = gameClient;
             this.timeUtils = timeUtils;
+            this.logService = logService;
         }
 
-        public void AttachToGameChat()
+        /// <summary>
+        /// Initializes and attaches to the game the chat listener.
+        /// </summary>
+        /// <param name="pluginMessageMark"></param>
+        public void InitializeAndRun(string pluginMessageMark)
         {
-            chatGui.ChatMessage += PropagateToCustomEvent;
+            this.pluginMessageMark = pluginMessageMark;
+            AttachToGameChat();
         }
 
         public delegate void ChatMessageHandler(XivChatType type, string senderFullName, string message, DateTime receivedAt);
 
         public event ChatMessageHandler OnChatMessage;
 
+        private void AttachToGameChat()
+        {
+            chatGui.ChatMessage += PropagateToCustomEvent;
+        }
+
         private void PropagateToCustomEvent(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
         {
             string messageAsString = message.ToString();
+            if (messageAsString.Contains(pluginMessageMark, StringComparison.OrdinalIgnoreCase))
+            {
+                logService.Info($"Message sent by the plugin ignored: " + messageAsString);
+                return;
+            }
+
             string senderFullName = GetFullPlayerNameFromSenderData(sender);
+
+
             DateTime localTime = timeUtils.GetLocalDateTime();
+
+            logService.Info($"Message processed and triggering custom event: " + messageAsString);
             OnChatMessage?.Invoke(type, senderFullName, messageAsString, localTime);
         }
 

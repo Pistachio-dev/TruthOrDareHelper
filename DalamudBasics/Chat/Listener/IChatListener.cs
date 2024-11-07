@@ -4,6 +4,6 @@
     {
         event ChatListener.ChatMessageHandler OnChatMessage;
 
-        void AttachToGameChat();
+        void InitializeAndRun(string pluginMessageMark);
     }
 }
