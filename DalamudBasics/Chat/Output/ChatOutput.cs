@@ -4,7 +4,6 @@ using Dalamud.Utility;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
-using ECommons.Logging;
 using System;
 using System.Collections.Concurrent;
 
@@ -33,7 +32,6 @@ namespace DalamudBasics.Chat.Output
             this.logService = logService;
             this.chatGui = chatGui;
         }
-
 
         public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
         {
@@ -88,7 +86,6 @@ namespace DalamudBasics.Chat.Output
 
         private void ActuallyWriteChat(ChatOutputQueuedMessage payload)
         {
-
             if (payload.Message.IsNullOrEmpty())
             {
                 return;
@@ -97,6 +94,15 @@ namespace DalamudBasics.Chat.Output
             {
                 payload.ChatChannel = DefaultOutputChatType;
             }
+
+            if (payload.ChatChannel == XivChatType.Say)
+            {
+                if (payload.SpacingBeforeInMs < configuration.SayDelayInMs)
+                {
+                    payload.SpacingBeforeInMs = configuration.SayDelayInMs;
+                }
+            }
+
             try
             {
                 var messagePrefix = payload.ChatChannel switch

@@ -1,10 +1,5 @@
 using Dalamud.Game.Text;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DalamudBasics.Configuration
 {
@@ -18,5 +13,7 @@ namespace DalamudBasics.Configuration
 
         // If true, all chat written only visually and not sent will be logged.
         public bool LogClientOnlyChatOutput { get; set; }
+
+        public int SayDelayInMs { get; set; }
     }
 }
