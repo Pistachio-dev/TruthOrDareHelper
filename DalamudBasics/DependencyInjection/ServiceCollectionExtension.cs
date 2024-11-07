@@ -2,6 +2,7 @@ using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.ClientOnlyDisplay;
+using DalamudBasics.Chat.Listener;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
@@ -26,7 +27,8 @@ namespace DalamudBasics.DependencyInjection
                 .AddSingleton<ITimeUtils, TimeUtils>()
                 .AddSingleton<IClientChatGui, ClientChatGui>()
                 .AddSingleton<ILogService, LogService>()
-                .AddSingleton<ITargetingService, TargetingService>();
+                .AddSingleton<ITargetingService, TargetingService>()
+                .AddSingleton<IChatListener, ChatListener>();
 
             serviceCollection.AddSingleton<IConfigurationService<T>, ConfigurationService<T>>();
 

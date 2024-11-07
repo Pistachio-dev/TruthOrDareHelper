@@ -16,7 +16,7 @@ namespace DalamudBasics.Chat.Listener
     /// <summary>
     /// Provides an <see cref="OnChatMessage"/> event that will be raised on every game chat received.
     /// </summary>
-    internal class ChatListener
+    internal class ChatListener : IChatListener
     {
         private readonly IChatGui chatGui;
         private readonly IClientState gameClient;
