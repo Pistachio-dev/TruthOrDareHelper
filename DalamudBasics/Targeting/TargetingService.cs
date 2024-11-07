@@ -4,12 +4,8 @@ using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
-using ECommons.GameHelpers;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PlayerReferenceMap = System.Collections.Generic.Dictionary<string, Dalamud.Game.ClientState.Objects.SubKinds.IPlayerCharacter>;
 
 namespace DalamudBasics.Targeting

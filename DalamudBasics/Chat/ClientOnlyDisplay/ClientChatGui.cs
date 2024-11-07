@@ -2,12 +2,6 @@ using Dalamud.Game.Text;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Logging;
 using DalamudBasics.Time;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Dalamud.Plugin.Services.IChatGui;
 
 namespace DalamudBasics.Chat.ClientOnlyDisplay
 {

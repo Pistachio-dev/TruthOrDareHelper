@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace DalamudBasics.SaveGames
 {
@@ -7,6 +7,7 @@ namespace DalamudBasics.SaveGames
         DateTime? LastTimeSaved { get; }
 
         T? LoadSave();
+
         void WriteSave(T gameState);
     }
 }

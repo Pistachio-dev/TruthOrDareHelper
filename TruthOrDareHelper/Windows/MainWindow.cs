@@ -1,5 +1,4 @@
 using Dalamud.Interface.Windowing;
-using ECommons.GameHelpers;
 using ImGuiNET;
 using Model;
 using System;
@@ -54,9 +53,8 @@ public class MainWindow : Window, IDisposable
         targetManager = Plugin.Resolve<ITargetingHandler>();
         rollManager = Plugin.Resolve<IRollManager>();
         log = Plugin.Resolve<ILogWrapper>();
-        
-        chatListener.AttachListener();
 
+        chatListener.AttachListener();
 
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
@@ -92,7 +90,7 @@ public class MainWindow : Window, IDisposable
 
         session.PlayingPairs = pairs;
         chatOutput.WriteChat($"-------------ROLLING--------------");
-        chatOutput.WritePairs(pairs);        
+        chatOutput.WritePairs(pairs);
     }
 
     private void AddToDChoiceDetection(string playerName)
@@ -142,7 +140,6 @@ public class MainWindow : Window, IDisposable
             pair.ChallengeType = ChallengeType.DealersChoice;
             log.Info($"{pair.Loser.FullName} chose Dealer's choice");
 
-
             return true;
         }
 
@@ -169,7 +166,7 @@ public class MainWindow : Window, IDisposable
             }
 
             return true;
-        }                            
+        }
 
         return false;
     }
@@ -198,7 +195,6 @@ public class MainWindow : Window, IDisposable
         if (pair.ChallengeType != ChallengeType.None && rerollTheLoser)
         {
             AddToDChoiceDetection(ChatOutput.RemoveWorldFromName(replacement.FullName));
-            
         }
     }
 
@@ -215,8 +211,8 @@ public class MainWindow : Window, IDisposable
             ImGui.PushID("RollButton");
             ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0.5f, 0, 0.6f));
             ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0.5f, 0, 0.7f));
-            ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));            
-            
+            ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));
+
             if (ImGui.Button("New round, rrrrrolll the dice!"))
             {
                 Roll();
@@ -237,8 +233,7 @@ public class MainWindow : Window, IDisposable
         ImGui.PopStyleColor(3);
         ImGui.PopID();
 
-
-        ImGui.SameLine();        
+        ImGui.SameLine();
         if (ImGui.Button("Configuration"))
         {
             plugin.ToggleConfigUI();

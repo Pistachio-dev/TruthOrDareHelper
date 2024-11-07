@@ -64,7 +64,7 @@ namespace TruthOrDareHelper.Modules.Chat
                     {
                         triggered &= message.Contains(filter, StringComparison.InvariantCultureIgnoreCase);
                     }
-                }                
+                }
             }
             if (payload.PlayerNameTrigger != null)
             {

@@ -21,7 +21,7 @@ namespace TruthOrDareHelper.Modules.Chat
             {
                 MessageContentTrigger = new List<string> { contentTrigger };
             }
-            
+
             IsMessageContentTriggerARegEx = isRegEx ?? false;
             PlayerNameTrigger = playerNameTrigger;
             OnMessageWithValidTriggers = onTrigger;
@@ -29,7 +29,7 @@ namespace TruthOrDareHelper.Modules.Chat
 
         public ConditionalDelegatePayload(OnChatMessageFunction onTrigger, string playerNameTrigger, bool isRegEx, params string[] contentTrigger)
         {
-            MessageContentTrigger = contentTrigger.ToList();            
+            MessageContentTrigger = contentTrigger.ToList();
             IsMessageContentTriggerARegEx = isRegEx;
             PlayerNameTrigger = playerNameTrigger;
             OnMessageWithValidTriggers = onTrigger;

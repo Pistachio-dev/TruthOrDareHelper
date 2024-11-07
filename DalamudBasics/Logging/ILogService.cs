@@ -1,4 +1,3 @@
-using Dalamud.Plugin.Services;
 using System;
 
 namespace DalamudBasics.Logging
@@ -6,10 +5,15 @@ namespace DalamudBasics.Logging
     public interface ILogService
     {
         void Debug(string message);
+
         void Error(Exception ex, string message);
+
         void Error(string message);
+
         void Fatal(Exception ex, string message);
+
         void Info(string message);
+
         void Warning(string message);
     }
 }

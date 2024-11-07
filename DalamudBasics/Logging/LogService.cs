@@ -2,10 +2,6 @@ using Dalamud.Plugin.Services;
 using DalamudBasics.Logging.Loggers;
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DalamudBasics.Logging
 {
@@ -53,7 +49,6 @@ namespace DalamudBasics.Logging
         public void Info(string message)
         {
             QueueEntry(message, LogLevel.Information);
-
         }
 
         public void Warning(string message)
@@ -80,7 +75,6 @@ namespace DalamudBasics.Logging
         {
             try
             {
-
                 while (queuedLogEntries.TryDequeue(out LogEntryParam? entry))
                 {
                     LogAnEntry(entry);
@@ -114,7 +108,6 @@ namespace DalamudBasics.Logging
         {
             Debug, Information, Warning, Error, Fatal
         }
-
 
         private void LogAnEntry(LogEntryParam entry)
         {
@@ -160,10 +153,10 @@ namespace DalamudBasics.Logging
                     }
                     pluginLog.Error(message);
                     return;
+
                 case LogLevel.Fatal:
                     pluginLog.Fatal(entry.ex, message); return;
                 default: return;
-
             }
         }
 

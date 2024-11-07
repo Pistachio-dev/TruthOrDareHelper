@@ -1,16 +1,12 @@
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
-using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using DalamudBasics.Time;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace DalamudBasics.Chat.Listener
 {
@@ -62,7 +58,6 @@ namespace DalamudBasics.Chat.Listener
             }
 
             string senderFullName = GetFullPlayerNameFromSenderData(sender);
-
 
             DateTime localTime = timeUtils.GetLocalDateTime();
 

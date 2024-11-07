@@ -57,7 +57,7 @@ public sealed class Plugin : IDalamudPlugin
         services = DependencyInjectionSetup(Configuration);
 
         Session = Resolve<ITruthOrDareSession>();
-        
+
         if (Configuration.UseTestData)
         {
             Session = Session.AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();
