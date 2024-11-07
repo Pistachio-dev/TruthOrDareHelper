@@ -3,6 +3,7 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Output;
+using DalamudBasics.Time;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,8 @@ namespace DalamudBasics.DependencyInjection
         public static IServiceCollection AddAllServices(this IServiceCollection serviceCollection, IDalamudPluginInterface pi)
         {
             return serviceCollection.AddDalamudServices(pi)
-                .AddSingleton<IChatOutput, ChatOutput>();                
+                .AddSingleton<IChatOutput, ChatOutput>()
+                .AddSingleton<ITimeUtils, TimeUtils>();
         }
 
         private static IServiceCollection AddDalamudServices(this IServiceCollection services, IDalamudPluginInterface pi)
