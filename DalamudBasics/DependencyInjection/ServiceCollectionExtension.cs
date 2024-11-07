@@ -3,6 +3,7 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Output;
+using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
 using DalamudBasics.Time;
@@ -18,14 +19,18 @@ namespace DalamudBasics.DependencyInjection
         /// <param name="serviceCollection">DI container.</param>
         /// <param name="pi">Interface of the plugin using this library.</param>
         /// <returns></returns>
-        public static IServiceCollection AddAllServices(this IServiceCollection serviceCollection, IDalamudPluginInterface pi)
+        public static IServiceCollection AddAllServices<T>(this IServiceCollection serviceCollection, IDalamudPluginInterface pi) where T: IConfiguration, new()
         {
-            return serviceCollection.AddDalamudServices(pi)
+            serviceCollection.AddDalamudServices(pi)
                 .AddSingleton<IChatOutput, ChatOutput>()
                 .AddSingleton<ITimeUtils, TimeUtils>()
                 .AddSingleton<IClientChatGui, ClientChatGui>()
                 .AddSingleton<ILogService, LogService>()
                 .AddSingleton<ITargetingService, TargetingService>();
+
+            serviceCollection.AddSingleton<IConfigurationService<T>, ConfigurationService<T>>();
+
+            return serviceCollection;
         }
 
         private static IServiceCollection AddDalamudServices(this IServiceCollection services, IDalamudPluginInterface pi)
