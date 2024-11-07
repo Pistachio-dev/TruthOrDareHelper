@@ -1,4 +1,5 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Utility;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DalamudBasics.Extensions
 {
-    public static class IPlayerCharacterExtensions
+    public static class PlayerCharacterExtensions
     {
         public static (string Name, string World) SplitFullName(this string fullName)
         {
@@ -28,6 +29,16 @@ namespace DalamudBasics.Extensions
         public static string GetWorldName(this IPlayerCharacter player)
         {
             return player?.HomeWorld?.GameData?.Name?.ToString() ?? string.Empty;
+        }
+
+        public static string GetFullName(this IPlayerCharacter player)
+        {
+            string world = GetWorldName(player);
+            if (world.IsNullOrEmpty())
+            {
+                return player?.Name?.ToString() ?? "None";
+            }
+            return $"{player?.Name ?? "None"}@{world}";
         }
     }
 }

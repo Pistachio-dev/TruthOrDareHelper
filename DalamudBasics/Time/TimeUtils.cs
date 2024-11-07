@@ -14,5 +14,10 @@ namespace DalamudBasics.Time
             DateTime now = useUtc ? DateTime.UtcNow : DateTime.Now;
             return (now - Epoch).Ticks;
         }
+
+        public DateTime GetLocalDateTime()
+        {
+            return DateTime.Now;
+        }
     }
 }
