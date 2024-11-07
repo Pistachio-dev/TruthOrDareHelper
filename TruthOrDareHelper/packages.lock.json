@@ -26,7 +26,8 @@
         "type": "Project",
         "dependencies": {
           "DalamudPackager": "[2.1.13, )",
-          "ECommons": "[2.2.0.2, )"
+          "ECommons": "[2.2.0.2, )",
+          "Microsoft.Extensions.DependencyInjection": "[8.0.0, )"
         }
       },
       "ecommons": {
