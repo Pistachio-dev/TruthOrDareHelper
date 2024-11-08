@@ -2,7 +2,7 @@ using ImGuiNET;
 using System;
 using System.Numerics;
 
-namespace DalamudBasics.GUI.Configuration
+namespace DalamudBasics.GUI.Forms
 {
     internal class ImGuiFormFactory<T>
     {
