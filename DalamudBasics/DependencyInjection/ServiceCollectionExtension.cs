@@ -1,6 +1,7 @@
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using DalamudBasics.Async;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Listener;
 using DalamudBasics.Chat.Output;
@@ -20,7 +21,7 @@ namespace DalamudBasics.DependencyInjection
         /// <param name="serviceCollection">DI container.</param>
         /// <param name="pi">Interface of the plugin using this library.</param>
         /// <returns></returns>
-        public static IServiceCollection AddAllServices<T>(this IServiceCollection serviceCollection, IDalamudPluginInterface pi) where T : IConfiguration, new()
+        public static IServiceCollection AddAllDalamudBasicsServices<T>(this IServiceCollection serviceCollection, IDalamudPluginInterface pi) where T : IConfiguration, new()
         {
             serviceCollection.AddDalamudServices(pi)
                 .AddSingleton<IChatOutput, ChatOutput>()
@@ -28,7 +29,8 @@ namespace DalamudBasics.DependencyInjection
                 .AddSingleton<IClientChatGui, ClientChatGui>()
                 .AddSingleton<ILogService, LogService>()
                 .AddSingleton<ITargetingService, TargetingService>()
-                .AddSingleton<IChatListener, ChatListener>();
+                .AddSingleton<IChatListener, ChatListener>()
+                .AddSingleton<IAsyncTaskManager, AsyncTaskManager>();
 
             serviceCollection.AddSingleton<IConfigurationService<T>, ConfigurationService<T>>();
 
