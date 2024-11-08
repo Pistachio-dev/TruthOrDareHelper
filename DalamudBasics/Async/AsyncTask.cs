@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace DalamudBasics.Async
 {
-    internal class AsyncTask
+    public class AsyncTask
     {
         public AsyncTask(string identifier, Task task, Action<Exception?>? onFailure = null)
         {

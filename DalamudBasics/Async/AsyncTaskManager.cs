@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DalamudBasics.Async
 {
-    internal class AsyncTaskManager
+    internal class AsyncTaskManager : IAsyncTaskManager
     {
         private Dictionary<string, AsyncTask> runningTasks = new();
         private readonly ILogService log;
