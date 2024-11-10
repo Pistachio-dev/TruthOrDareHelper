@@ -37,7 +37,7 @@ namespace DalamudBasics.Chat.Interpretation
             chatDiceRoll = new ChatDiceRoll();
             if (clientState.ClientLanguage != Dalamud.Game.ClientLanguage.English)
             {
-                chatGui.PrintError($"Dice roll parsing is not supported for your client language.");
+                logService.Warning($"Dice roll parsing is not supported for your client language.");
 
                 return false;
             }
@@ -61,7 +61,6 @@ namespace DalamudBasics.Chat.Interpretation
                 return true;
             }
             
-
             return false;
         }
 
