@@ -43,21 +43,24 @@ namespace DalamudBasics.Chat.Interpretation
             }
 
             var strategy = new DiceReadingStrategyEnglish();
-            DiceRollType diceRoll = strategy.GetRollType(message);
-            logService.Warning("Dice roll type " + diceRoll); // TODO: DELETE
-            if (diceRoll == DiceRollType.None)
+            DiceRollType diceRollType = strategy.GetRollType(message);
+            logService.Warning("Dice roll type " + diceRollType); // TODO: DELETE
+            if (diceRollType == DiceRollType.None)
             {
                 return false;
             }
 
-            if (diceRoll == DiceRollType.Dice)
-            {
-                string rollerFullName = message.GetSenderFullName(clientState);
-                if (strategy.TryParseDiceRoll(message, out chatDiceRoll, rollerFullName))
-                {
-                    return true;
-                }
+            string rollerFullName = message.GetSenderFullName(clientState);
+            if (diceRollType == DiceRollType.Dice && strategy.TryParseDiceRoll(message, out chatDiceRoll, rollerFullName))
+            { 
+                return true;                
             }
+
+            if (diceRollType == DiceRollType.Random && strategy.TryParseRandomRoll(message, out chatDiceRoll, rollerFullName))
+            {
+                return true;
+            }
+            
 
             return false;
         }

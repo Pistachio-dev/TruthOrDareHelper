@@ -1,12 +1,9 @@
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.Interpretation;
+using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DalamudBasics.Debugging
 {
@@ -14,11 +11,13 @@ namespace DalamudBasics.Debugging
     {
         private readonly ILogService logService;
         private readonly IChatMessageInterpreter chatMessageInterpreter;
+        private readonly IClientState gameClient;
 
-        public StringDebugUtils(ILogService logService, IChatMessageInterpreter chatMessageInterpreter)
+        public StringDebugUtils(ILogService logService, IChatMessageInterpreter chatMessageInterpreter, IClientState gameClient)
         {
             this.logService = logService;
             this.chatMessageInterpreter = chatMessageInterpreter;
+            this.gameClient = gameClient;
         }
 
         public void DumpSeString(SeString s)
@@ -43,6 +42,7 @@ namespace DalamudBasics.Debugging
         public void DumpAllReceivedMessages(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
         {
             logService.Info($"Type: {type} Timestamp: {timestamp} IsHandled: {isHandled}");
+            logService.Info("Sender as interpreted: " + sender.GetSenderFullName(gameClient));
             logService.Info("Sender SeString dump---------------------------");
             DumpSeString(sender);
             logService.Info("Message SeString dump---------------------------");
@@ -59,12 +59,12 @@ namespace DalamudBasics.Debugging
 
             if (result.IsRangeLimited)
             {
-                logService.Info($"Roll read: {result.RolledNumber} ({result.LowerLimit} to {result.UpperLimit})");
+                logService.Info($"Roll read: {result.RolledNumber} ({result.LowerLimit} to {result.UpperLimit}, by {result.RollingPlayer})");
                 
                 return;
             }
 
-            logService.Info($"Roll read: {result.RolledNumber}");
+            logService.Info($"Roll read: {result.RolledNumber}, by {result.RollingPlayer}");
 
         }
     }

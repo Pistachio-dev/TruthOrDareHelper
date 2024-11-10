@@ -1,5 +1,6 @@
 using Dalamud.Game.Text.SeStringHandling;
 using DalamudBasics.Extensions;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace DalamudBasics.Chat.Interpretation.DiceReadingStrategy
@@ -57,5 +58,43 @@ namespace DalamudBasics.Chat.Interpretation.DiceReadingStrategy
             chatDiceRoll.RolledNumber = rolledNumber;
             return true;
         }
+
+        public bool TryParseRandomRoll(SeString message, out ChatDiceRoll chatDiceRoll, string hostFullName)
+        {
+            chatDiceRoll = new ChatDiceRoll();
+            chatDiceRoll.Type = DiceRollType.Random;
+
+            if (message.Payloads.Count == 3)
+            {
+                chatDiceRoll.RollingPlayer = hostFullName;
+                if (message.GetPayload(0)?.GetText() != "Random! You roll a ")
+                {
+                    return false;
+                }
+
+                var regex = new Regex("(\\d+)[\\s\\.](?:\\(out of (\\d+)\\))?");
+                var match = regex.Match(message.GetPayload(2)?.GetText() ?? string.Empty);
+                if (!match.Success)
+                {
+                    return false;
+                }
+
+                if (!int.TryParse(match.Groups[1].Value, out int rolledNumber))
+                {
+                    return false;
+                }
+
+                chatDiceRoll.RolledNumber = rolledNumber;
+                if (int.TryParse(match.Groups[2].Value, out int upperLimit))
+                {
+                    chatDiceRoll.SetRange(1, upperLimit);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }
