@@ -13,10 +13,12 @@ namespace DalamudBasics.Debugging
     public class StringDebugUtils
     {
         private readonly ILogService logService;
+        private readonly IChatMessageInterpreter chatMessageInterpreter;
 
-        public StringDebugUtils(ILogService logService)
+        public StringDebugUtils(ILogService logService, IChatMessageInterpreter chatMessageInterpreter)
         {
             this.logService = logService;
+            this.chatMessageInterpreter = chatMessageInterpreter;
         }
 
         public void DumpSeString(SeString s)
@@ -49,13 +51,13 @@ namespace DalamudBasics.Debugging
 
         public void TestDiceRollParsing(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
         {
-            if (!ChatMessageInterpreter.TryParseDiceRoll(message, out ChatDiceRoll result))
+            if (!chatMessageInterpreter.TryParseDiceRoll(message, out ChatDiceRoll result))
             {
                 logService.Info("No roll detected");
                 return;
             }
 
-            if (result.RangeLimited)
+            if (result.IsRangeLimited)
             {
                 logService.Info($"Roll read: {result.RolledNumber} ({result.LowerLimit} to {result.UpperLimit})");
                 

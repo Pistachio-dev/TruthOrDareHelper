@@ -1,6 +1,6 @@
 using Dalamud.Game.Text.SeStringHandling;
 
-namespace DalamudBasics.Debugging
+namespace DalamudBasics.Extensions
 {
     public static class PayloadExtensions
     {
@@ -12,6 +12,16 @@ namespace DalamudBasics.Debugging
             }
 
             return (payload as ITextProvider)!.Text;
+        }
+
+        public static Payload? GetPayload(this SeString seString, int payloadIndex)
+        {
+            if (seString.Payloads.Count <= payloadIndex)
+            {
+                return null;
+            }
+
+            return seString.Payloads[payloadIndex];
         }
     }
 }

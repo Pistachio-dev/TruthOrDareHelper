@@ -3,6 +3,7 @@ using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Async;
 using DalamudBasics.Chat.ClientOnlyDisplay;
+using DalamudBasics.Chat.Interpretation;
 using DalamudBasics.Chat.Listener;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
@@ -32,7 +33,8 @@ namespace DalamudBasics.DependencyInjection
                 .AddSingleton<IChatListener, ChatListener>()
                 .AddSingleton<IAsyncTaskManager, AsyncTaskManager>()
                 .AddSingleton<IFileLogger, FileLogger>()
-                .AddSingleton<ILogService, LogService>();
+                .AddSingleton<ILogService, LogService>()
+                .AddSingleton<IChatMessageInterpreter, ChatMessageInterpreter>();
 
             serviceCollection.AddSingleton<IConfigurationService<T>, ConfigurationService<T>>();
 

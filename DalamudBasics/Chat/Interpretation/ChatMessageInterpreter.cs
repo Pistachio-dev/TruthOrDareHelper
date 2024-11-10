@@ -1,60 +1,90 @@
 using Dalamud.Game.Text.SeStringHandling;
-using DalamudBasics.Debugging;
+using Dalamud.Plugin.Services;
+using DalamudBasics.Chat.ClientOnlyDisplay;
+using DalamudBasics.Chat.Interpretation.DiceReadingStrategy;
+using DalamudBasics.Extensions;
+using DalamudBasics.Logging;
 using ECommons.UIHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DalamudBasics.Chat.Interpretation
 {
-    public static class ChatMessageInterpreter
+    public class ChatMessageInterpreter : IChatMessageInterpreter
     {
-        public static readonly Regex EnglishDiceRegex = new Regex("Random! (?:\\(\\d+-(\\d+)\\))?");
-        public static bool TryParseDiceRoll(SeString message, out ChatDiceRoll chatDiceRoll)
+        public ChatMessageInterpreter(IClientState clientState, IClientChatGui chatGui, ILogService logService)
         {
-            // Dice rolls have the format of 5 payloads: [symbol], "Random!" or "Random! (1-999)", [symbol], number rolled as text, [symbol]            
+            this.clientState = clientState;
+            this.chatGui = chatGui;
+            this.logService = logService;
+        }
+
+        public static readonly Regex[] DiceRollRegex = [
+            new Regex("Random! (?:\\(\\d+-(\\d+)\\))?"),
+            new Regex("Lancer de dé (?:(\\d+) )?!"),
+        ];
+        private readonly IClientState clientState;
+        private readonly IClientChatGui chatGui;
+        private readonly ILogService logService;
+
+        public bool TryParseDiceRoll(SeString message, out ChatDiceRoll chatDiceRoll)
+        {
             chatDiceRoll = new ChatDiceRoll();
-            if (message.Payloads.Count != 5
-                || message.Payloads[0].Type != PayloadType.Icon
-                || message.Payloads[1].Type != PayloadType.RawText
-                || message.Payloads[2].Type != PayloadType.Icon
-                || message.Payloads[3].Type != PayloadType.RawText
-                || message.Payloads[4].Type != PayloadType.Icon)
+            if (clientState.ClientLanguage != Dalamud.Game.ClientLanguage.English)
             {
+                chatGui.PrintError($"Dice roll parsing is not supported for your client language.");
+
                 return false;
             }
-            string fixedText = message.Payloads[1].GetText();
-            Match fixedTextMatch = EnglishDiceRegex.Match(fixedText);
-            if (!fixedTextMatch.Success)
+
+            var strategy = new DiceReadingStrategyEnglish();
+            DiceRollType diceRoll = strategy.GetRollType(message);
+            logService.Warning("Dice roll type " + diceRoll); // TODO: DELETE
+            if (diceRoll == DiceRollType.None)
             {
                 return false;
             }
 
-            if (fixedTextMatch.Groups[1].Success)
+            if (diceRoll == DiceRollType.Dice)
             {
-                chatDiceRoll.RangeLimited = true;
-                if (int.TryParse(fixedTextMatch.Groups[1].Value, out int parsedHighBoundNumber))
+                string rollerFullName = message.GetSenderFullName(clientState);
+                if (strategy.TryParseDiceRoll(message, out chatDiceRoll, rollerFullName))
                 {
-                    chatDiceRoll.UpperLimit = parsedHighBoundNumber;
+                    return true;
                 }
-                chatDiceRoll.LowerLimit = 1;
-            }
-            else
-            {
-                chatDiceRoll.RangeLimited = false;
-            }
-
-            string rolledNumberText = message.Payloads[3].GetText();
-            if (int.TryParse(rolledNumberText, out int parsedRolledNumber))
-            {
-                chatDiceRoll.RolledNumber = parsedRolledNumber;
-                return true;
             }
 
             return false;
+        }
+
+        private static bool TryParseDiceRollEnglish(SeString message, out ChatDiceRoll chatDiceRoll)
+        {
+            chatDiceRoll = new ChatDiceRoll();
+            var payload2 = message.GetPayload(2);
+            if (payload2 != null && payload2.Type == PayloadType.RawText && payload2.GetText().Contains("Random!"))
+            {
+
+            }
+            throw new NotImplementedException();
+        }
+
+        public static Match GetFirstSuccessfulMatch(Regex[] regexArray, string target)
+        {
+            foreach (Regex regex in regexArray)
+            {
+                Match match = regex.Match(target);
+                if (match.Success)
+                {
+                    return match;
+                }
+            }
+
+            return Match.Empty;
         }
     }
 }
