@@ -5,7 +5,7 @@ using System;
 
 namespace DalamudBasics.GUI.Windows
 {
-    public class PluginWindowBase : Window
+    public abstract class PluginWindowBase : Window
     {
         private readonly ILogService logService;
 

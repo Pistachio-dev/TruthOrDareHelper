@@ -21,6 +21,8 @@ namespace DalamudBasics.Chat.Listener
         private readonly ITimeUtils timeUtils;
         private readonly ILogService logService;
 
+        public event IChatListener.ChatMessageHandler OnChatMessage;
+
         public ChatListener(IChatGui chatGui, IClientState gameClient, ITimeUtils timeUtils, ILogService logService)
         {
             this.chatGui = chatGui;
@@ -38,10 +40,6 @@ namespace DalamudBasics.Chat.Listener
             this.pluginMessageMark = pluginMessageMark;
             AttachToGameChat();
         }
-
-        public delegate void ChatMessageHandler(XivChatType type, string senderFullName, string message, DateTime receivedAt);
-
-        public event ChatMessageHandler OnChatMessage;
 
         private void AttachToGameChat()
         {

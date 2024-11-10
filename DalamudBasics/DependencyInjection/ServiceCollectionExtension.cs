@@ -7,6 +7,7 @@ using DalamudBasics.Chat.Listener;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
+using DalamudBasics.Logging.Loggers;
 using DalamudBasics.Targeting;
 using DalamudBasics.Time;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,10 +28,11 @@ namespace DalamudBasics.DependencyInjection
                 .AddSingleton<IChatOutput, ChatOutput>()
                 .AddSingleton<ITimeUtils, TimeUtils>()
                 .AddSingleton<IClientChatGui, ClientChatGui>()
-                .AddSingleton<ILogService, LogService>()
                 .AddSingleton<ITargetingService, TargetingService>()
                 .AddSingleton<IChatListener, ChatListener>()
-                .AddSingleton<IAsyncTaskManager, AsyncTaskManager>();
+                .AddSingleton<IAsyncTaskManager, AsyncTaskManager>()
+                .AddSingleton<IFileLogger, FileLogger>()
+                .AddSingleton<ILogService, LogService>();
 
             serviceCollection.AddSingleton<IConfigurationService<T>, ConfigurationService<T>>();
 

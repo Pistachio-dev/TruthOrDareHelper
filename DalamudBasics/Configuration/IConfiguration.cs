@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace DalamudBasics.Configuration
 {
-    public interface IConfiguration : ISerializable
+    public interface IConfiguration
     {
         // If your plugin does not write to chat, set this to None
         public XivChatType DefaultOutputChatType { get; set; }

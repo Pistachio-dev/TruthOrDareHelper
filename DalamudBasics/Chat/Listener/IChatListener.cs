@@ -1,9 +1,14 @@
+using Dalamud.Game.Text;
+using System;
+
 namespace DalamudBasics.Chat.Listener
 {
-    internal interface IChatListener
+    public interface IChatListener
     {
-        event ChatListener.ChatMessageHandler OnChatMessage;
+        public event ChatMessageHandler OnChatMessage;
 
-        void InitializeAndRun(string pluginMessageMark);
+        public delegate void ChatMessageHandler(XivChatType type, string senderFullName, string message, DateTime receivedAt);
+
+        public void InitializeAndRun(string pluginMessageMark);
     }
 }
