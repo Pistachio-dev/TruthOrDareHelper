@@ -7,6 +7,8 @@ using DalamudBasics.Chat.Interpretation;
 using DalamudBasics.Chat.Listener;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
+using DalamudBasics.DiceRolling;
+using DalamudBasics.Interop;
 using DalamudBasics.Logging;
 using DalamudBasics.Logging.Loggers;
 using DalamudBasics.Targeting;
@@ -34,7 +36,9 @@ namespace DalamudBasics.DependencyInjection
                 .AddSingleton<IAsyncTaskManager, AsyncTaskManager>()
                 .AddSingleton<IFileLogger, FileLogger>()
                 .AddSingleton<ILogService, LogService>()
-                .AddSingleton<IChatMessageInterpreter, ChatMessageInterpreter>();
+                .AddSingleton<IChatMessageInterpreter, ChatMessageInterpreter>()
+                .AddSingleton<HookManager>()
+                .AddSingleton<DiceRollManager>();
 
             serviceCollection.AddSingleton<IConfigurationService<T>, ConfigurationService<T>>();
 
@@ -56,6 +60,8 @@ namespace DalamudBasics.DependencyInjection
             AddDalamudService<IGameInventory>(services, pi);
             AddDalamudService<IObjectTable>(services, pi);
             AddDalamudService<IFramework>(services, pi);
+            AddDalamudService<IGameInteropProvider>(services, pi);
+            AddDalamudService<IDataManager>(services, pi);
 
             return services;
         }
