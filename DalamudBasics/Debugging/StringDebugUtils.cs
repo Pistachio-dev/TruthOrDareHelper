@@ -1,5 +1,6 @@
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
+using DalamudBasics.Chat.Interpretation;
 using DalamudBasics.Logging;
 using System;
 using System.Collections.Generic;
@@ -31,7 +32,7 @@ namespace DalamudBasics.Debugging
                     text = textProvider.Text;
                 }
 
-                string output = $"Payload {counter} Type: {embeddedInfoType} Text: {text}";
+                string output = $"Payload {counter} Type: {embeddedInfoType} Text: \"{text}\"";
                 logService.Info(output);
                 counter++;
             }
@@ -44,6 +45,25 @@ namespace DalamudBasics.Debugging
             DumpSeString(sender);
             logService.Info("Message SeString dump---------------------------");
             DumpSeString(message);
+        }
+
+        public void TestDiceRollParsing(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
+        {
+            if (!ChatMessageInterpreter.TryParseDiceRoll(message, out ChatDiceRoll result))
+            {
+                logService.Info("No roll detected");
+                return;
+            }
+
+            if (result.RangeLimited)
+            {
+                logService.Info($"Roll read: {result.RolledNumber} ({result.LowerLimit} to {result.UpperLimit})");
+                
+                return;
+            }
+
+            logService.Info($"Roll read: {result.RolledNumber}");
+
         }
     }
 }
