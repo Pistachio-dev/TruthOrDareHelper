@@ -9,11 +9,8 @@ using FFXIVClientStructs.FFXIV.Component.Text;
 using FFXIVClientStructs.STD;
 using Lumina.Excel.GeneratedSheets;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
+/// This class was taken from https://github.com/Infiziert90/DeathRoll
 namespace DalamudBasics.Interop
 {
     public unsafe class HookManager : IDisposable
