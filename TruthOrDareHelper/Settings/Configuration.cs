@@ -22,7 +22,7 @@ public class Configuration : IToDConfiguration
 
     public bool LogOutgoingChatOutput { get; set; } = true;
     public bool LogClientOnlyChatOutput { get; set; } = true;
-    public int LimitedChatChannelsMessageDelayInMs { get; set; } = 500;
+    public int LimitedChatChannelsMessageDelayInMs { get; set; } = 1500;
 
     public void Save()
     {

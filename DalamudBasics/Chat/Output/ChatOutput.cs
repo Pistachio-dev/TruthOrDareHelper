@@ -135,6 +135,14 @@ namespace DalamudBasics.Chat.Output
         {
             while (queue.TryPeek(out ChatOutputQueuedMessage? nextChatPayload))
             {
+                if (IsLimitedChatChannel(nextChatPayload.ChatChannel))
+                {
+                    if (nextChatPayload.SpacingBeforeInMs < configuration.LimitedChatChannelsMessageDelayInMs)
+                    {
+                        nextChatPayload.SpacingBeforeInMs = configuration.LimitedChatChannelsMessageDelayInMs;
+                    }
+                }
+
                 if ((DateTime.Now - lastTimeChatWasWritten).TotalMilliseconds < nextChatPayload.SpacingBeforeInMs)
                 {
                     return false;
@@ -159,14 +167,6 @@ namespace DalamudBasics.Chat.Output
             if (payload.ChatChannel == null)
             {
                 payload.ChatChannel = DefaultOutputChatType;
-            }
-
-            if (IsLimitedChatChannel(payload.ChatChannel))
-            {
-                if (payload.SpacingBeforeInMs < configuration.LimitedChatChannelsMessageDelayInMs)
-                {
-                    payload.SpacingBeforeInMs = configuration.LimitedChatChannelsMessageDelayInMs;
-                }
             }
 
             try
@@ -227,9 +227,11 @@ namespace DalamudBasics.Chat.Output
             };
         }
 
-        private bool IsLimitedChatChannel(XivChatType? chatEntry)
+        private bool IsLimitedChatChannel(XivChatType? chatEntryChannel)
         {
-            return chatEntry is XivChatType.Shout or XivChatType.Yell or XivChatType.Say or XivChatType.TellOutgoing;
+
+            return (chatEntryChannel is XivChatType.Shout or XivChatType.Yell or XivChatType.Say or XivChatType.TellOutgoing)
+                || (chatEntryChannel == null && configuration.DefaultOutputChatType is XivChatType.Shout or XivChatType.Yell or XivChatType.Say or XivChatType.TellOutgoing);
         }
     }
 }
