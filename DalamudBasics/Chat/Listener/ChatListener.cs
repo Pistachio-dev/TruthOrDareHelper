@@ -7,6 +7,7 @@ using DalamudBasics.Logging;
 using DalamudBasics.Time;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using static DalamudBasics.Chat.Listener.IChatListener;
 
 namespace DalamudBasics.Chat.Listener
@@ -56,7 +57,7 @@ namespace DalamudBasics.Chat.Listener
 
         private void PropagateToCustomEvent(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
         {
-            if (!channelsToListenTo.Contains(type))
+            if (channelsToListenTo.Any() && !channelsToListenTo.Contains(type))
             {
                 return;
             }

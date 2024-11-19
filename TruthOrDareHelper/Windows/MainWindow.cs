@@ -197,6 +197,9 @@ public class MainWindow : PluginWindowBase, IDisposable
 
     protected override void SafeDraw()
     {
+        if (ImGui.Button("Test chat")) {
+            chatOutput.WriteChat(Guid.NewGuid().ToString(), XivChatType.Say);
+        };
         DrawPlayerTable();
 
         ImGui.TextUnformatted($"Round {session.Round}");

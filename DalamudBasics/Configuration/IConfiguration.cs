@@ -13,6 +13,6 @@ namespace DalamudBasics.Configuration
         // If true, all chat written only visually and not sent will be logged.
         public bool LogClientOnlyChatOutput { get; set; }
 
-        public int SayDelayInMs { get; set; }
+        public int LimitedChatChannelsMessageDelayInMs { get; set; }
     }
 }

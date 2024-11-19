@@ -3,6 +3,7 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.Listener;
+using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Debugging;
 using DalamudBasics.DependencyInjection;
@@ -51,7 +52,7 @@ public sealed class Plugin : IDalamudPlugin
 
         if (configuration.UseTestData)
         {
-            Session = Session.AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();
+            Session = Session.AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();            
         }
 
         // TODO: remember to attach listener.
@@ -112,6 +113,7 @@ public sealed class Plugin : IDalamudPlugin
         IFramework framework = serviceProvider.GetRequiredService<IFramework>();
         serviceProvider.GetRequiredService<ILogService>().AttachToGameLogicLoop(framework);
         serviceProvider.GetRequiredService<IChatListener>().InitializeAndRun("[ToD]");
+        serviceProvider.GetRequiredService<IChatOutput>().AttachToGameLogicLoop(framework);
         serviceProvider.GetRequiredService<HookManager>();
     }
 

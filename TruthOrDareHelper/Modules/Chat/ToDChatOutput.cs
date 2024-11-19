@@ -1,4 +1,8 @@
+using Dalamud.Plugin.Services;
+using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Output;
+using DalamudBasics.Configuration;
+using DalamudBasics.Logging;
 using Model;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +11,11 @@ using TruthOrDareHelper.Modules.Chat.Interface;
 
 namespace TruthOrDareHelper.Modules.Chat
 {
-    internal class ToDChatOutput : IToDChatOutput
+    internal class ToDChatOutput : ChatOutput, IToDChatOutput
     {
-        private readonly IChatOutput chatOutput;
-
-        public ToDChatOutput(IChatOutput chatOutput)
+        public ToDChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState)
+            : base(configuration,logService, chatGui, clientState)
         {
-            this.chatOutput = chatOutput;
         }
 
         public void WritePairs(List<PlayerPair> pairs)
@@ -40,7 +42,7 @@ namespace TruthOrDareHelper.Modules.Chat
                     s.Append(" They're done!");
                 }
 
-                chatOutput.WriteChat(s.ToString());
+                WriteChat(s.ToString());
             }
         }
 
