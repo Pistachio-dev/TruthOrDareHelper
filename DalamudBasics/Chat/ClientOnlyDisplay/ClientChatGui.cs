@@ -2,6 +2,7 @@ using Dalamud.Game.Text;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Logging;
 using DalamudBasics.Time;
+using static Dalamud.Plugin.Services.IChatGui;
 
 namespace DalamudBasics.Chat.ClientOnlyDisplay
 {
@@ -51,6 +52,11 @@ namespace DalamudBasics.Chat.ClientOnlyDisplay
         {
             chatGui.PrintError(message);
             logService.Info($"[ClientOnlyChat_AsError]{message}");
+        }
+
+        public void AddOnChatUIListener(OnMessageDelegate listener)
+        {
+            chatGui.ChatMessage += listener;
         }
     }
 }

@@ -1,10 +1,13 @@
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
+using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using DalamudBasics.Time;
 using System;
+using System.Collections.Generic;
+using static DalamudBasics.Chat.Listener.IChatListener;
 
 namespace DalamudBasics.Chat.Listener
 {
@@ -14,16 +17,17 @@ namespace DalamudBasics.Chat.Listener
     internal class ChatListener : IChatListener
     {
         private string pluginMessageMark;
-        private readonly IChatGui chatGui;
+        private readonly IClientChatGui clientChatGui;
         private readonly IClientState gameClient;
         private readonly ITimeUtils timeUtils;
         private readonly ILogService logService;
+        private List<XivChatType> channelsToListenTo = new();
 
-        public event IChatListener.ChatMessageHandler OnChatMessage;
+        private event ChatMessageHandler OnChatMessage;
 
-        public ChatListener(IChatGui chatGui, IClientState gameClient, ITimeUtils timeUtils, ILogService logService)
+        public ChatListener(IClientChatGui chatGui, IClientState gameClient, ITimeUtils timeUtils, ILogService logService)
         {
-            this.chatGui = chatGui;
+            this.clientChatGui = chatGui;
             this.gameClient = gameClient;
             this.timeUtils = timeUtils;
             this.logService = logService;
@@ -33,19 +37,30 @@ namespace DalamudBasics.Chat.Listener
         /// Initializes and attaches to the game the chat listener.
         /// </summary>
         /// <param name="pluginMessageMark"></param>
-        public void InitializeAndRun(string pluginMessageMark)
+        public void InitializeAndRun(string pluginMessageMark, params XivChatType[] channelsToListenTo)
         {
             this.pluginMessageMark = pluginMessageMark;
+            this.channelsToListenTo.AddRange(channelsToListenTo);
             AttachToGameChat();
+        }
+
+        public void AddPreprocessedMessageListener(ChatMessageHandler listener)
+        {
+            OnChatMessage += listener;
         }
 
         private void AttachToGameChat()
         {
-            chatGui.ChatMessage += PropagateToCustomEvent;
+            clientChatGui.AddOnChatUIListener(PropagateToCustomEvent);
         }
 
         private void PropagateToCustomEvent(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
         {
+            if (!channelsToListenTo.Contains(type))
+            {
+                return;
+            }
+
             string messageAsString = message.ToString();
             if (messageAsString.Contains(pluginMessageMark, StringComparison.OrdinalIgnoreCase))
             {
