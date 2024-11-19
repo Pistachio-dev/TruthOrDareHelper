@@ -92,7 +92,7 @@ namespace DalamudBasics.Targeting
         private string GetTargetName()
         {
             var target = dalamudTargetManager.Target;
-            if (target == null || target is not IPlayerCharacter pc || pc.HomeWorld.GameData == null)
+            if (target == null || target is not IPlayerCharacter pc || pc.HomeWorld.ValueNullable == null)
                 return string.Empty;
 
             return BuildFullPlayerName(pc);
@@ -100,12 +100,7 @@ namespace DalamudBasics.Targeting
 
         private static string BuildFullPlayerName(IPlayerCharacter pc)
         {
-            if (pc?.HomeWorld?.GameData == null)
-            {
-                return string.Empty;
-            }
-
-            return $"{pc.Name}@{pc.HomeWorld.GameData.Name}";
+            return pc.GetFullName();
         }
 
         private bool VerifyTargeting(string fullPlayerName)

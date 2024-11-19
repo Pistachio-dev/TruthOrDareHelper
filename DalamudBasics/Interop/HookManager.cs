@@ -7,7 +7,7 @@ using DalamudBasics.Logging;
 using FFXIVClientStructs.FFXIV.Client.UI.Misc;
 using FFXIVClientStructs.FFXIV.Component.Text;
 using FFXIVClientStructs.STD;
-using Lumina.Excel.GeneratedSheets;
+using Lumina.Excel.Sheets;
 using System;
 
 /// This class was taken from https://github.com/Infiziert90/DeathRoll
@@ -24,7 +24,7 @@ namespace DalamudBasics.Interop
         private Hook<RandomPrintLogDelegate>? RandomPrintLogHook { get; set; }
         private delegate void RandomPrintLogDelegate(RaptureLogModule* module, int logMessageId, byte* playerName, byte sex, StdDeque<TextParameter>* parameter, byte flags, ushort homeWorldId);
 
-        [Signature("48 89 5C 24 ?? 48 89 6C 24 ?? 56 57 41 56 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 84 24 ?? ?? ?? ?? 44 0F B7 8C 24", DetourName = nameof(DicePrintLogDetour))]
+        [Signature("48 89 5C 24 ?? 48 89 74 24 ?? 55 57 41 54 41 55 41 56 48 8D 6C 24 ?? 48 81 EC ?? ?? ?? ?? 48 8B 05 ?? ?? ?? ?? 48 33 C4 48 89 45 ?? 0F B7 7D", DetourName = nameof(DicePrintLogDetour))]
         private Hook<DicePrintLogDelegate>? DicePrintLogHook { get; set; }
         private delegate void DicePrintLogDelegate(RaptureLogModule* module, ushort chatType, byte* userName, void* unused, ushort worldId, ulong accountId, ulong contentId, ushort roll, ushort outOf, uint entityId, byte ident);
 
@@ -61,8 +61,8 @@ namespace DalamudBasics.Interop
                 var world = dataManager.GetExcelSheet<World>()!.GetRow(homeWorldId)!;
                 var fullName = $"{name}@{world.Name}";
 
-                var roll = parameter->Get(1).IntValue;
-                var outOf = logMessageId == 3887 ? parameter->Get(2).IntValue : 0;
+                var roll = (*parameter)[1].IntValue;
+                var outOf = logMessageId == 3887 ? (*parameter)[2].IntValue : 0;                
 
                 diceRollManager.InvokeDiceRollEvent(fullName, DiceRollType.Random, roll, outOf);
             }

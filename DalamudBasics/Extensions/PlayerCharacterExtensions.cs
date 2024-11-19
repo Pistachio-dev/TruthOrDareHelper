@@ -24,7 +24,7 @@ namespace DalamudBasics.Extensions
 
         public static string GetWorldName(this IPlayerCharacter player)
         {
-            return player?.HomeWorld?.GameData?.Name?.ToString() ?? string.Empty;
+            return player?.HomeWorld.ValueNullable?.Name.ToString() ?? string.Empty;
         }
 
         public static string GetFullName(this IPlayerCharacter player)
