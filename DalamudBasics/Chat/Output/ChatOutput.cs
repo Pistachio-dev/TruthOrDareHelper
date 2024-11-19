@@ -139,7 +139,7 @@ namespace DalamudBasics.Chat.Output
                 {
                     if (nextChatPayload.SpacingBeforeInMs < configuration.LimitedChatChannelsMessageDelayInMs)
                     {
-                        nextChatPayload.SpacingBeforeInMs = configuration.LimitedChatChannelsMessageDelayInMs;
+                        nextChatPayload.SpacingBeforeInMs = configuration.LimitedChatChannelsMessageDelayInMs + new Random().Next(0, 150);
                     }
                 }
 
