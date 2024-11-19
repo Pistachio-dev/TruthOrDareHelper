@@ -1,10 +1,11 @@
 using ImGuiNET;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace DalamudBasics.GUI.Forms
 {
-    internal class ImGuiFormFactory<T>
+    public class ImGuiFormFactory<T>
     {
         private readonly Func<T> getData;
         private readonly Action<T> saveData;
@@ -29,7 +30,7 @@ namespace DalamudBasics.GUI.Forms
         }
 
         // Validable callbacks return a message if something happens, null otherwise.
-        public void AddValidation(string? callWithValidation)
+        public void AddValidationText(string? callWithValidation)
         {
             if (callWithValidation != null)
             {
@@ -49,6 +50,33 @@ namespace DalamudBasics.GUI.Forms
                 SetVarViaReflection(propertyName, data, local);
                 saveData(data);
             }
+            return null;
+        }
+
+        public string? DrawRadio(string propertyName, bool sameLine, List<(string label, int value, string? tooltip)> options)
+        {
+            bool changed = false;
+            T data = getData();
+            int local = (int)GetVarViaReflection(propertyName, data);
+            foreach(var tuple in options)
+            {
+                if (sameLine)
+                {
+                    ImGui.SameLine();
+                }
+                changed |= ImGui.RadioButton(tuple.label, ref local, tuple.value);
+                if (tuple.tooltip != null && ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip(tuple.tooltip);
+                }
+            }
+
+            if (changed)
+            {
+                SetVarViaReflection(propertyName, data, local);
+                saveData(data);
+            }
+
             return null;
         }
 

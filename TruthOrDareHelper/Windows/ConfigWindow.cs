@@ -1,42 +1,35 @@
-using Dalamud.Game.Gui.Toast;
-using Dalamud.Interface.Windowing;
+using Dalamud.Game.Text;
+using DalamudBasics.Chat.ClientOnlyDisplay;
+using DalamudBasics.Configuration;
+using DalamudBasics.GUI.Forms;
+using DalamudBasics.GUI.Windows;
+using DalamudBasics.Logging;
 using ImGuiNET;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Numerics;
-using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Windows;
 
-public class ConfigWindow : Window, IDisposable
+public class ConfigWindow : PluginWindowBase, IDisposable
 {
-    private Configuration Configuration;
-    private int rollingType;
-    private int simultaneousPlays;
-    private int maxParticipationStreak;
-    private int defaultChatChannel;
-    private string confirmationKeyword;
-    private bool useTestData;
+    IConfigurationService<Configuration> configurationService;
+    IClientChatGui chatGui;
+    ImGuiFormFactory<Configuration> formFactory;
+    Configuration configuration;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
     // and the window ID will always be "###XYZ counter window" for ImGui
-    public ConfigWindow(Plugin plugin) : base("ToD Configuration###With a constant ID")
+    public ConfigWindow(ILogService logService, IServiceProvider serviceProvider) : base(logService, "ToD Configuration")
     {
-        Flags = ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoScrollbar |
-                ImGuiWindowFlags.NoScrollWithMouse;
-
         Size = new Vector2(700, 700);
         SizeCondition = ImGuiCond.Always;
-
-        Configuration = plugin.Configuration;
-
-        rollingType = (int)Configuration.RollingType;
-        simultaneousPlays = Configuration.SimultaneousPlays;
-        maxParticipationStreak = Configuration.MaxParticipationStreak;
-        defaultChatChannel = (int)Configuration.DefaultChatChannel;
-        confirmationKeyword = Configuration.ConfirmationKeyword;
-        useTestData = Configuration.UseTestData;
+        this.configurationService = serviceProvider.GetRequiredService<IConfigurationService<Configuration>>();
+        this.chatGui = serviceProvider.GetRequiredService<IClientChatGui>();
+        this.formFactory = new ImGuiFormFactory<Configuration>(() => configurationService.GetConfiguration(), (data) => configurationService.SaveConfiguration());
+        configuration = this.configurationService.GetConfiguration();
     }
 
     public void Dispose()
@@ -46,79 +39,38 @@ public class ConfigWindow : Window, IDisposable
     {
     }
 
-    public override void Draw()
+    protected override void SafeDraw()
     {
         DrawSectionHeader("Chat");
         ImGui.BeginGroup();
-        ImGui.TextUnformatted("Write to: "); ImGui.SameLine();
-        ImGui.RadioButton("/echo", ref defaultChatChannel, (int)ChatChannelType.Echo); ImGui.SameLine();
-        ImGui.RadioButton("/party", ref defaultChatChannel, (int)ChatChannelType.Party); ImGui.SameLine();
-        ImGui.RadioButton("/alliance", ref defaultChatChannel, (int)ChatChannelType.Alliance); ImGui.SameLine();
+        ImGui.TextUnformatted("Write to: ");
+        formFactory.DrawRadio(nameof(Configuration.DefaultOutputChatType), sameLine: true,
+            [("/echo", (int)XivChatType.Echo, null),
+                ("/party", (int)XivChatType.Party, null),
+                ("/alliance", (int)XivChatType.Alliance, null),
+                ("/say", (int)XivChatType.Say, null)]);
+        
         ImGui.EndGroup();
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("What chat channel the plugin will write to.");
-        }
+        DrawTooltip("What chat channel the plugin will write to.");
 
         DrawSectionHeader("Game");
-        ImGui.InputInt("How many pairs are formed in a round", ref simultaneousPlays);
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("For big groups, you can have as many pairs of asker->asked as you want on every round.");
-        }
+        formFactory.AddValidationText(formFactory.DrawIntInput("How many pairs are formed in a round", nameof(Configuration.SimultaneousPlays), EnforcePositiveInt));
+        DrawTooltip("For big groups, you can have as many pairs of asker->asked as you want on every round.");
 
-        ImGui.InputInt("Maximum participation streak", ref maxParticipationStreak);
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("Players that have won or lost these amount of rounds in a row won't roll for the next round");
-        }
-
-        ImGui.InputText("Confirmation keyword", ref confirmationKeyword, 50);
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");
-        }
+        formFactory.AddValidationText(formFactory.DrawIntInput("Maximum participation streak", nameof(Configuration.MaxParticipationStreak), EnforcePositiveInt));
+        DrawTooltip("Players that have won or lost these amount of rounds in a row won't roll for the next round");
+        
+        formFactory.DrawTextInput("Confirmation keyword", nameof(Configuration.ConfirmationKeyword), 50);
+        DrawTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");        
 
         DrawSectionHeader("Testing");
-        ImGui.Checkbox("Use test data", ref useTestData);
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip("Starts the plugin with some dummy data. Only for testing the plugin.");
-        }
+        formFactory.DrawCheckbox("Use test data", nameof(Configuration.UseTestData));
+        DrawTooltip("Starts the plugin with some dummy data. Only for testing the plugin.");        
+    }
 
-        //ImGui.BeginGroup();
-        //ImGui.TextUnformatted("Player pair rolling type: ");
-        //ImGui.RadioButton("Plugin rolls everything", ref defaultChatChannel, (int)ChatChannelType.Echo);
-        //ImGui.RadioButton("Plugin writes /dice to chat", ref defaultChatChannel, (int)ChatChannelType.Party);
-        //ImGui.RadioButton("Plugin rolls, weighted in favour of idle players", ref defaultChatChannel, (int)ChatChannelType.Alliance);
-        //ImGui.EndGroup();
-        //if (ImGui.IsItemHovered())
-        //{
-        //    ImGui.SetTooltip("What way the plugin decides the player pairs.");
-        //}
-
-        if (ImGui.Button("Save"))
-        {
-            if (simultaneousPlays <= 0)
-            {
-                simultaneousPlays = 1;
-            }
-
-            if (maxParticipationStreak <= 0)
-            {
-                maxParticipationStreak = 1;
-            }
-
-            Configuration.RollingType = (RollingType)rollingType;
-            Configuration.SimultaneousPlays = simultaneousPlays;
-            Configuration.MaxParticipationStreak = maxParticipationStreak;
-            Configuration.DefaultChatChannel = (ChatChannelType)defaultChatChannel;
-            Configuration.ConfirmationKeyword = confirmationKeyword;
-            Configuration.UseTestData = useTestData;
-            Configuration.Save();
-            //Plugin.Chat.PrintError(PasswordManager.GetCharacterPassword());
-            Plugin.ToastGui.ShowNormal("Configuration saved.");
-        }
+    private string? EnforcePositiveInt(int number)
+    {
+        return number >= 0 ? null : "Number must be positive";
     }
 
     private void DrawSectionHeader(string title)

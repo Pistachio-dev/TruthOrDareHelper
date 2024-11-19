@@ -1,10 +1,9 @@
-using TruthOrDareHelper.Modules.Chat;
+using DalamudBasics.Configuration;
 
 namespace TruthOrDareHelper.Settings
 {
-    public interface IConfiguration
+    public interface IToDConfiguration : IConfiguration
     {
-        ChatChannelType DefaultChatChannel { get; set; }
         RollingType RollingType { get; set; }
         int SimultaneousPlays { get; set; }
         int Version { get; set; }

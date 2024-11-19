@@ -1,41 +1,42 @@
-using Dalamud.Interface.Windowing;
+using Dalamud.Game.Text;
+using DalamudBasics.Chat.ClientOnlyDisplay;
+using DalamudBasics.Chat.Output;
+using DalamudBasics.Configuration;
+using DalamudBasics.Extensions;
+using DalamudBasics.GUI.Windows;
+using DalamudBasics.Logging;
+using DalamudBasics.Targeting;
 using ImGuiNET;
+using Microsoft.Extensions.DependencyInjection;
 using Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using TruthOrDareHelper.DalamudWrappers.Interface;
-using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Rolling;
-using TruthOrDareHelper.Modules.Targeting.Interface;
-using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Windows;
 
-public class MainWindow : Window, IDisposable
+public class MainWindow : PluginWindowBase, IDisposable
 {
-    private IConfiguration configuration;
-    private ITruthOrDareSession session;
-    private ITimeKeeper timeKeeper;
-    private IChatOutput chatOutput;
-    private IChatListener chatListener;
-    private IChatWrapper chatRaw;
-    private ILogWrapper log;
-    private ITargetingHandler targetManager;
-    private IRollManager rollManager;
-    private Plugin plugin;
-
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
     private static readonly Vector4 Gray = new Vector4(0.3f, 0.3f, 0.3f, 1f);
+    private Plugin plugin;
+    private ITruthOrDareSession session;
+    private IRollManager rollManager;
+    private IChatOutput chatOutput;
+    private Configuration configuration;
+    private IToDChatOutput toDChatOutput;
+    private IClientChatGui chatGui;
+    private ITargetingService targetManager;
     private const string RoundSymbol = "♦";
     private const int RoundsToShowInHistory = 8;
 
-    public MainWindow(Plugin plugin)
-        : base("Truth or Dare helper", ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse)
+    public MainWindow(Plugin plugin, ILogService logService, IServiceProvider serviceProvider)
+        : base(logService, "Truth or Dare helper")
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -43,18 +44,14 @@ public class MainWindow : Window, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
-        this.plugin = plugin;
-        configuration = Plugin.Resolve<IConfiguration>();
-        session = Plugin.Resolve<ITruthOrDareSession>();
-        timeKeeper = Plugin.Resolve<ITimeKeeper>();
-        chatOutput = Plugin.Resolve<IChatOutput>();
-        chatListener = Plugin.Resolve<IChatListener>();
-        chatRaw = Plugin.Resolve<IChatWrapper>();
-        targetManager = Plugin.Resolve<ITargetingHandler>();
-        rollManager = Plugin.Resolve<IRollManager>();
-        log = Plugin.Resolve<ILogWrapper>();
-
-        chatListener.AttachListener();
+        this.plugin = plugin;       
+        session = serviceProvider.GetRequiredService<ITruthOrDareSession>();
+        rollManager = serviceProvider.GetRequiredService<IRollManager>();
+        chatOutput = serviceProvider.GetRequiredService<IChatOutput>();
+        configuration = serviceProvider.GetRequiredService<IConfigurationService<Configuration>>().GetConfiguration();
+        toDChatOutput = serviceProvider.GetRequiredService<IToDChatOutput>();
+        chatGui = serviceProvider.GetRequiredService<IClientChatGui>();
+        targetManager = serviceProvider.GetRequiredService<ITargetingService>();
 
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
@@ -75,12 +72,12 @@ public class MainWindow : Window, IDisposable
             if (pairs.FirstOrDefault(p => p.Winner == player) != null)
             {
                 player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Winner));
-                AddConfirmationDetection(ChatOutput.RemoveWorldFromName(player.FullName));
+                AddConfirmationDetection(player.FullName.WithoutWorldName());
             }
             else if (pairs.FirstOrDefault(p => p.Loser == player) != null)
             {
                 player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Loser));
-                AddToDChoiceDetection(ChatOutput.RemoveWorldFromName(player.FullName));
+                AddToDChoiceDetection(player.FullName.WithoutWorldName());
             }
             else
             {
@@ -90,24 +87,24 @@ public class MainWindow : Window, IDisposable
 
         session.PlayingPairs = pairs;
         chatOutput.WriteChat($"-------------ROLLING--------------");
-        chatOutput.WritePairs(pairs);
+        //chatOutput.WritePairs(pairs);
     }
 
     private void AddToDChoiceDetection(string playerName)
     {
-        ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectTruthOrDare);
-        chatListener.AddConditionalDelegate(payload);
-        log.Info($"Added ToD choice chat listener for {playerName}");
+        //ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectTruthOrDare);
+        //chatListener.AddConditionalDelegate(payload);
+        //log.Info($"Added ToD choice chat listener for {playerName}");
     }
 
     private void AddConfirmationDetection(string playerName)
     {
-        ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectConfirmation);
-        chatListener.AddConditionalDelegate(payload);
-        log.Info($"Added ToD confirmation chat listener for {playerName}");
+        //ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectConfirmation);
+        //chatListener.AddConditionalDelegate(payload);
+        //log.Info($"Added ToD confirmation chat listener for {playerName}");
     }
 
-    private bool DetectTruthOrDare(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
+    private bool DetectTruthOrDare(XivChatEntry chatChannel, DateTime timeStamp, string sender, string message)
     {
         PlayerPair? pair = session.PlayingPairs.FirstOrDefault(p => (p.Loser?.FullName.Contains(sender) ?? false));
         if (pair == null)
@@ -121,7 +118,7 @@ public class MainWindow : Window, IDisposable
             || message.Contains("truht", StringComparison.InvariantCultureIgnoreCase))
         {
             pair.ChallengeType = ChallengeType.Truth;
-            log.Info($"{pair.Loser.FullName} chose TRUTH");
+            logService.Info($"{pair.Loser.FullName} chose TRUTH");
             return true;
         }
         if (message.Equals("d", StringComparison.InvariantCultureIgnoreCase)
@@ -129,7 +126,7 @@ public class MainWindow : Window, IDisposable
             || message.Contains("daer", StringComparison.InvariantCultureIgnoreCase))
         {
             pair.ChallengeType = ChallengeType.Dare;
-            log.Info($"{pair.Loser.FullName} chose DARE");
+            logService.Info($"{pair.Loser.FullName} chose DARE");
 
             return true;
         }
@@ -138,7 +135,7 @@ public class MainWindow : Window, IDisposable
             || message.Contains("dealer", StringComparison.InvariantCultureIgnoreCase))
         {
             pair.ChallengeType = ChallengeType.DealersChoice;
-            log.Info($"{pair.Loser.FullName} chose Dealer's choice");
+            logService.Info($"{pair.Loser.FullName} chose Dealer's choice");
 
             return true;
         }
@@ -146,7 +143,7 @@ public class MainWindow : Window, IDisposable
         return false;
     }
 
-    private bool DetectConfirmation(ChatChannelType chatChannel, DateTime timeStamp, string sender, string message)
+    private bool DetectConfirmation(XivChatType chatChannel, DateTime timeStamp, string sender, string message)
     {
         PlayerPair? pair = session.PlayingPairs.FirstOrDefault(p => (p.Winner?.FullName.Contains(sender) ?? false));
         if (pair == null)
@@ -158,7 +155,7 @@ public class MainWindow : Window, IDisposable
         if (message.Contains(configuration.ConfirmationKeyword, StringComparison.InvariantCultureIgnoreCase))
         {
             pair.Done = true;
-            log.Info($"{pair.Winner.FullName} confirms the answer as valid!");
+            logService.Info($"{pair.Winner.FullName} confirms the answer as valid!");
 
             if (session.PlayingPairs.FirstOrDefault(pair => !pair.Done) == null)
             {
@@ -194,14 +191,12 @@ public class MainWindow : Window, IDisposable
 
         if (pair.ChallengeType != ChallengeType.None && rerollTheLoser)
         {
-            AddToDChoiceDetection(ChatOutput.RemoveWorldFromName(replacement.FullName));
+            AddToDChoiceDetection(rerrolledName.WithoutWorldName());
         }
     }
 
-    public override void Draw()
+    protected override void SafeDraw()
     {
-        timeKeeper.Tick(session.Round);
-
         DrawPlayerTable();
 
         ImGui.TextUnformatted($"Round {session.Round}");
@@ -247,7 +242,7 @@ public class MainWindow : Window, IDisposable
             ImGui.SameLine();
             if (ImGui.Button($"Print player pairs to chat"))
             {
-                chatOutput.WritePairs(session.PlayingPairs);
+                toDChatOutput.WritePairs(session.PlayingPairs);
             }
             DrawPlayingPairsTable();
         }
@@ -307,7 +302,7 @@ public class MainWindow : Window, IDisposable
     {
         PlayerInfo? player = isLoser ? pair.Loser : pair.Winner;
         bool playerNotChosenByRoll = player == null;
-        string playerName = playerNotChosenByRoll ? "Not autodetected yet" : ChatOutput.RemoveWorldFromName(player.FullName);
+        string playerName = playerNotChosenByRoll ? "Not autodetected yet" : player.FullName.WithoutWorldName();
         ImGui.TextUnformatted(playerName);
         if (!playerNotChosenByRoll)
         {
@@ -338,22 +333,22 @@ public class MainWindow : Window, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(ChatOutput.RemoveWorldFromName(player.FullName));
+                ImGui.TextUnformatted(player.FullName.WithoutWorldName());
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                 {
-                    if (targetManager.Target(player.FullName))
+                    if (targetManager.TargetPlayer(player.FullName))
                     {
-                        chatRaw.Print($"Targeting {player.FullName}.");
+                        chatGui.Print($"Targeting {player.FullName}.");
                     }
                     else
                     {
-                        chatRaw.Print($"Could not target {player.FullName}.");
+                        chatGui.Print($"Could not target {player.FullName}.");
                     }
                 }
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right) && ImGui.GetIO().KeyShift)
                 {
                     session.TryRemovePlayer(player.FullName);
-                    targetManager.TryRemoveTargetReference(player.FullName);
+                    targetManager.RemovePlayerReference(player.FullName);
                     chatOutput.WriteChat($"{player.FullName} leaves the game.");
                 }
                 Tooltip("Click to target the player, shift + right click to remove them.");
@@ -384,17 +379,16 @@ public class MainWindow : Window, IDisposable
 
     private bool AddTargetPlayer()
     {
-        string? targetFullName = targetManager.AddReferenceToCurrentTarget();
-
-        if (targetFullName == null)
+        if (!targetManager.TrySaveTargetPlayerReference(out var targetReference) || targetReference == null)
         {
-            chatRaw.Print("Could not add target to the players. It's either nothing or not a player.");
+            chatGui.Print("Could not add target to the players. It's either nothing or not a player.");
             return false;
         }
 
+        string targetFullName = targetReference.GetFullName();
         if (session.GetPlayer(targetFullName) != null)
         {
-            chatRaw.Print("Target player is already in the game.");
+            chatGui.Print("Target player is already in the game.");
             return true;
         }
 

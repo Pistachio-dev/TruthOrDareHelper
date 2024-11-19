@@ -1,11 +1,10 @@
-using Dalamud.Configuration;
+using Dalamud.Game.Text;
 using System;
-using TruthOrDareHelper.Modules.Chat;
 
 namespace TruthOrDareHelper.Settings;
 
 [Serializable]
-public class Configuration : IPluginConfiguration, IConfiguration
+public class Configuration : IToDConfiguration
 {
     public int Version { get; set; } = 0;
 
@@ -15,15 +14,18 @@ public class Configuration : IPluginConfiguration, IConfiguration
 
     public int MaxParticipationStreak { get; set; } = 3;
 
-    public ChatChannelType DefaultChatChannel { get; set; } = ChatChannelType.Party;
-
     public string ConfirmationKeyword { get; set; } = "#nova";
 
     public bool UseTestData { get; set; } = false;
 
-    // the below exist just to make saving less cumbersome
+    public XivChatType DefaultOutputChatType { get; set; } = XivChatType.Party;
+
+    public bool LogOutgoingChatOutput { get; set; } = true;
+    public bool LogClientOnlyChatOutput { get; set; } = true;
+    public int SayDelayInMs { get; set; } = 500;
+
     public void Save()
     {
-        Plugin.PluginInterface.SavePluginConfig(this);
+        throw new NotImplementedException();
     }
 }

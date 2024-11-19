@@ -6,6 +6,7 @@ using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using PlayerReferenceMap = System.Collections.Generic.Dictionary<string, Dalamud.Game.ClientState.Objects.SubKinds.IPlayerCharacter>;
 
 namespace DalamudBasics.Targeting
@@ -32,9 +33,10 @@ namespace DalamudBasics.Targeting
             playerRefs.Remove(playerFullName);
         }
 
-        public bool SaveTargetPlayerReference()
+        public bool TrySaveTargetPlayerReference(out IPlayerCharacter? reference)
         {
             var targetName = GetTargetName();
+            reference = null;
             if (string.IsNullOrEmpty(targetName))
             {
                 chatGui.PrintError("Cannot save target player reference. Nothing is targeted, or it is not a player.");
@@ -44,8 +46,8 @@ namespace DalamudBasics.Targeting
             }
 
             // At this point we know it is a player character, valid, not null.
-            var targetedPlayer = (IPlayerCharacter)dalamudTargetManager.Target!;
-            playerRefs[targetName] = targetedPlayer;
+            reference = (IPlayerCharacter)dalamudTargetManager.Target!;
+            playerRefs[targetName] = reference;
             logService.Debug("Stored reference for player " + targetName);
 
             return true;
@@ -84,18 +86,18 @@ namespace DalamudBasics.Targeting
             return VerifyTargeting(fullPlayerName);
         }
 
-        private IPlayerCharacter? GetPlayerReferenceFromObjectTable(string name, string world)
-        {
-            return (IPlayerCharacter?)gameObjectTable.FirstOrDefault(o => o is IPlayerCharacter player && player.Matches(name, world));
-        }
-
-        private string GetTargetName()
+        public string GetTargetName()
         {
             var target = dalamudTargetManager.Target;
             if (target == null || target is not IPlayerCharacter pc || pc.HomeWorld.ValueNullable == null)
                 return string.Empty;
 
             return BuildFullPlayerName(pc);
+        }
+
+        private IPlayerCharacter? GetPlayerReferenceFromObjectTable(string name, string world)
+        {
+            return (IPlayerCharacter?)gameObjectTable.FirstOrDefault(o => o is IPlayerCharacter player && player.Matches(name, world));
         }
 
         private static string BuildFullPlayerName(IPlayerCharacter pc)

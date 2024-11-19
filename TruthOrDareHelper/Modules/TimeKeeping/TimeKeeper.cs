@@ -1,6 +1,6 @@
+using DalamudBasics.Logging;
 using System;
 using System.Collections.Generic;
-using TruthOrDareHelper.DalamudWrappers.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 
@@ -10,11 +10,11 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
     {
         private int currentRound = 0;
         private LinkedList<TimedAction> timedActions = new();
-        private ILogWrapper log;
+        private ILogService log;
 
         public TimeKeeper()
         {
-            log = Plugin.Resolve<ILogWrapper>();
+            log = Plugin.Resolve<ILogService>();
         }
 
         public void AddTimedAction(TimedAction action)

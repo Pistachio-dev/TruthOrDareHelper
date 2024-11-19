@@ -8,6 +8,7 @@ using DalamudBasics.Chat.Listener;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.DiceRolling;
+using DalamudBasics.GUI.Forms;
 using DalamudBasics.Interop;
 using DalamudBasics.Logging;
 using DalamudBasics.Logging.Loggers;
@@ -41,6 +42,8 @@ namespace DalamudBasics.DependencyInjection
                 .AddSingleton<DiceRollManager>();
 
             serviceCollection.AddSingleton<IConfigurationService<T>, ConfigurationService<T>>();
+            serviceCollection.AddSingleton<IConfiguration>(sp => sp.GetRequiredService<IConfigurationService<T>>().GetConfiguration());
+            serviceCollection.AddSingleton<ImGuiFormFactory<T>>();
 
             return serviceCollection;
         }

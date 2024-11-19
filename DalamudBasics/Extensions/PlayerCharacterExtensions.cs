@@ -1,6 +1,7 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Utility;
 using System;
+using System.Linq;
 
 namespace DalamudBasics.Extensions
 {
@@ -35,6 +36,11 @@ namespace DalamudBasics.Extensions
                 return player?.Name?.ToString() ?? "None";
             }
             return $"{player?.Name ?? "None"}@{world}";
+        }
+
+        public static string WithoutWorldName(this string name)
+        {
+            return name.Split("@").First();
         }
     }
 }

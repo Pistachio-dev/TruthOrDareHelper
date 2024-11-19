@@ -7,7 +7,7 @@ namespace DalamudBasics.GUI.Windows
 {
     public abstract class PluginWindowBase : Window
     {
-        private readonly ILogService logService;
+        protected readonly ILogService logService;
 
         protected PluginWindowBase(ILogService logService, string name, ImGuiWindowFlags flags = ImGuiWindowFlags.None, bool forceMainWindow = false) : base(name, flags, forceMainWindow)
         {

@@ -1,13 +1,17 @@
+using Dalamud.Game.ClientState.Objects.SubKinds;
+
 namespace DalamudBasics.Targeting
 {
-    internal interface ITargetingService
+    public interface ITargetingService
     {
         void ClearTarget();
 
-        void RemovePlayerReference(string playerFullName);
+        string GetTargetName();
 
-        bool SaveTargetPlayerReference();
+        void RemovePlayerReference(string playerFullName);        
 
         bool TargetPlayer(string fullPlayerName);
+
+        bool TrySaveTargetPlayerReference(out IPlayerCharacter? reference);
     }
 }

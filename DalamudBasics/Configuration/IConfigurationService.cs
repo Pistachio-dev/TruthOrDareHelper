@@ -1,6 +1,6 @@
 namespace DalamudBasics.Configuration
 {
-    internal interface IConfigurationService<T> where T : IConfiguration, new()
+    public interface IConfigurationService<T> where T : IConfiguration, new()
     {
         T GetConfiguration();
 

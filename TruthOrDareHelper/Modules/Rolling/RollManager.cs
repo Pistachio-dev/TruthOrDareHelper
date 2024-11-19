@@ -1,3 +1,4 @@
+using DalamudBasics.Chat.ClientOnlyDisplay;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,13 @@ namespace TruthOrDareHelper.Modules.Rolling
 {
     public class RollManager : IRollManager
     {
+        private readonly IClientChatGui chatGui;
+
+        public RollManager(IClientChatGui chatgui)
+        {
+            this.chatGui = chatgui;
+        }
+
         public List<PlayerPair> RollStandard(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm)
         {
             Random rng = new Random();
@@ -16,11 +24,11 @@ namespace TruthOrDareHelper.Modules.Rolling
 
             if (elegiblePlayers.Count < pairsToForm * 2)
             {
-                Plugin.Chat.PrintError($"Not enough players to form {pairsToForm} pairs, reducing amount to {elegiblePlayers.Count / 2}.");
+                chatGui.PrintError($"Not enough players to form {pairsToForm} pairs, reducing amount to {elegiblePlayers.Count / 2}.");
                 pairsToForm = elegiblePlayers.Count / 2;
                 if (pairsToForm == 0)
                 {
-                    Plugin.Chat.PrintError($"Not enough playes to form a single pair! Let's lift streak restrictions.");
+                    chatGui.PrintError($"Not enough playes to form a single pair! Let's lift streak restrictions.");
                     elegiblePlayers = new List<PlayerInfo>(players);
                     pairsToForm = elegiblePlayers.Count / 2;
                 }
@@ -54,7 +62,7 @@ namespace TruthOrDareHelper.Modules.Rolling
 
             if (alreadyUsed.Count == session.PlayerInfo.Count)
             {
-                Plugin.Chat.PrintError($"Can't reroll, all players are already playing");
+                chatGui.PrintError($"Can't reroll, all players are already playing");
                 return null;
             }
 
