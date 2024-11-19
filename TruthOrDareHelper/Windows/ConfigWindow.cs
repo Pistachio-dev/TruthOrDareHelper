@@ -14,10 +14,10 @@ namespace TruthOrDareHelper.Windows;
 
 public class ConfigWindow : PluginWindowBase, IDisposable
 {
-    IConfigurationService<Configuration> configurationService;
-    IClientChatGui chatGui;
-    ImGuiFormFactory<Configuration> formFactory;
-    Configuration configuration;
+    private IConfigurationService<Configuration> configurationService;
+    private IClientChatGui chatGui;
+    private ImGuiFormFactory<Configuration> formFactory;
+    private Configuration configuration;
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
@@ -49,7 +49,7 @@ public class ConfigWindow : PluginWindowBase, IDisposable
                 ("/party", (int)XivChatType.Party, null),
                 ("/alliance", (int)XivChatType.Alliance, null),
                 ("/say", (int)XivChatType.Say, null)]);
-        
+
         ImGui.EndGroup();
         DrawTooltip("What chat channel the plugin will write to.");
 
@@ -59,13 +59,13 @@ public class ConfigWindow : PluginWindowBase, IDisposable
 
         formFactory.AddValidationText(formFactory.DrawIntInput("Maximum participation streak", nameof(Configuration.MaxParticipationStreak), EnforcePositiveInt));
         DrawTooltip("Players that have won or lost these amount of rounds in a row won't roll for the next round");
-        
+
         formFactory.DrawTextInput("Confirmation keyword", nameof(Configuration.ConfirmationKeyword), 50);
-        DrawTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");        
+        DrawTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");
 
         DrawSectionHeader("Testing");
         formFactory.DrawCheckbox("Use test data", nameof(Configuration.UseTestData));
-        DrawTooltip("Starts the plugin with some dummy data. Only for testing the plugin.");        
+        DrawTooltip("Starts the plugin with some dummy data. Only for testing the plugin.");
     }
 
     private string? EnforcePositiveInt(int number)

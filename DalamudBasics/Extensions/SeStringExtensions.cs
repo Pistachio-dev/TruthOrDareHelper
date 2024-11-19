@@ -1,12 +1,7 @@
-using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Plugin.Services;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace DalamudBasics.Extensions
 {

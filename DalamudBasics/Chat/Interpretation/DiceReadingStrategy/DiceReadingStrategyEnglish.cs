@@ -8,7 +8,7 @@ namespace DalamudBasics.Chat.Interpretation.DiceReadingStrategy
     public class DiceReadingStrategyEnglish
     {
         public DiceRollType GetRollType(SeString message)
-        {           
+        {
             var payload1 = message.GetPayload(1);
             if (payload1?.Type == PayloadType.RawText && payload1.GetText().Contains("Random!"))
             {
@@ -113,7 +113,6 @@ namespace DalamudBasics.Chat.Interpretation.DiceReadingStrategy
             return TryParseRollNumberAndLimit(payloadWithRolledNumber, ref chatDiceRoll);
         }
 
-
         private bool TryParseRollNumberAndLimit(Payload? payloadWithTheNumbers, ref ChatDiceRoll chatDiceRoll)
         {
             var regex = new Regex("(\\d+)[\\s\\.](?:\\(out of (\\d+)\\))?");
@@ -136,6 +135,5 @@ namespace DalamudBasics.Chat.Interpretation.DiceReadingStrategy
 
             return true;
         }
-
     }
 }

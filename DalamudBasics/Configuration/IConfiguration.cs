@@ -1,5 +1,4 @@
 using Dalamud.Game.Text;
-using System.Runtime.Serialization;
 
 namespace DalamudBasics.Configuration
 {

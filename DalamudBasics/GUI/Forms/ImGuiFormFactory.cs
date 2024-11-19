@@ -11,7 +11,6 @@ namespace DalamudBasics.GUI.Forms
         private readonly Action<T> saveData;
         private static readonly Vector4 Red = new Vector4(1, 0, 0, 1);
 
-
         public ImGuiFormFactory(Func<T> getData, Action<T> saveData)
         {
             this.getData = getData;
@@ -58,7 +57,7 @@ namespace DalamudBasics.GUI.Forms
             bool changed = false;
             T data = getData();
             int local = (int)GetVarViaReflection(propertyName, data);
-            foreach(var tuple in options)
+            foreach (var tuple in options)
             {
                 if (sameLine)
                 {

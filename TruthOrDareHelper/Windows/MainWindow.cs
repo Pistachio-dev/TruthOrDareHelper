@@ -44,7 +44,7 @@ public class MainWindow : PluginWindowBase, IDisposable
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
-        this.plugin = plugin;       
+        this.plugin = plugin;
         session = serviceProvider.GetRequiredService<ITruthOrDareSession>();
         rollManager = serviceProvider.GetRequiredService<IRollManager>();
         chatOutput = serviceProvider.GetRequiredService<IChatOutput>();

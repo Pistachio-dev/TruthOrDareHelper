@@ -41,12 +41,14 @@ namespace DalamudBasics.Debugging
 
         public void DumpAllReceivedMessages(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
         {
+            logService.Info("------------------------------------------------------------------------------------------------------------");
             logService.Info($"Type: {type} Timestamp: {timestamp} IsHandled: {isHandled}");
             logService.Info("Sender as interpreted: " + sender.GetSenderFullName(gameClient));
             logService.Info("Sender SeString dump---------------------------");
             DumpSeString(sender);
             logService.Info("Message SeString dump---------------------------");
             DumpSeString(message);
+            logService.Info("------------------------------------------------------------------------------------------------------------");
         }
 
         public void TestDiceRollParsing(XivChatType type, int timestamp, ref SeString sender, ref SeString message, ref bool isHandled)
@@ -60,12 +62,11 @@ namespace DalamudBasics.Debugging
             if (result.IsRangeLimited)
             {
                 logService.Info($"Roll read: {result.RolledNumber} ({result.LowerLimit} to {result.UpperLimit}, by {result.RollingPlayer})");
-                
+
                 return;
             }
 
             logService.Info($"Roll read: {result.RolledNumber}, by {result.RollingPlayer}");
-
         }
     }
 }

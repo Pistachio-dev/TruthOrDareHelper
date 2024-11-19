@@ -5,8 +5,6 @@ using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using DalamudBasics.Time;
 using System;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace DalamudBasics.Chat.Listener
 {

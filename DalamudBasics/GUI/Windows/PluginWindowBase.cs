@@ -39,7 +39,7 @@ namespace DalamudBasics.GUI.Windows
             ImGui.EndGroup();
         }
 
-        public sealed override void Draw()
+        public override sealed void Draw()
         {
             try
             {

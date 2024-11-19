@@ -6,7 +6,6 @@ using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using PlayerReferenceMap = System.Collections.Generic.Dictionary<string, Dalamud.Game.ClientState.Objects.SubKinds.IPlayerCharacter>;
 
 namespace DalamudBasics.Targeting

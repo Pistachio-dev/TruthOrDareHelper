@@ -8,7 +8,7 @@ namespace DalamudBasics.Logging.Loggers
         private readonly string fileRoute;
 
         public FileLogger(IDalamudPluginInterface pluginInterface)
-        {            
+        {
             this.fileRoute = pluginInterface.GetPluginConfigDirectory() + Path.DirectorySeparatorChar + "logs.txt";
         }
 

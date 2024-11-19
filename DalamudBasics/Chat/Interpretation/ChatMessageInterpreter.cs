@@ -4,14 +4,8 @@ using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Interpretation.DiceReadingStrategy;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
-using ECommons.UIHelpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace DalamudBasics.Chat.Interpretation
 {
@@ -28,6 +22,7 @@ namespace DalamudBasics.Chat.Interpretation
             new Regex("Random! (?:\\(\\d+-(\\d+)\\))?"),
             new Regex("Lancer de dé (?:(\\d+) )?!"),
         ];
+
         private readonly IClientState clientState;
         private readonly IClientChatGui chatGui;
         private readonly ILogService logService;
@@ -52,15 +47,15 @@ namespace DalamudBasics.Chat.Interpretation
 
             string rollerFullName = message.GetSenderFullName(clientState);
             if (diceRollType == DiceRollType.Dice && strategy.TryParseDiceRoll(message, out chatDiceRoll, rollerFullName))
-            { 
-                return true;                
+            {
+                return true;
             }
 
             if (diceRollType == DiceRollType.Random && strategy.TryParseRandomRoll(message, out chatDiceRoll, rollerFullName))
             {
                 return true;
             }
-            
+
             return false;
         }
 
@@ -70,7 +65,6 @@ namespace DalamudBasics.Chat.Interpretation
             var payload2 = message.GetPayload(2);
             if (payload2 != null && payload2.Type == PayloadType.RawText && payload2.GetText().Contains("Random!"))
             {
-
             }
             throw new NotImplementedException();
         }
