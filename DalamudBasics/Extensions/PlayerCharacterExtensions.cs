@@ -42,5 +42,10 @@ namespace DalamudBasics.Extensions
         {
             return name.Split("@").First();
         }
+
+        public static string GetFirstName(this string name)
+        {
+            return name.Split(' ').First();
+        }
     }
 }

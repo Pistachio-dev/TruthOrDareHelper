@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Model;
 using System;
 using TruthOrDareHelper.Modules.Chat;
+using TruthOrDareHelper.Modules.Chat.Commands;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Settings;
@@ -24,6 +25,7 @@ namespace TruthOrDareHelper;
 
 public sealed class Plugin : IDalamudPlugin
 {
+    public static string MessageMark = "[ToD]";
     private const string CommandName = "/tod";
 
     public readonly WindowSystem WindowSystem = new("TruthOrDareHelper");
@@ -104,7 +106,8 @@ public sealed class Plugin : IDalamudPlugin
         serviceCollection.AddSingleton<ITruthOrDareSession, TruthOrDareSession>();
         serviceCollection.AddSingleton<IRollManager, RollManager>();
         serviceCollection.AddSingleton<IToDChatOutput, ToDChatOutput>();
-
+        serviceCollection.AddSingleton<IToDChatListener, ToDChatListener>();
+        serviceCollection.AddSingleton<ICommandRunner, CommandRunner>();
         return serviceCollection.BuildServiceProvider();
     }
 
@@ -112,9 +115,10 @@ public sealed class Plugin : IDalamudPlugin
     {
         IFramework framework = serviceProvider.GetRequiredService<IFramework>();
         serviceProvider.GetRequiredService<ILogService>().AttachToGameLogicLoop(framework);
-        serviceProvider.GetRequiredService<IChatListener>().InitializeAndRun("[ToD]");
+        serviceProvider.GetRequiredService<IChatListener>().InitializeAndRun(MessageMark);
         serviceProvider.GetRequiredService<IChatOutput>().AttachToGameLogicLoop(framework);
         serviceProvider.GetRequiredService<HookManager>();
+        serviceProvider.GetRequiredService<IToDChatListener>().AttachCommandDetector();
     }
 
     private void OnCommand(string command, string args)
