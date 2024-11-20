@@ -55,8 +55,8 @@ public sealed class Plugin : IDalamudPlugin
 
         if (configuration.UseTestData)
         {
-            //Session = Session.AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();            
-            Session = Session.MacalaniaAndMe();
+            Session = Session.AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();
+            //Session = Session.MacalaniaAndMe();
         }
 
         // TODO: remember to attach listener.

@@ -50,7 +50,7 @@ namespace TruthOrDareHelper.GameActions
             }
 
             session.PlayingPairs = pairs;
-            chatOutput.WriteChat($"-------------ROLLING--------------");
+            chatOutput.WriteChat($"-------------ROLLING NEW COUPLES--------------");
             chatOutput.WritePairs(pairs);
         }
 

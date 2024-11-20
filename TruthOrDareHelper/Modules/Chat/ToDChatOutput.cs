@@ -24,18 +24,24 @@ namespace TruthOrDareHelper.Modules.Chat
             foreach (PlayerPair p in pairs)
             {
                 StringBuilder s = new StringBuilder(p.Winner.FullName.WithoutWorldName());
-                s.Append("  ");
+                s.Append(" [");
                 s.Append(p.Winner.LastRollResult);
+                s.Append(']');
                 if (p.Loser != null)
                 {
-                    s.Append("->");
+                    s.Append(" ");
                     s.Append(p.Loser.FullName.WithoutWorldName());
-                    s.Append("  ");
+                    s.Append(" [");
                     s.Append(p.Loser.LastRollResult);
+                    s.Append("]");
                 }
                 else
                 {
                     s.Append(", choose your \"victim\".");
+                }
+                if (p.ChallengeType == ChallengeType.None)
+                {
+                    s.Append("<se.5>");
                 }
 
                 if (p.ChallengeType != ChallengeType.None)
@@ -47,7 +53,7 @@ namespace TruthOrDareHelper.Modules.Chat
                     s.Append(" They're done!");
                 }
 
-                WriteChat(s.ToString());
+                WriteChat(s.ToString(), null, 1000);
             }
         }
     }
