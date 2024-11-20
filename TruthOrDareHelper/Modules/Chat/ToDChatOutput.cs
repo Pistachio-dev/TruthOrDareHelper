@@ -4,6 +4,7 @@ using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
+using DalamudBasics.Targeting;
 using Model;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,8 +15,8 @@ namespace TruthOrDareHelper.Modules.Chat
 {
     internal class ToDChatOutput : ChatOutput, IToDChatOutput
     {
-        public ToDChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState)
-            : base(configuration,logService, chatGui, clientState)
+        public ToDChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
+            : base(configuration,logService, chatGui, clientState, targetingService)
         {
         }
 

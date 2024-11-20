@@ -11,6 +11,7 @@ namespace TruthOrDareHelper.Modules.Chat.Signs
     public class SignManager : ISignManager
     {
         private string ClearMarkCommand { get; } = "/mk off";
+        private const int TargetCommandDelay = 200;
 
         private static FfxivSign[] WinnerSigns = ((int[])[1, 2, 3, 4, 5, 6, 7, 6]).Select(number => new FfxivSign() { Text = $"attack{number}" }).ToArray();
         private static FfxivSign[] LoserSigns = [
@@ -64,18 +65,12 @@ namespace TruthOrDareHelper.Modules.Chat.Signs
 
         public void MarkPlayer(PlayerInfo player, bool isWinner)
         {
-            if (targetingService.TargetPlayer(player.FullName))
-            {
-                chatOutput.WriteCommand(GetMarkCommand(isWinner));
-            }
+            chatOutput.WriteCommand(GetMarkCommand(isWinner), TargetCommandDelay, player.FullName);            
         }
 
         public void UnmarkPlayer(PlayerInfo player)
-        {
-            if (targetingService.TargetPlayer(player.FullName))
-            {
-                chatOutput.WriteCommand(ClearMarkCommand);
-            }
+        {            
+            chatOutput.WriteCommand(ClearMarkCommand, TargetCommandDelay, player.FullName);
         }
 
         private string GetMarkCommand(bool isForWinner)

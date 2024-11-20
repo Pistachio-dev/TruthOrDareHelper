@@ -7,6 +7,7 @@ using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Configuration;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
+using DalamudBasics.Targeting;
 using System;
 using System.Collections.Concurrent;
 
@@ -25,6 +26,7 @@ namespace DalamudBasics.Chat.Output
         private readonly ILogService logService;
         private readonly IClientChatGui chatGui;
         private readonly IClientState clientState;
+        private readonly ITargetingService targetingService;
 
         private XivChatType DefaultOutputChatType
         {
@@ -34,25 +36,26 @@ namespace DalamudBasics.Chat.Output
             }
         }
 
-        public ChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState)
+        public ChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
         {
             this.configuration = configuration;
             this.logService = logService;
             this.chatGui = chatGui;
             this.clientState = clientState;
+            this.targetingService = targetingService;
         }
 
-        public void WriteCommand(string command)
+        public void WriteCommand(string command, int delay = 0, string? targetFullName = null)
         {
             if (!command.StartsWith("/"))
             {
                 command = "/" + command;
             }
 
-            WriteChat(command, XivChatType.None);
+            WriteChat(command, XivChatType.None, delay, targetFullName);
         }
 
-        public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
+        public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0, string? targetFullName = null)
         {
             if (!initialized)
             {
@@ -60,7 +63,7 @@ namespace DalamudBasics.Chat.Output
                 return;
             }
 
-            chatQueue.Enqueue(new ChatOutputQueuedMessage(message, chatChannel, minSpacingBeforeInMs));
+            chatQueue.Enqueue(new ChatOutputQueuedMessage(message, chatChannel, minSpacingBeforeInMs, targetFullName));
         }
 
         public void SendTell(string message, string playerFullName, string playerHomeWorld, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
@@ -177,6 +180,14 @@ namespace DalamudBasics.Chat.Output
             {
                 payload.ChatChannel = DefaultOutputChatType;
             }
+            if (payload.TargetFullName != null)
+            {
+                bool successfulTargeting = targetingService.TargetPlayer(payload.TargetFullName);
+                if (!successfulTargeting)
+                {
+                    logService.Warning($"Could not target player '{payload.TargetFullName}', skipping command");
+                }
+            }
 
             try
             {
@@ -200,6 +211,11 @@ namespace DalamudBasics.Chat.Output
             catch
             {
                 chatGui.PrintError("Invalid chat channel (or some odd error) for message: " + payload.Message + " with prefix " + payload.ChatChannel.ToString());
+            }
+
+            if (payload.TargetFullName != null)
+            {
+                targetingService.ClearTarget();
             }
         }
 

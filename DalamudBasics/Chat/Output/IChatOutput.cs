@@ -5,12 +5,12 @@ namespace DalamudBasics.Chat.Output
 {
     public interface IChatOutput
     {
-        void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0);
+        void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0, string? targetFullName = null);
 
         void SendTell(string message, string playerFullName, string playerHomeWorld, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0);
 
         void AttachToGameLogicLoop(IFramework framework);
 
-        void WriteCommand(string command);
+        void WriteCommand(string command, int delay = 0, string? targetFullName = null);
     }
 }
