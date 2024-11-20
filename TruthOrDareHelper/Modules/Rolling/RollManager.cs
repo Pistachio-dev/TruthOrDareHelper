@@ -27,10 +27,10 @@ namespace TruthOrDareHelper.Modules.Rolling
             LinkedList<Roll> rolls = new LinkedList<Roll>(elegiblePlayers.Select(p => new Roll(p, rng.Next(100))).OrderBy(r => r.RollResult));
             foreach (var roll in rolls) { roll.Player.LastRollResult = roll.RollResult; }
 
-            return GeneratePairs(rolls);
+            return GeneratePairs(rolls, pairsToForm);
         }
 
-        private List<PlayerPair> GeneratePairs(LinkedList<Roll> rolls)
+        private List<PlayerPair> GeneratePairs(LinkedList<Roll> rolls, int maxPairAmount)
         {
             List<PlayerPair> pairs = new();
             List<LinkedListNode<Roll>> alreadyTaken = new();
@@ -52,8 +52,13 @@ namespace TruthOrDareHelper.Modules.Rolling
                 alreadyTaken.Add(loserPointer!);
                 alreadyTaken.Add(winnerPointer!);
                 pairs.Add(new PlayerPair(winnerPointer!.Value.Player, loserPointer!.Value.Player));
+                if (pairs.Count >= maxPairAmount)
+                {
+                    return pairs;
+                }
             }
         }
+
         private (List<PlayerInfo> elegiblePlayers, int pairsToForm) GetElegiblePlayers(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm)
         {
             List<PlayerInfo> elegiblePlayers = players.Where(p => !p.IsOnStreak(maxParticipationStreak)).ToList();
