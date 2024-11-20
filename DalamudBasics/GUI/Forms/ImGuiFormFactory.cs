@@ -79,6 +79,33 @@ namespace DalamudBasics.GUI.Forms
             return null;
         }
 
+        public string? DrawUshortRadio(string propertyName, bool sameLine, List<(string label, ushort value, string? tooltip)> options)
+        {
+            bool changed = false;
+            T data = getData();
+            int local = (ushort)GetVarViaReflection(propertyName, data);
+            foreach (var tuple in options)
+            {
+                if (sameLine)
+                {
+                    ImGui.SameLine();
+                }
+                changed |= ImGui.RadioButton(tuple.label, ref local, tuple.value);
+                if (tuple.tooltip != null && ImGui.IsItemHovered())
+                {
+                    ImGui.SetTooltip(tuple.tooltip);
+                }
+            }
+
+            if (changed)
+            {
+                SetVarViaReflection(propertyName, data, (ushort)local);
+                saveData(data);
+            }
+
+            return null;
+        }
+
         public string? DrawIntInput(string label, string propertyName, Func<int, string?>? validation = null)
         {
             T data = getData();

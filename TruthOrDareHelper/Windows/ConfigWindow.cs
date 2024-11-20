@@ -44,11 +44,11 @@ public class ConfigWindow : PluginWindowBase, IDisposable
         DrawSectionHeader("Chat");
         ImGui.BeginGroup();
         ImGui.TextUnformatted("Write to: ");
-        formFactory.DrawRadio(nameof(Configuration.DefaultOutputChatType), sameLine: true,
-            [("/echo", (int)XivChatType.Echo, null),
-                ("/party", (int)XivChatType.Party, null),
-                ("/alliance", (int)XivChatType.Alliance, null),
-                ("/say", (int)XivChatType.Say, null)]);
+        formFactory.DrawUshortRadio(nameof(Configuration.DefaultOutputChatType), sameLine: true,
+            [("/echo", (ushort)XivChatType.Echo, null),
+                ("/party", (ushort)XivChatType.Party, null),
+                ("/alliance", (ushort)XivChatType.Alliance, null),
+                ("/say", (ushort)XivChatType.Say, null)]);
 
         ImGui.EndGroup();
         DrawTooltip("What chat channel the plugin will write to.");
