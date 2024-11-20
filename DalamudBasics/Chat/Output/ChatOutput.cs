@@ -81,7 +81,6 @@ namespace DalamudBasics.Chat.Output
         {
             if (type != XivChatType.ErrorMessage || message.Payloads.Count != 1 || message.Payloads[0].Type != PayloadType.RawText || sender.Payloads.Count != 0)
             {
-                logService.Debug("Message ignored");
                 return;
             }
 

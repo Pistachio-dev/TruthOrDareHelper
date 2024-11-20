@@ -2,6 +2,7 @@ using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
+using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using Model;
 using System.Collections.Generic;
@@ -22,11 +23,11 @@ namespace TruthOrDareHelper.Modules.Chat
         {
             foreach (PlayerPair p in pairs)
             {
-                StringBuilder s = new StringBuilder(RemoveWorldFromName(p.Winner.FullName));
+                StringBuilder s = new StringBuilder(p.Winner.FullName.WithoutWorldName());
                 if (p.Loser != null)
                 {
                     s.Append("->");
-                    s.Append(RemoveWorldFromName(p.Loser.FullName));
+                    s.Append(p.Loser.FullName.WithoutWorldName());
                 }
                 else
                 {
@@ -44,11 +45,6 @@ namespace TruthOrDareHelper.Modules.Chat
 
                 WriteChat(s.ToString());
             }
-        }
-
-        public static string RemoveWorldFromName(string name)
-        {
-            return name.Split("@").First();
         }
     }
 }

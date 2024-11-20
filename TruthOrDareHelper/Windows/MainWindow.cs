@@ -13,6 +13,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text;
+using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Settings;
@@ -34,6 +36,7 @@ public class MainWindow : PluginWindowBase, IDisposable
     private ITargetingService targetManager;
     private const string RoundSymbol = "♦";
     private const int RoundsToShowInHistory = 8;
+    private IRunnerActions runnerActions;
 
     public MainWindow(Plugin plugin, ILogService logService, IServiceProvider serviceProvider)
         : base(logService, "Truth or Dare helper")
@@ -52,6 +55,7 @@ public class MainWindow : PluginWindowBase, IDisposable
         toDChatOutput = serviceProvider.GetRequiredService<IToDChatOutput>();
         chatGui = serviceProvider.GetRequiredService<IClientChatGui>();
         targetManager = serviceProvider.GetRequiredService<ITargetingService>();
+        runnerActions = serviceProvider.GetRequiredService<IRunnerActions>();
 
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
@@ -60,140 +64,7 @@ public class MainWindow : PluginWindowBase, IDisposable
     }
 
     public void Dispose()
-    { }
-
-    private void Roll()
-    {
-        session.Round++;
-        // TODO: Before next roll, make sure to add the "truth wins, dare wins, etc" stats if available
-        List<PlayerPair> pairs = rollManager.RollStandard(session.PlayerInfo.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
-        foreach (var player in session.PlayerInfo.Select(p => p.Value))
-        {
-            if (pairs.FirstOrDefault(p => p.Winner == player) != null)
-            {
-                player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Winner));
-                AddConfirmationDetection(player.FullName.WithoutWorldName());
-            }
-            else if (pairs.FirstOrDefault(p => p.Loser == player) != null)
-            {
-                player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.Loser));
-                AddToDChoiceDetection(player.FullName.WithoutWorldName());
-            }
-            else
-            {
-                player.ParticipationRecords.Add(new RoundParticipationRecord(session.Round, RoundParticipation.NotParticipating));
-            }
-        }
-
-        session.PlayingPairs = pairs;
-        chatOutput.WriteChat($"-------------ROLLING--------------");
-        //chatOutput.WritePairs(pairs);
-    }
-
-    private void AddToDChoiceDetection(string playerName)
-    {
-        //ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectTruthOrDare);
-        //chatListener.AddConditionalDelegate(payload);
-        //log.Info($"Added ToD choice chat listener for {playerName}");
-    }
-
-    private void AddConfirmationDetection(string playerName)
-    {
-        //ConditionalDelegatePayload payload = new ConditionalDelegatePayload(null, null, playerName, DetectConfirmation);
-        //chatListener.AddConditionalDelegate(payload);
-        //log.Info($"Added ToD confirmation chat listener for {playerName}");
-    }
-
-    private bool DetectTruthOrDare(XivChatEntry chatChannel, DateTime timeStamp, string sender, string message)
-    {
-        PlayerPair? pair = session.PlayingPairs.FirstOrDefault(p => (p.Loser?.FullName.Contains(sender) ?? false));
-        if (pair == null)
-        {
-            // This would happen in case of rerrolls.
-            return true;
-        }
-
-        if (message.Equals("t", StringComparison.InvariantCultureIgnoreCase)
-            || message.Contains("truth", StringComparison.InvariantCultureIgnoreCase)
-            || message.Contains("truht", StringComparison.InvariantCultureIgnoreCase))
-        {
-            pair.ChallengeType = ChallengeType.Truth;
-            logService.Info($"{pair.Loser.FullName} chose TRUTH");
-            return true;
-        }
-        if (message.Equals("d", StringComparison.InvariantCultureIgnoreCase)
-            || message.Contains("dare", StringComparison.InvariantCultureIgnoreCase)
-            || message.Contains("daer", StringComparison.InvariantCultureIgnoreCase))
-        {
-            pair.ChallengeType = ChallengeType.Dare;
-            logService.Info($"{pair.Loser.FullName} chose DARE");
-
-            return true;
-        }
-        if (message.Contains("choice", StringComparison.InvariantCultureIgnoreCase)
-            || message.Contains("decide", StringComparison.InvariantCultureIgnoreCase)
-            || message.Contains("dealer", StringComparison.InvariantCultureIgnoreCase))
-        {
-            pair.ChallengeType = ChallengeType.DealersChoice;
-            logService.Info($"{pair.Loser.FullName} chose Dealer's choice");
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private bool DetectConfirmation(XivChatType chatChannel, DateTime timeStamp, string sender, string message)
-    {
-        PlayerPair? pair = session.PlayingPairs.FirstOrDefault(p => (p.Winner?.FullName.Contains(sender) ?? false));
-        if (pair == null)
-        {
-            // This would happen in case of rerrolls.
-            return true;
-        }
-
-        if (message.Contains(configuration.ConfirmationKeyword, StringComparison.InvariantCultureIgnoreCase))
-        {
-            pair.Done = true;
-            logService.Info($"{pair.Winner.FullName} confirms the answer as valid!");
-
-            if (session.PlayingPairs.FirstOrDefault(pair => !pair.Done) == null)
-            {
-                Roll();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private void ReRoll(PlayerPair pair, bool rerollTheLoser)
-    {
-        string rerrolledName = rerollTheLoser ? pair.Loser?.FullName ?? "Nobody? This should not be possible." : pair.Winner.FullName;
-        chatOutput.WriteChat($"Rerolling {rerrolledName}.");
-        PlayerInfo? replacement = rollManager.Reroll(session);
-        if (replacement == null)
-        {
-            return;
-        }
-
-        if (rerollTheLoser)
-        {
-            pair.Loser = replacement;
-        }
-        else
-        {
-            pair.Winner = replacement;
-        }
-
-        chatOutput.WriteChat($"{replacement.FullName} replaces {rerrolledName}.");
-
-        if (pair.ChallengeType != ChallengeType.None && rerollTheLoser)
-        {
-            AddToDChoiceDetection(rerrolledName.WithoutWorldName());
-        }
-    }
+    { } 
 
     protected override void SafeDraw()
     {
@@ -211,10 +82,7 @@ public class MainWindow : PluginWindowBase, IDisposable
             ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0.5f, 0, 0.7f));
             ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));
 
-            if (ImGui.Button("New round, rrrrrolll the dice!"))
-            {
-                Roll();
-            }
+            DrawActionButton(() => runnerActions.Roll(), "New round, rrrrrolll the dice!");
             ImGui.PopStyleColor(3);
             ImGui.PopID();
         }
@@ -224,18 +92,12 @@ public class MainWindow : PluginWindowBase, IDisposable
         ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0.5f, 0.6f));
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0, 0.5f, 0.7f));
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0, 0.5f, 0.7f));
-        if (ImGui.Button("Add target player to the game"))
-        {
-            AddTargetPlayer();
-        }
+        DrawActionButton(() => AddTargetPlayer(), "Add target player to the game");
         ImGui.PopStyleColor(3);
         ImGui.PopID();
 
         ImGui.SameLine();
-        if (ImGui.Button("Configuration"))
-        {
-            plugin.ToggleConfigUI();
-        }
+        DrawActionButton(() => plugin.ToggleConfigUI(), "Configuration");
 
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
@@ -310,12 +172,8 @@ public class MainWindow : PluginWindowBase, IDisposable
         if (!playerNotChosenByRoll)
         {
             ImGui.SameLine();
-            if (ImGui.Button($"##{row}{isLoser}"))
-            {
-                ReRoll(pair, isLoser);
-            }
-
-            Tooltip("Reroll player, if this one is afk or passes.");
+            DrawActionButton(() => runnerActions.ReRoll(pair, isLoser), $"##{row}{isLoser}");
+            DrawTooltip("Reroll player, if this one is afk or passes.");
         }
     }
 
@@ -354,7 +212,7 @@ public class MainWindow : PluginWindowBase, IDisposable
                     targetManager.RemovePlayerReference(player.FullName);
                     chatOutput.WriteChat($"{player.FullName} leaves the game.");
                 }
-                Tooltip("Click to target the player, shift + right click to remove them.");
+                DrawTooltip("Click to target the player, shift + right click to remove them.");
 
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted(player.Wins.ToString());
@@ -418,14 +276,7 @@ public class MainWindow : PluginWindowBase, IDisposable
         }
 
         ImGui.EndGroup();
-        Tooltip("Last 8 rounds. Green means being the asker, red the asked, gray not participating.");
+        DrawTooltip("Last 8 rounds. Green means being the asker, red the asked, gray not participating.");
     }
 
-    private void Tooltip(string tooltip)
-    {
-        if (ImGui.IsItemHovered())
-        {
-            ImGui.SetTooltip(tooltip);
-        }
-    }
 }

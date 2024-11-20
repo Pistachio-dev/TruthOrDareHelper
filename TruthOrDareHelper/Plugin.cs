@@ -13,6 +13,7 @@ using ECommons;
 using Microsoft.Extensions.DependencyInjection;
 using Model;
 using System;
+using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Commands;
 using TruthOrDareHelper.Modules.Chat.Interface;
@@ -54,7 +55,8 @@ public sealed class Plugin : IDalamudPlugin
 
         if (configuration.UseTestData)
         {
-            Session = Session.AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();            
+            //Session = Session.AddDummyPlayers().AddRandomSessionParticipation().MakePlayer3BeOnStreak();            
+            Session = Session.MacalaniaAndMe();
         }
 
         // TODO: remember to attach listener.
@@ -108,6 +110,7 @@ public sealed class Plugin : IDalamudPlugin
         serviceCollection.AddSingleton<IToDChatOutput, ToDChatOutput>();
         serviceCollection.AddSingleton<IToDChatListener, ToDChatListener>();
         serviceCollection.AddSingleton<ICommandRunner, CommandRunner>();
+        serviceCollection.AddSingleton<IRunnerActions, RunnerActions>();
         return serviceCollection.BuildServiceProvider();
     }
 
