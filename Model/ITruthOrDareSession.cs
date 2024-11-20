@@ -2,7 +2,7 @@ namespace Model
 {
     public interface ITruthOrDareSession
     {
-        Dictionary<string, PlayerInfo> PlayerInfo { get; set; }
+        Dictionary<string, PlayerInfo> PlayerData { get; set; }
         List<PlayerPair> PlayingPairs { get; set; }
         Guid SessionId { get; set; }
         public int Round { get; set; }

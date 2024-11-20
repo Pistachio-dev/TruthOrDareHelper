@@ -24,7 +24,7 @@ namespace TruthOrDareHelper.Modules.Rolling
             }
             Random rng = new Random();
             (var elegiblePlayers, pairsToForm) = GetElegiblePlayers(players, maxParticipationStreak, pairsToForm);
-            LinkedList<Roll> rolls = new LinkedList<Roll>(elegiblePlayers.Select(p => new Roll(p, rng.Next(100))).OrderBy(r => r.RollResult));
+            LinkedList<Roll> rolls = new LinkedList<Roll>(elegiblePlayers.Select(p => new Roll(p)).OrderBy(r => r.RollResult));
             foreach (var roll in rolls) { roll.Player.LastRollResult = roll.RollResult; }
 
             return GeneratePairs(rolls, pairsToForm);
@@ -89,13 +89,13 @@ namespace TruthOrDareHelper.Modules.Rolling
                 }
             }
 
-            if (alreadyUsed.Count == session.PlayerInfo.Count)
+            if (alreadyUsed.Count == session.PlayerData.Count)
             {
                 chatGui.PrintError($"Can't reroll, all players are already playing");
                 return null;
             }
 
-            List<PlayerInfo> elegiblePlayers = session.PlayerInfo.Select(kvp => kvp.Value).Where(p => !alreadyUsed.Contains(p)).ToList();
+            List<PlayerInfo> elegiblePlayers = session.PlayerData.Select(kvp => kvp.Value).Where(p => !alreadyUsed.Contains(p)).ToList();
             return elegiblePlayers[new Random().Next(elegiblePlayers.Count)];
         }
     }

@@ -10,7 +10,7 @@ namespace TruthOrDareHelper.TestData
             for (int i = 1; i < 9; i++)
             {
                 string playerName = "Player" + i;
-                session.PlayerInfo.Add(playerName, new PlayerInfo(playerName));
+                session.PlayerData.Add(playerName, new PlayerInfo(playerName));
             }
 
             return session;
@@ -28,7 +28,7 @@ namespace TruthOrDareHelper.TestData
         public static ITruthOrDareSession AddRandomSessionParticipation(this ITruthOrDareSession session)
         {
             Random rng = new Random();
-            foreach (var player in session.PlayerInfo.Values)
+            foreach (var player in session.PlayerData.Values)
             {
                 for (int i = 0; i < 8; i++)
                 {
@@ -67,9 +67,9 @@ namespace TruthOrDareHelper.TestData
 
         public static ITruthOrDareSession MakePlayer3BeOnStreak(this ITruthOrDareSession session)
         {
-            session.PlayerInfo["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2342, RoundParticipation.Winner));
-            session.PlayerInfo["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2343, RoundParticipation.Winner));
-            session.PlayerInfo["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2345, RoundParticipation.Loser));
+            session.PlayerData["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2342, RoundParticipation.Winner));
+            session.PlayerData["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2343, RoundParticipation.Winner));
+            session.PlayerData["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2345, RoundParticipation.Loser));
 
             return session;
         }

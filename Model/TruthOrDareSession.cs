@@ -6,25 +6,25 @@ namespace Model
 
         public int Round { get; set; } = 0;
 
-        public Dictionary<string, PlayerInfo> PlayerInfo { get; set; } = new();
+        public Dictionary<string, PlayerInfo> PlayerData { get; set; } = new();
 
         public List<PlayerPair> PlayingPairs { get; set; } = new();
 
         public PlayerInfo? GetPlayer(string name)
         {
-            return PlayerInfo.ContainsKey(name) ? PlayerInfo[name] : null;
+            return PlayerData.ContainsKey(name) ? PlayerData[name] : null;
         }
 
         public void AddNewPlayer(string fullName)
         {
-            PlayerInfo[fullName] = new PlayerInfo(fullName);
+            PlayerData[fullName] = new PlayerInfo(fullName);
         }
 
         public void TryRemovePlayer(string fullName)
         {
-            if (PlayerInfo.ContainsKey(fullName))
+            if (PlayerData.ContainsKey(fullName))
             {
-                PlayerInfo.Remove(fullName);
+                PlayerData.Remove(fullName);
             }
         }
 

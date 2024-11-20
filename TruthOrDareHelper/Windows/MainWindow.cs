@@ -74,7 +74,7 @@ public class MainWindow : PluginWindowBase, IDisposable
         DrawPlayerTable();
 
         ImGui.TextUnformatted($"Round {session.Round}");
-        if (session.PlayerInfo.Count >= 2)
+        if (session.PlayerData.Count >= 2)
         {
             ImGui.SameLine();
             ImGui.PushID("RollButton");
@@ -190,7 +190,7 @@ public class MainWindow : PluginWindowBase, IDisposable
 
             ImGui.TableHeadersRow();
 
-            foreach (var player in session.PlayerInfo.Values)
+            foreach (var player in session.PlayerData.Values)
             {
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
