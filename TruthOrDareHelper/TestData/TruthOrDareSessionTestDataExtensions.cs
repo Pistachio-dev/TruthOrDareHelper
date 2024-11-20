@@ -54,6 +54,17 @@ namespace TruthOrDareHelper.TestData
             return session;
         }
 
+        public static ITruthOrDareSession MacalaniaAndMe(this ITruthOrDareSession session)
+        {
+            string name1 = "Pistachio Herald@Omega";
+            string name2 = "Macalania Nut@Louisoix";
+            session.AddNewPlayer(name1);
+            session.AddNewPlayer(name2);
+            session.PlayingPairs.Add(new PlayerPair(session.GetPlayer(name1)!, session.GetPlayer(name2)));
+
+            return session;
+        }
+
         public static ITruthOrDareSession MakePlayer3BeOnStreak(this ITruthOrDareSession session)
         {
             session.PlayerInfo["Player3"].ParticipationRecords.Add(new RoundParticipationRecord(2342, RoundParticipation.Winner));

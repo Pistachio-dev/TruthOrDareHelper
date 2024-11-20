@@ -29,7 +29,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         {
             var relevantPair = session.PlayingPairs.First(pp => pp.Loser?.FullName == sender);
             relevantPair.ChallengeType = ChallengeType.Dare;
-            chatOutput.WriteChat($"{Plugin.MessageMark} {relevantPair.Winner.FullName.GetFirstName()} chooses Dare!");            
+            chatOutput.WriteChat($"{Plugin.MessageMark} {relevantPair.Loser?.FullName.GetFirstName()} chooses Dare!");            
         }
     }
 }

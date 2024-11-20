@@ -1,5 +1,7 @@
+using Dalamud.Utility;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Logging;
+using FFXIVClientStructs;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -30,7 +32,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         {
             bool isMatch = IsMatch(message.ToLower());
             if (!isMatch) { return false; }
-            bool isApplicable = IsApplicable(sender);
+            bool isApplicable = IsApplicable(sender);            
             if (!isApplicable) { return false;  }
             Execute(sender);
             return true;
@@ -44,7 +46,8 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
 
         protected bool IsMatchAsSeparateWordInPhrase(string word, string message)
         {
-            return new Regex($"[^\\w\\d\\s]*(\\w*)({word})(\\w*)[^\\w\\d\\s]*").Match(message).Success;
+            var matches = new Regex($"[^\\w\\d\\s]*(\\w*)({word})(\\w*)[^\\w\\d\\s]*").Match(message);
+            return matches.Success && matches.Groups[1].Value.IsNullOrWhitespace() && matches.Groups[3].Value.IsNullOrWhitespace();
         }
     }
 }
