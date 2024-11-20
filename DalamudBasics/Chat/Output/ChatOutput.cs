@@ -42,6 +42,16 @@ namespace DalamudBasics.Chat.Output
             this.clientState = clientState;
         }
 
+        public void WriteCommand(string command)
+        {
+            if (!command.StartsWith("/"))
+            {
+                command = "/" + command;
+            }
+
+            WriteChat(command, XivChatType.None);
+        }
+
         public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
         {
             if (!initialized)
@@ -175,7 +185,12 @@ namespace DalamudBasics.Chat.Output
                 lastMessageSent = payload;
 
                 var sanitizedText = ECommons.Automation.Chat.Instance.SanitiseText(payload.Message);
-                string fullChatString = $"{messagePrefix} {sanitizedText}";
+                string fullChatString = sanitizedText;
+                if (!messagePrefix.IsNullOrEmpty())
+                {
+                    fullChatString = $"{messagePrefix} {sanitizedText}";
+                }                 
+
                 ECommons.Automation.Chat.Instance.SendMessage(fullChatString);
                 if (configuration.LogOutgoingChatOutput)
                 {

@@ -17,6 +17,7 @@ using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Commands;
 using TruthOrDareHelper.Modules.Chat.Interface;
+using TruthOrDareHelper.Modules.Chat.Signs;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
@@ -111,6 +112,7 @@ public sealed class Plugin : IDalamudPlugin
         serviceCollection.AddSingleton<IToDChatListener, ToDChatListener>();
         serviceCollection.AddSingleton<ICommandRunner, CommandRunner>();
         serviceCollection.AddSingleton<IRunnerActions, RunnerActions>();
+        serviceCollection.AddSingleton<ISignManager, SignManager>();
         return serviceCollection.BuildServiceProvider();
     }
 
@@ -121,7 +123,7 @@ public sealed class Plugin : IDalamudPlugin
         serviceProvider.GetRequiredService<IChatListener>().InitializeAndRun(MessageMark);
         serviceProvider.GetRequiredService<IToDChatOutput>().AttachToGameLogicLoop(framework);
         serviceProvider.GetRequiredService<HookManager>();
-        serviceProvider.GetRequiredService<IToDChatListener>().AttachCommandDetector();
+        serviceProvider.GetRequiredService<IToDChatListener>().AttachCommandDetector();        
     }
 
     private void OnCommand(string command, string args)

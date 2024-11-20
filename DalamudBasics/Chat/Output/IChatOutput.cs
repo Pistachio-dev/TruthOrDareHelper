@@ -10,5 +10,7 @@ namespace DalamudBasics.Chat.Output
         void SendTell(string message, string playerFullName, string playerHomeWorld, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0);
 
         void AttachToGameLogicLoop(IFramework framework);
+
+        void WriteCommand(string command);
     }
 }
