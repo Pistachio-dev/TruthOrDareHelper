@@ -53,6 +53,12 @@ public class ConfigWindow : PluginWindowBase, IDisposable
         ImGui.EndGroup();
         DrawTooltip("What chat channel the plugin will write to.");
 
+        ImGui.TextUnformatted("Dice rolling type");
+        formFactory.DrawRadio(nameof(Configuration.RollingType), sameLine: true,
+            [("Auto normal", (int)RollingType.PluginRng, "The plugin does the rolls instantly, every number has the same probability."),
+            ("Auto weighted", (int)RollingType.PluginWeightedRng, "The plugin does the rolls instantly, and people that has participated less than average get progressively higher chances of being selected")
+            ]);
+
         DrawSectionHeader("Game");
         formFactory.AddValidationText(formFactory.DrawIntInput("How many pairs are formed in a round", nameof(Configuration.SimultaneousPlays), EnforcePositiveInt));
         DrawTooltip("For big groups, you can have as many pairs of asker->asked as you want on every round.");

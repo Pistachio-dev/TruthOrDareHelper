@@ -18,16 +18,34 @@ namespace TruthOrDareHelper.Modules.Rolling
 
         public List<PlayerPair> RollStandard(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm)
         {
+            CheckPlayerAmount(players);
+            (var elegiblePlayers, pairsToForm) = GetElegiblePlayers(players, maxParticipationStreak, pairsToForm);
+            LinkedList<Roll> rolls = new LinkedList<Roll>(elegiblePlayers.Select(p => new Roll(p)).OrderBy(r => r.RollResult));
+            SaveRolls(rolls);
+
+            return GeneratePairs(rolls, pairsToForm);
+        }
+
+        public List<PlayerPair> RollWeighted(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm)
+        {
+            CheckPlayerAmount(players);
+            (var elegiblePlayers, pairsToForm) = GetElegiblePlayers(players, maxParticipationStreak, pairsToForm);
+            LinkedList<Roll> rolls = new LinkedList<Roll>(elegiblePlayers.Select(p => new WeightedRoll(p, players.Count)).OrderBy(r => r.RollResult));
+            SaveRolls(rolls);
+
+            return GeneratePairs(rolls, pairsToForm);
+        }
+
+        private void SaveRolls(ICollection<Roll> rolls)
+        {
+            foreach (var roll in rolls) { roll.Player.LastRollResult = roll.RollResult; }
+        }
+        private void CheckPlayerAmount(List<PlayerInfo> players)
+        {
             if (players.Count < 2)
             {
                 throw new Exception("Can't roll without at least two players");
             }
-            Random rng = new Random();
-            (var elegiblePlayers, pairsToForm) = GetElegiblePlayers(players, maxParticipationStreak, pairsToForm);
-            LinkedList<Roll> rolls = new LinkedList<Roll>(elegiblePlayers.Select(p => new Roll(p)).OrderBy(r => r.RollResult));
-            foreach (var roll in rolls) { roll.Player.LastRollResult = roll.RollResult; }
-
-            return GeneratePairs(rolls, pairsToForm);
         }
 
         private List<PlayerPair> GeneratePairs(LinkedList<Roll> rolls, int maxPairAmount)

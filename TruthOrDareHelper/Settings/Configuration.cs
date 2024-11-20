@@ -8,7 +8,7 @@ public class Configuration : IToDConfiguration
 {
     public int Version { get; set; } = 0;
 
-    public RollingType RollingType { get; set; } = RollingType.PluginRng;
+    public RollingType RollingType { get; set; } = RollingType.PluginWeightedRng;
 
     public int SimultaneousPlays { get; set; } = 3;
 

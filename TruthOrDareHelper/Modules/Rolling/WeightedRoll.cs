@@ -17,20 +17,26 @@ namespace TruthOrDareHelper.Modules.Rolling
         // The calculation is: (winPercentage / (1 / numberOfPlayers) * (how much we'd have to add/remove to get the lowest/highest score guaranteed);        
         private int CalculateWeightedRoll()
         {
-            int naturalRoll = rng.Next(1, RollExclusiveCeiling);            
+            int naturalRoll = rng.Next(1, RollExclusiveCeiling);
+
+            if (Player.ParticipationCounter.Total == 0)
+            {
+                return naturalRoll;
+            }
+            
             double expectedParticipationRateForRole = 1f / numberOfPlayers;
             double startingWeight = CalculateStartingWeight();
             if (naturalRoll >= RollExclusiveCeiling / 2)
             {
                 double winPercentage = Player.ParticipationCounter.Wins / (double)Player.ParticipationCounter.Total;
-                double weight = CalculateWeight(winPercentage, expectedParticipationRateForRole, naturalRoll);
-                return (int)(naturalRoll - weight);
+                double weight = CalculateWeight(winPercentage, expectedParticipationRateForRole, RollExclusiveCeiling - naturalRoll) * startingWeight;
+                return (int)(naturalRoll + weight);
             }
             if (naturalRoll < RollExclusiveCeiling / 2)
             {
                 double lossPercentage = Player.ParticipationCounter.Losses / (double)Player.ParticipationCounter.Total;
-                double weight = CalculateWeight(lossPercentage, expectedParticipationRateForRole, RollExclusiveCeiling - naturalRoll);
-                return (int)(naturalRoll + weight);
+                double weight = CalculateWeight(lossPercentage, expectedParticipationRateForRole, naturalRoll) * startingWeight;
+                return (int)(naturalRoll - weight);
             }
 
             return naturalRoll;
@@ -46,7 +52,12 @@ namespace TruthOrDareHelper.Modules.Rolling
         {
             int roundsBeforeGuaranteedRole = (int)(numberOfPlayers * 1.5);
             int cappedRoundsParticipated = Math.Min(Player.ParticipationCounter.Total, roundsBeforeGuaranteedRole);
-            return cappedRoundsParticipated/Player.ParticipationCounter.Total;
+            if (Player.ParticipationCounter.Total == 0)
+            {
+                return 0;
+            }
+
+            return cappedRoundsParticipated/roundsBeforeGuaranteedRole;
         }
     }
 }

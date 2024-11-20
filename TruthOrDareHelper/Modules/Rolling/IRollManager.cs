@@ -8,5 +8,6 @@ namespace TruthOrDareHelper.Modules.Rolling
         PlayerInfo? Reroll(ITruthOrDareSession session);
 
         List<PlayerPair> RollStandard(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm);
+        List<PlayerPair> RollWeighted(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm);
     }
 }

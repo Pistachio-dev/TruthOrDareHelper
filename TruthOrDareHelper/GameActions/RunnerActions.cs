@@ -1,3 +1,4 @@
+using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
@@ -18,10 +19,11 @@ namespace TruthOrDareHelper.GameActions
         private readonly ISignManager signManager;
         private readonly ITargetingService targetingManager;
         private readonly ILogService log;
+        private readonly IClientChatGui chatGui;
         private readonly Configuration configuration;
 
         public RunnerActions(ITruthOrDareSession session, IConfigurationService<Configuration> configService, IToDChatOutput chatOutput, IRollManager rollManager, ISignManager signManager,
-            ITargetingService targetingManager, ILogService log)
+            ITargetingService targetingManager, ILogService log, IClientChatGui chatGui)
         {
             this.session = session;
             this.chatOutput = chatOutput;
@@ -29,6 +31,7 @@ namespace TruthOrDareHelper.GameActions
             this.signManager = signManager;
             this.targetingManager = targetingManager;
             this.log = log;
+            this.chatGui = chatGui;
             this.configuration = configService.GetConfiguration();
         }
 
@@ -37,7 +40,18 @@ namespace TruthOrDareHelper.GameActions
             signManager.ClearMarks(session.PlayingPairs);
             session.Round++;
             
-            List<PlayerPair> pairs = rollManager.RollStandard(session.PlayerData.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
+            switch (configuration.RollingType)
+            {
+                case RollingType.PluginRng:
+                    session.PlayingPairs = rollManager.RollStandard(session.PlayerData.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
+                    break;
+                case RollingType.PluginWeightedRng:
+                    session.PlayingPairs = rollManager.RollWeighted(session.PlayerData.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
+                    break;
+                default:
+                    chatGui.Print($"Rolling type not supported");
+                    return;
+            }
             AddParticipationRecords(session.PlayerData.Select(p => p.Value), session.PlayingPairs);
             IncreaseParticipationCounters();
             signManager.ApplyMarks(session.PlayingPairs);
@@ -45,7 +59,7 @@ namespace TruthOrDareHelper.GameActions
             string optionalS = session.PlayingPairs.Count > 1 ? "S" : string.Empty;
             chatOutput.WriteChat($"-------------ROLLING NEW COUPLE{optionalS}--------------");
             chatOutput.WritePairs(session.PlayingPairs);
-        }        
+        }
 
         public void ReRoll(PlayerPair pair, bool rerollTheLoser)
         {
