@@ -119,7 +119,7 @@ public sealed class Plugin : IDalamudPlugin
         IFramework framework = serviceProvider.GetRequiredService<IFramework>();
         serviceProvider.GetRequiredService<ILogService>().AttachToGameLogicLoop(framework);
         serviceProvider.GetRequiredService<IChatListener>().InitializeAndRun(MessageMark);
-        serviceProvider.GetRequiredService<IChatOutput>().AttachToGameLogicLoop(framework);
+        serviceProvider.GetRequiredService<IToDChatOutput>().AttachToGameLogicLoop(framework);
         serviceProvider.GetRequiredService<HookManager>();
         serviceProvider.GetRequiredService<IToDChatListener>().AttachCommandDetector();
     }

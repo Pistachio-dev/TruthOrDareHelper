@@ -6,6 +6,7 @@ namespace Model
         public ParticipationCounter TruthParticipation { get; set; }
         public ParticipationCounter DareParticipation { get; set; }
         public List<RoundParticipationRecord> ParticipationRecords { get; set; } = new();
+        public int LastRollResult { get; set; }
 
         public int Wins => ParticipationRecords.Where(x => x.Participation == RoundParticipation.Winner).Count();
         public int Losses => ParticipationRecords.Where(x => x.Participation == RoundParticipation.Loser).Count();

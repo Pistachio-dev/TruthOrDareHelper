@@ -24,14 +24,18 @@ namespace TruthOrDareHelper.Modules.Chat
             foreach (PlayerPair p in pairs)
             {
                 StringBuilder s = new StringBuilder(p.Winner.FullName.WithoutWorldName());
+                s.Append("  ");
+                s.Append(p.Winner.LastRollResult);
                 if (p.Loser != null)
                 {
                     s.Append("->");
                     s.Append(p.Loser.FullName.WithoutWorldName());
+                    s.Append("  ");
+                    s.Append(p.Loser.LastRollResult);
                 }
                 else
                 {
-                    s.Append(", choose your victim.");
+                    s.Append(", choose your \"victim\".");
                 }
 
                 if (p.ChallengeType != ChallengeType.None)

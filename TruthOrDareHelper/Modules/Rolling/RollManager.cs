@@ -1,4 +1,5 @@
 using DalamudBasics.Chat.ClientOnlyDisplay;
+using Lumina.Excel.Sheets;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -17,11 +18,45 @@ namespace TruthOrDareHelper.Modules.Rolling
 
         public List<PlayerPair> RollStandard(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm)
         {
+            if (players.Count < 2)
+            {
+                throw new Exception("Can't roll without at least two players");
+            }
             Random rng = new Random();
-            List<PlayerInfo> elegiblePlayers = players.Where(p => !p.IsOnStreak(maxParticipationStreak)).ToList();
-            List<Roll> winRolls = elegiblePlayers.Select(p => new Roll(p, rng.Next(100))).OrderBy(r => r.RollResult).ToList();
-            List<Roll> lossRolls = elegiblePlayers.Select(p => new Roll(p, rng.Next(100))).OrderBy(r => r.RollResult).ToList();
+            (var elegiblePlayers, pairsToForm) = GetElegiblePlayers(players, maxParticipationStreak, pairsToForm);
+            LinkedList<Roll> rolls = new LinkedList<Roll>(elegiblePlayers.Select(p => new Roll(p, rng.Next(100))).OrderBy(r => r.RollResult));
+            foreach (var roll in rolls) { roll.Player.LastRollResult = roll.RollResult; }
 
+            return GeneratePairs(rolls);
+        }
+
+        private List<PlayerPair> GeneratePairs(LinkedList<Roll> rolls)
+        {
+            List<PlayerPair> pairs = new();
+            List<LinkedListNode<Roll>> alreadyTaken = new();
+            LinkedListNode<Roll>? winnerPointer = rolls.Last;
+            LinkedListNode<Roll>? loserPointer = rolls.First;
+            while (true)
+            {
+                while (alreadyTaken.Contains(loserPointer!))
+                {
+                    loserPointer = loserPointer!.Next;
+                    if (loserPointer == winnerPointer) { return pairs; }
+                }
+                while (alreadyTaken.Contains(winnerPointer!))
+                {
+                    winnerPointer = winnerPointer!.Previous;
+                    if (winnerPointer == loserPointer) { return pairs; }
+                }
+
+                alreadyTaken.Add(loserPointer!);
+                alreadyTaken.Add(winnerPointer!);
+                pairs.Add(new PlayerPair(winnerPointer!.Value.Player, loserPointer!.Value.Player));
+            }
+        }
+        private (List<PlayerInfo> elegiblePlayers, int pairsToForm) GetElegiblePlayers(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm)
+        {
+            List<PlayerInfo> elegiblePlayers = players.Where(p => !p.IsOnStreak(maxParticipationStreak)).ToList();
             if (elegiblePlayers.Count < pairsToForm * 2)
             {
                 chatGui.PrintError($"Not enough players to form {pairsToForm} pairs, reducing amount to {elegiblePlayers.Count / 2}.");
@@ -34,18 +69,7 @@ namespace TruthOrDareHelper.Modules.Rolling
                 }
             }
 
-            List<PlayerPair> pairs = new();
-            List<PlayerInfo> alreadyTaken = new();
-            for (int i = 0; i < pairsToForm; i++)
-            {
-                PlayerInfo winner = winRolls.First(p => !alreadyTaken.Contains(p.Player)).Player;
-                alreadyTaken.Add(winner);
-                PlayerInfo loser = lossRolls.First(p => !alreadyTaken.Contains(p.Player)).Player;
-                alreadyTaken.Add(loser);
-                pairs.Add(new PlayerPair(winner, loser, DateTime.Now));
-            }
-
-            return pairs;
+            return (elegiblePlayers, pairsToForm);
         }
 
         public PlayerInfo? Reroll(ITruthOrDareSession session)

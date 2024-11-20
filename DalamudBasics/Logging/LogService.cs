@@ -29,7 +29,7 @@ namespace DalamudBasics.Logging
         {
             if (!initialized)
             {
-                pluginLog.Error($"You forgot to call {nameof(AttachToGameLogicLoop)}!");
+                pluginLog.Error($"You forgot to call {nameof(LogService)}.{nameof(AttachToGameLogicLoop)}!");
                 return;
             }
 

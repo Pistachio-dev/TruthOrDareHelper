@@ -67,7 +67,7 @@ namespace DalamudBasics.Chat.Output
 
         private void NotifyNotAttachedToGame()
         {
-            logService.Error($"You forgot to call {nameof(AttachToGameLogicLoop)}!");
+            logService.Error($"You forgot to call {this.GetType()}.{nameof(AttachToGameLogicLoop)}!");
         }
 
         public void AttachToGameLogicLoop(IFramework framework)
