@@ -45,10 +45,11 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(375, 330),
+            MinimumSize = new Vector2(700, 330),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
+        this.SizeCondition = ImGuiCond.Always;
         this.plugin = plugin;
         session = serviceProvider.GetRequiredService<ITruthOrDareSession>();
         rollManager = serviceProvider.GetRequiredService<IRollManager>();
@@ -60,6 +61,40 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         prompter = serviceProvider.GetRequiredService<IPrompter>();
 
         InitializeFormFactory();
+    }
+
+    private void GoLalaMode()
+    {
+        compactMode = true;
+        SizeConstraints = new WindowSizeConstraints
+        {
+            MinimumSize = new Vector2(100, 100),
+            MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
+        };
+    }
+
+    private void GoBigMode()
+    {
+        compactMode = false;
+        SizeConstraints = new WindowSizeConstraints
+        {
+            MinimumSize = new Vector2(700, 330),
+            MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
+        };
+    }
+
+    private void ToggleSize()
+    {
+        if (compactMode)
+        {
+            compactMode = false;
+            GoBigMode();
+        }
+        else
+        {
+            compactMode = true;
+            GoLalaMode();
+        }
     }
 
     public void Dispose()
@@ -123,7 +158,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         DrawTooltip("Prompts are ideas players can get if they can't come with one themselves.");
 
         ImGui.SameLine();
-        DrawActionButton(() => compactMode = !compactMode, compactMode ? " Grow" : " Lala mode");
+        DrawActionButton(() => ToggleSize(), compactMode ? " Grow" : " Lala mode");
 
         ImGui.SameLine();
         DrawActionButton(() => openHelpPopup = true, "");
