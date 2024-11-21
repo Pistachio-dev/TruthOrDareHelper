@@ -88,6 +88,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));
 
             DrawActionButton(() => runnerActions.Roll(), " Roll a new round ");
+            DrawTooltip("Start a new round and form new player pairs. Rolling type can be changed in Configuration.");
             ImGui.PopStyleColor(3);
             ImGui.PopID();
         }
@@ -97,10 +98,20 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0.5f, 0.6f));
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0, 0.5f, 0.7f));
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0, 0.5f, 0.7f));
-        DrawWithinDisableBlock(targetManager.IsTargetingAPlayer(), () =>
+        bool targetingAPlayer = targetManager.IsTargetingAPlayer();
+        DrawWithinDisableBlock(targetingAPlayer, () =>
         {
             DrawActionButton(() => AddTargetPlayer(), " Add target to game");
         });
+        if (!targetingAPlayer)
+        {
+            DrawTooltip("Add your target to the players. This only works if you target a player.");
+        }
+        else
+        {
+            DrawTooltip("Add your target to the players.");
+        }
+        
         ImGui.PopStyleColor(3);
         ImGui.PopID();
 
