@@ -196,7 +196,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private void DrawPlayerTable()
     {
         const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
-        if (ImGui.BeginTable("##PlayerTable", 6, flags))
+        if (ImGui.BeginTable("##PlayerTable", 7, flags))
         {
             ImGui.TableSetupColumn("Player", ImGuiTableColumnFlags.WidthStretch, 0.8f);
             ImGui.TableSetupColumn("NSFW?", ImGuiTableColumnFlags.WidthFixed, 0.2f);
@@ -204,6 +204,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.1f);
             ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
             ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+            ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.1f);
 
             ImGui.TableHeadersRow();
 
@@ -252,6 +253,13 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 {
                     ImGui.TextColored(Gray, "x");
                 }
+
+                ImGui.TableNextColumn();
+                if (ImGui.Button($"##{player.FullName}"))
+                {
+                    TriggerTimersPopupOpening(player);
+                }
+                DrawTooltip("Start a timer");
             }
             
             ImGui.EndTable();
