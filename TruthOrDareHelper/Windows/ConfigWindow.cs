@@ -69,6 +69,9 @@ public class ConfigWindow : PluginWindowBase, IDisposable
         formFactory.DrawTextInput("Confirmation keyword", nameof(Configuration.ConfirmationKeyword), 50);
         DrawTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");
 
+        formFactory.DrawCheckbox("Put marks on players", nameof(Configuration.MarkPlayers));
+        DrawTooltip("If true, party markers will be applied to playes depending on their role");
+
         DrawSectionHeader("Default player preferences");
         formFactory.DrawComboBox("Truth", nameof(Configuration.DefaultTruthAcceptance), ["None", "SFW only", "NSFW only", "Both SFW and NSFW"]);
         formFactory.DrawComboBox("Dare", nameof(Configuration.DefaultDareAcceptance), ["None", "SFW only", "NSFW only", "Both SFW and NSFW"]);

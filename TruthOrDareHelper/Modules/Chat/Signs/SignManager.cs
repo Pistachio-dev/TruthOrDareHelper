@@ -1,10 +1,12 @@
 using DalamudBasics.Chat.Output;
+using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
 using Model;
 using System.Collections.Generic;
 using System.Linq;
 using TruthOrDareHelper.Modules.Chat.Interface;
+using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Modules.Chat.Signs
 {
@@ -29,16 +31,22 @@ namespace TruthOrDareHelper.Modules.Chat.Signs
         private readonly ILogService logService;
         private readonly ITargetingService targetingService;
         private readonly IToDChatOutput chatOutput;
+        private readonly Configuration configuration;
 
-        public SignManager(ILogService logService, ITargetingService targetingService, IToDChatOutput chatOutput)
+        public SignManager(ILogService logService, ITargetingService targetingService, IToDChatOutput chatOutput, IConfigurationService<Configuration> configService)
         {
             this.logService = logService;
             this.targetingService = targetingService;
             this.chatOutput = chatOutput;
+            this.configuration = configService.GetConfiguration();
         }
 
         public void ClearMarks(List<PlayerPair> markedPlayerPairs)
         {
+            if (!configuration.MarkPlayers)
+            {
+                return;
+            }
             foreach (var pair in markedPlayerPairs)
             {
                 UnmarkPlayer(pair.Winner);
@@ -53,6 +61,11 @@ namespace TruthOrDareHelper.Modules.Chat.Signs
 
         public void ApplyMarks(List<PlayerPair> playerPairsToMark)
         {
+            if (!configuration.MarkPlayers)
+            {
+                return;
+            }
+
             foreach (var pair in playerPairsToMark)
             {
                 MarkPlayer(pair.Winner, true);
@@ -63,14 +76,23 @@ namespace TruthOrDareHelper.Modules.Chat.Signs
             }
         }
 
-        public void MarkPlayer(PlayerInfo player, bool isWinner)
+        public void UnmarkPlayer(PlayerInfo player)
         {
-            chatOutput.WriteCommand(GetMarkCommand(isWinner), TargetCommandDelay, player.FullName);            
+            if (!configuration.MarkPlayers)
+            {
+                return;
+            }
+            chatOutput.WriteCommand(ClearMarkCommand, TargetCommandDelay, player.FullName);
         }
 
-        public void UnmarkPlayer(PlayerInfo player)
-        {            
-            chatOutput.WriteCommand(ClearMarkCommand, TargetCommandDelay, player.FullName);
+        public void MarkPlayer(PlayerInfo player, bool isWinner)
+        {
+            if (!configuration.MarkPlayers)
+            {
+                return;
+            }
+
+            chatOutput.WriteCommand(GetMarkCommand(isWinner), TargetCommandDelay, player.FullName);
         }
 
         private string GetMarkCommand(bool isForWinner)
