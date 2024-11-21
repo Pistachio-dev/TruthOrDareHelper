@@ -1,12 +1,7 @@
-using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
 using Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Settings;
 
@@ -21,7 +16,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
 
         private ChatCommandBase[] commands;
 
-        public CommandRunner(ITruthOrDareSession session, IConfigurationService<Configuration> configurationService, IToDChatOutput chatOutput, ILogService logService)
+        public CommandRunner(IRunnerActions runnerActions, ITruthOrDareSession session, IConfigurationService<Configuration> configurationService, IToDChatOutput chatOutput, ILogService logService)
         {
             this.session = session;
             this.configuration = configurationService.GetConfiguration();
@@ -35,6 +30,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
                 new DealersChoiceCommand(session, configuration, chatOutput, logService),
                 new ConflipCommand(session, configuration, chatOutput, logService),
                 new PasswordCommand(session, configuration, chatOutput, logService),
+                new PromptCommand(runnerActions, session, configuration, chatOutput, logService)
             ];
         }
 
