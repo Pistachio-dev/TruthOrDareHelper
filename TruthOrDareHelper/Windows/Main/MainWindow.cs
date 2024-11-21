@@ -220,10 +220,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 DrawTooltip("Click to target the player, shift + right click to remove them.");
 
                 ImGui.TableNextColumn();
-                DrawActionButton(() => {
-                    playerSelectedForTopicsAcceptedMenu = player;
-                    openAcceptedTopicsDialogue = true;
-                    }, $"Check##{player.FullName}");                
+                DrawAcceptedTopicsCell(player);
 
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted(player.Wins.ToString());
