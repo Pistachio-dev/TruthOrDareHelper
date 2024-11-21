@@ -204,7 +204,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.1f);
             ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
             ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
-            ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.1f);
+            ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.2f);
 
             ImGui.TableHeadersRow();
 
@@ -255,6 +255,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 }
 
                 ImGui.TableNextColumn();
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1, 0));
                 if (ImGui.Button($"##{player.FullName}"))
                 {
                     TriggerTimersPopupOpening(player);
@@ -262,6 +263,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 DrawTooltip("Start a timer");
                 ImGui.SameLine();
                 DrawAcceptedTopicsPopupButton(player);
+                ImGui.PopStyleVar();
             }
             
             ImGui.EndTable();
@@ -293,6 +295,8 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     {
         var roundsToSkip = Math.Max(player.ParticipationRecords.Count - RoundsToShowInHistory, 0);
         ImGui.BeginGroup();
+        bool firstIteration = true;
+        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1, 0));
         foreach (var roundRecord in player.ParticipationRecords.Skip(roundsToSkip))
         {
             var color = roundRecord.Participation switch
@@ -301,10 +305,15 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 RoundParticipation.Loser => Red,
                 _ => Gray,
             };
-            ImGui.SameLine();
+            if (!firstIteration)
+            {
+                ImGui.SameLine();                
+            }
+            
             ImGui.TextColored(color, RoundSymbol);
+            firstIteration = false;
         }
-
+        ImGui.PopStyleVar();
         ImGui.EndGroup();
         DrawTooltip("Last 8 rounds. Green means being the asker, red the asked, gray not participating.");
     }
