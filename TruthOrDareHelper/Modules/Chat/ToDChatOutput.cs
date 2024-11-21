@@ -7,7 +7,6 @@ using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
 using Model;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using TruthOrDareHelper.Modules.Chat.Interface;
 
@@ -18,6 +17,16 @@ namespace TruthOrDareHelper.Modules.Chat
         public ToDChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
             : base(configuration,logService, chatGui, clientState, targetingService)
         {
+        }
+
+        public void ChatSoundWakeUp(PlayerInfo player)
+        {
+            WriteChat($"{player.FullName.WithoutWorldName()}, it's your turn! <se.9>");
+        }
+
+        public void TellWakeUp(PlayerInfo player)
+        {
+            WriteChat($"{player.FullName} It's your turn!", GetOutputTypeForTell());
         }
 
         public void WritePairs(List<PlayerPair> pairs)

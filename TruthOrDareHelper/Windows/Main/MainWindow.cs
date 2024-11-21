@@ -255,7 +255,9 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 }
 
                 ImGui.TableNextColumn();
+                Vector2 buttonSize = new Vector2(18, 18);
                 ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1, 0));
+                ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(1, 0));
                 if (ImGui.Button($"##{player.FullName}"))
                 {
                     TriggerTimersPopupOpening(player);
@@ -263,7 +265,25 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 DrawTooltip("Start a timer");
                 ImGui.SameLine();
                 DrawAcceptedTopicsPopupButton(player);
-                ImGui.PopStyleVar();
+                ImGui.SameLine();
+                
+
+                ImGui.PushID($"SmallWakeUpButton#{player.FullName}");
+                ImGui.SameLine();
+                if (ImGui.Button($"!", buttonSize))
+                {
+                    runnerActions.ChatSoundWakeUp(player);
+                }
+                DrawTooltip("Play wake up sound");
+
+                ImGui.PushID($"BigWakeUpButton#{player.FullName}");
+                ImGui.SameLine();
+                if (ImGui.Button("!!", buttonSize))
+                {
+                    runnerActions.TellWakeUp(player);
+                }
+                DrawTooltip("Send a wake up /tell");
+                ImGui.PopStyleVar(2);
             }
             
             ImGui.EndTable();

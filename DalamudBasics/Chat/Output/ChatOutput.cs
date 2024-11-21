@@ -132,7 +132,12 @@ namespace DalamudBasics.Chat.Output
 
             return false;
         }
-        
+
+        protected XivChatType GetOutputTypeForTell()
+        {
+            return configuration.DefaultOutputChatType == XivChatType.Echo ? XivChatType.Echo : XivChatType.TellOutgoing;
+        }
+
         private void Tick(IFramework framework)
         {
             bool arellRetryMessagesProcessed = SendMessagesFromQueueAllowedOnThisTick(retryQueue);

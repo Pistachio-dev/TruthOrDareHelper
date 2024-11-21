@@ -45,6 +45,7 @@ namespace TruthOrDareHelper.GameActions
 
         public void Roll()
         {
+            log.Info($"[ACTION] Create timer: Roll. Type: {configuration.RollingType}");
             signManager.ClearMarks(session.PlayingPairs);
             session.Round++;
             
@@ -71,6 +72,7 @@ namespace TruthOrDareHelper.GameActions
 
         public void ReRoll(PlayerPair pair, bool rerollTheLoser)
         {
+            log.Info($"[ACTION] Create timer: Reroll.");
             PlayerInfo? replaced = rerollTheLoser ? pair.Loser : pair.Winner;
             string rerrolledName = replaced?.FullName ?? "Nobody? This should not be possible.";
             chatOutput.WriteChat($"Rerolling {rerrolledName}.");
@@ -101,6 +103,7 @@ namespace TruthOrDareHelper.GameActions
 
         public void CreateAndStartTimer(PlayerInfo target, string description, int minutes, int seconds)
         {
+            log.Info($"[ACTION] Create timer: stopwatch based.");
             var duration = new TimeSpan(0, minutes, seconds);
             var timer = new TimerTimedAction(duration, target, description, CreateTimedActionCallback(target, description));
             timeKeeper.AddTimedAction(timer);
@@ -108,6 +111,7 @@ namespace TruthOrDareHelper.GameActions
 
         public void CreateAndStartTimer(PlayerInfo target, string description, int roundAmount)
         {
+            log.Info($"[ACTION] Create timer: round based.");
             var timer = new RoundTimedAction(session.Round, roundAmount, target, description, CreateTimedActionCallback(target, description));
             timeKeeper.AddTimedAction(timer);
         }
@@ -121,6 +125,18 @@ namespace TruthOrDareHelper.GameActions
             {
                 chatOutput.WriteChat($"{target.FullName.GetFirstName()}, you can stop {descriptionSection}now. <se.7>");
             };
+        }
+
+        public void ChatSoundWakeUp(PlayerInfo player)
+        {
+            log.Info($"[ACTION] Wake up through chat sound. Player: {player.FullName}.");
+            chatOutput.ChatSoundWakeUp(player);
+        }
+
+        public void TellWakeUp(PlayerInfo player)
+        {
+            log.Info($"[ACTION] Wake up through tell. Player: {player.FullName}.");
+            chatOutput.TellWakeUp(player);
         }
 
         private void AddParticipationRecords(IEnumerable<PlayerInfo> players, List<PlayerPair> pairs)
