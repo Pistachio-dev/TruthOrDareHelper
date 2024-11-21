@@ -34,31 +34,38 @@ namespace TruthOrDareHelper.Windows.Main
             }
             if (ImGui.BeginPopup($"{TimersPopupName}"))
             {
-                var player = playerSelectedAsTimerTarget;
-                ImGui.TextUnformatted("Target: ");
+                var player = playerSelectedAsTimerTarget;               
+                ImGui.TextColored(Yellow, player?.FullName ?? "Nobody");                
                 ImGui.SameLine();
-                ImGui.TextColored(Yellow, player?.FullName ?? "Nobody");
-                ImGui.InputTextWithHint("Description", "What is this timing, optional", ref timedActionDescription, 240);
-                ImGui.TextUnformatted("Timer type: ");
+                ImGui.TextUnformatted("Target");
+
+                ImGui.PushItemWidth(ImGui.GetFontSize() * 15);
+                ImGui.InputTextWithHint("Description", "What is this timer for (optional)", ref timedActionDescription, 240);
+                ImGui.PopItemWidth();
+                
+                ImGui.RadioButton("Count rounds", ref timedActionType, (int)TimedActionType.Rounds);                                
                 ImGui.SameLine();
-                ImGui.RadioButton("Rounds", ref timedActionType, (int)TimedActionType.Rounds);
-                ImGui.SameLine();
-                ImGui.RadioButton("Time", ref timedActionType, (int)TimedActionType.Time);
+                ImGui.RadioButton("Stopwatch", ref timedActionType, (int)TimedActionType.Time);
+
                 if (timedActionType == (int)TimedActionType.Rounds)
                 {
+                    ImGui.PushItemWidth(ImGui.GetFontSize() * 6);
                     ImGui.InputInt("How many rounds?", ref timedActionRounds, 1, 1);
+                    ImGui.PopItemWidth();
                 }
                 else if (timedActionType == (int)TimedActionType.Time)
                 {
+                    ImGui.PushItemWidth(ImGui.GetFontSize() * 6);
                     ImGui.InputInt("Minutes", ref timedActionMinutes, 1, 1);
                     ImGui.InputInt("Seconds", ref timedActionSeconds, 1, 1);
+                    ImGui.PopItemWidth();
                 }
                 if (ImGui.Button($"Create timer##{player?.FullName ?? "nobody"}"))
                 {
                     CreateTimer();
                     ImGui.CloseCurrentPopup();
-                }
-
+                }              
+                
                 ImGui.EndPopup();
             }
         }

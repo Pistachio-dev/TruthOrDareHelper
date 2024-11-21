@@ -171,6 +171,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                     {
                         TriggerTimersPopupOpening(pair.Loser!);
                     }
+                    DrawTooltip("Start a timer");
                 });
             }
 
