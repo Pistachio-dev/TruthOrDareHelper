@@ -38,7 +38,7 @@ namespace TruthOrDareHelper.Windows.Main
             ImGui.SameLine(0);
             ImGui.TextColored(Yellow, GetAcceptedTopicText(player.AcceptsSfwTruth, player.AcceptsNsfwTruth));
             ImGui.SameLine(0);
-            ImGui.TextColored(LightGreen, " D:");
+            ImGui.TextColored(Pink, " D:");
             ImGui.SameLine();
             ImGui.TextColored(Yellow, GetAcceptedTopicText(player.AcceptsSfwDare, player.AcceptsNsfwDare));
             ImGui.PopStyleVar();
