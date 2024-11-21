@@ -71,6 +71,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         DrawTimersPopup();
         DrawPromptsPopup();
         DrawPlayerTable();
+        DrawHelpPopup();
 
         ImGui.TextColored(Yellow, $"Round {session.Round}");
         if (session.PlayerData.Count >= 2)
@@ -123,6 +124,10 @@ public partial class MainWindow : PluginWindowBase, IDisposable
 
         ImGui.SameLine();
         DrawActionButton(() => compactMode = !compactMode, compactMode ? " Grow" : " Lala mode");
+
+        ImGui.SameLine();
+        DrawActionButton(() => openHelpPopup = true, "");
+        DrawTooltip("Help");
 
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
