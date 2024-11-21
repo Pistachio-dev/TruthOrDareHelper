@@ -178,14 +178,27 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 pair.Done = referenceableDone;
 
                 ImGui.TableNextColumn();
-                DrawWithinDisableBlock(pair.Loser != null, () =>
+                ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1, 0));
+                try
                 {
-                    if (ImGui.Button($"##{pair.Winner.FullName}"))
+                    DrawWithinDisableBlock(pair.Loser != null, () =>
                     {
-                        TriggerTimersPopupOpening(pair.Loser!);
-                    }
-                    DrawTooltip("Start a timer");
-                });
+                        if (ImGui.Button($"##{pair.Winner.FullName}"))
+                        {
+                            TriggerTimersPopupOpening(pair.Loser!);
+                        }
+                        DrawTooltip("Start a timer");
+                    });
+
+                    ImGui.SameLine();
+                    DrawActionButton(() => runnerActions.WritePrompt(pair.Winner, pair.ChallengeType), "");
+                }
+                finally
+                {
+                    ImGui.PopStyleVar();
+                }
+
+                DrawTooltip("Give the player a random suggestion for their truth or dare if they're drawing a blank.");
             }
 
             ImGui.EndTable();

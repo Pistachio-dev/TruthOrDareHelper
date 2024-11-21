@@ -12,5 +12,6 @@ namespace TruthOrDareHelper.GameActions
         void ReRoll(PlayerPair pair, bool rerollTheLoser);
         void Roll();
         void TellWakeUp(PlayerInfo player);
+        void WritePrompt(PlayerInfo player, ChallengeType challengeType);
     }
 }

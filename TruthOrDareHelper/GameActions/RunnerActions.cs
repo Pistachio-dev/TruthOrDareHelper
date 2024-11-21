@@ -158,6 +158,26 @@ namespace TruthOrDareHelper.GameActions
             prompter.OpenFolder();
         }
 
+        public void WritePrompt(PlayerInfo player, ChallengeType challengeType)
+        {
+            log.Info($"[ACTION] Requesting prompt for player {player.FullName}.");
+            var prompt = "I've got nothing";
+            if (challengeType == ChallengeType.Truth)
+            {
+                prompt = prompter.GetPrompt(player.AcceptsSfwTruth, player.AcceptsNsfwTruth, false, false);
+            }
+            else if (challengeType == ChallengeType.Dare)
+            {
+                prompt = prompter.GetPrompt(false, false, player.AcceptsSfwDare, player.AcceptsNsfwTruth);
+            }
+            else
+            {
+                prompt = prompter.GetPrompt(player.AcceptsSfwTruth, player.AcceptsNsfwTruth, player.AcceptsSfwDare, player.AcceptsNsfwTruth);
+            }
+
+            chatOutput.WriteChat($"{Plugin.MessageMark}[PROMPT]{prompt}");
+        }
+
         private void AddParticipationRecords(IEnumerable<PlayerInfo> players, List<PlayerPair> pairs)
         {
             foreach (var player in session.PlayerData.Select(p => p.Value))
