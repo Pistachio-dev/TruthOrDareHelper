@@ -14,6 +14,27 @@ namespace Model
         public int Wins => ParticipationRecords.Where(x => x.Participation == RoundParticipation.Winner).Count();
         public int Losses => ParticipationRecords.Where(x => x.Participation == RoundParticipation.Loser).Count();
 
+        public PlayerInfo(string fullName, AskedAcceptedType truthPreferences, AskedAcceptedType darePreferences)
+        {
+            this.FullName = fullName;
+            if (truthPreferences is AskedAcceptedType.SFW or AskedAcceptedType.Any)
+            {
+                AcceptsSfwTruth = true;
+            }
+            if (truthPreferences is AskedAcceptedType.NSFW or AskedAcceptedType.Any)
+            {
+                AcceptsNsfwTruth = true;
+            }
+            if (darePreferences is AskedAcceptedType.SFW or AskedAcceptedType.Any)
+            {
+                AcceptsSfwDare = true;
+            }
+            if (darePreferences is AskedAcceptedType.NSFW or AskedAcceptedType.Any)
+            {
+                AcceptsNsfwDare = true;
+            }
+        }
+
         public bool IsOnStreak(int streakSize)
         {
             if (!ParticipationRecords.Any())
@@ -40,9 +61,6 @@ namespace Model
             return false;
         }
 
-        public PlayerInfo(string fullName)
-        {
-            this.FullName = fullName;
-        }
+
     }
 }

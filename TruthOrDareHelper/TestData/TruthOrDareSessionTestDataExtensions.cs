@@ -10,7 +10,7 @@ namespace TruthOrDareHelper.TestData
             for (int i = 1; i < 9; i++)
             {
                 string playerName = "Player" + i;
-                session.PlayerData.Add(playerName, new PlayerInfo(playerName));
+                session.PlayerData.Add(playerName, new PlayerInfo(playerName, AskedAcceptedType.NSFW, AskedAcceptedType.Any));
             }
 
             return session;
@@ -58,8 +58,8 @@ namespace TruthOrDareHelper.TestData
         {
             string name1 = "Pistachio Herald@Omega";
             string name2 = "Macalania Nut@Louisoix";
-            session.AddNewPlayer(name1);
-            session.AddNewPlayer(name2);
+            session.AddNewPlayer(name1, AskedAcceptedType.Any, AskedAcceptedType.Any);
+            session.AddNewPlayer(name2, AskedAcceptedType.Any, AskedAcceptedType.Any);
             session.PlayingPairs.Add(new PlayerPair(session.GetPlayer(name1)!, session.GetPlayer(name2)));
 
             return session;

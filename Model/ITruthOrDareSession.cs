@@ -7,7 +7,7 @@ namespace Model
         Guid SessionId { get; set; }
         public int Round { get; set; }
 
-        void AddNewPlayer(string fullName);
+        void AddNewPlayer(string fullName, AskedAcceptedType truthPrefs, AskedAcceptedType darePrefs);
 
         bool ArePlayersPaired();
 

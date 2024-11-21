@@ -261,7 +261,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             return true;
         }
 
-        session.AddNewPlayer(targetFullName);
+        session.AddNewPlayer(targetFullName, configuration.DefaultTruthAcceptance, configuration.DefaultDareAcceptance);
         chatOutput.WriteChat($"{targetFullName} joins the game.");
 
         return true;

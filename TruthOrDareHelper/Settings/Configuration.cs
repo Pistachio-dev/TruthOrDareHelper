@@ -1,4 +1,5 @@
 using Dalamud.Game.Text;
+using Model;
 using System;
 
 namespace TruthOrDareHelper.Settings;
@@ -23,6 +24,9 @@ public class Configuration : IToDConfiguration
     public bool LogOutgoingChatOutput { get; set; } = true;
     public bool LogClientOnlyChatOutput { get; set; } = true;
     public int LimitedChatChannelsMessageDelayInMs { get; set; } = 1500;
+
+    public AskedAcceptedType DefaultTruthAcceptance { get; set; } = AskedAcceptedType.SFW;
+    public AskedAcceptedType DefaultDareAcceptance { get; set; } = AskedAcceptedType.SFW;
 
     public void Save()
     {

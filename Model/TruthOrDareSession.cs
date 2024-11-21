@@ -15,9 +15,9 @@ namespace Model
             return PlayerData.ContainsKey(name) ? PlayerData[name] : null;
         }
 
-        public void AddNewPlayer(string fullName)
+        public void AddNewPlayer(string fullName, AskedAcceptedType truthPrefs, AskedAcceptedType darePrefs)
         {
-            PlayerData[fullName] = new PlayerInfo(fullName);
+            PlayerData[fullName] = new PlayerInfo(fullName, truthPrefs, darePrefs);
         }
 
         public void TryRemovePlayer(string fullName)
