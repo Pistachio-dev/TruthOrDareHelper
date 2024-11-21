@@ -60,12 +60,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         runnerActions = serviceProvider.GetRequiredService<IRunnerActions>();
         prompter = serviceProvider.GetRequiredService<IPrompter>();
 
-        InitializeFormFactory();
-
-        //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
-        //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
-        //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(5), () => session.TryRemovePlayer("Player4")));
-        //Plugin.timeKeeper.AddTimedAction(new RoundTimedAction(session.Round, 2, () => session.TryRemovePlayer("Player 4")));
+        InitializeFormFactory();        
     }
 
     public void Dispose()
