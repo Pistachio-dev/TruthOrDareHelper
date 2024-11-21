@@ -75,6 +75,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     protected override void SafeDraw()
     {
         DrawPlayerAcceptedTopicsPopup();
+        DrawTimersPopup();
         DrawPlayerTable();
 
         ImGui.TextUnformatted($"Round {session.Round}");
@@ -125,12 +126,13 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     {
         var check = session.PlayingPairs.Select(p => p.Done).ToArray();
         const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
-        if (ImGui.BeginTable("##PairedPlayerTable", 4, flags))
+        if (ImGui.BeginTable("##PairedPlayerTable", 5, flags))
         {
             ImGui.TableSetupColumn("Asker", ImGuiTableColumnFlags.WidthStretch, 0.3f);
             ImGui.TableSetupColumn("Target", ImGuiTableColumnFlags.WidthStretch, 0.3f);
             ImGui.TableSetupColumn("Choice", ImGuiTableColumnFlags.WidthStretch, 0.2f);
-            ImGui.TableSetupColumn("Done", ImGuiTableColumnFlags.WidthStretch, 0.1f); // Use a checkbox here
+            ImGui.TableSetupColumn("Done", ImGuiTableColumnFlags.WidthStretch, 0.1f);
+            ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.1f);
 
             ImGui.TableHeadersRow();
 
@@ -161,6 +163,15 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 var referenceableDone = pair.Done;
                 ImGui.Checkbox("## " + i, ref referenceableDone);
                 pair.Done = referenceableDone;
+
+                ImGui.TableNextColumn();
+                DrawWithinDisableBlock(pair.Loser != null, () =>
+                {
+                    if (ImGui.Button($"##{pair.Winner.FullName}"))
+                    {
+                        TriggerTimersPopupOpening(pair.Loser!);
+                    }
+                });
             }
 
             ImGui.EndTable();
