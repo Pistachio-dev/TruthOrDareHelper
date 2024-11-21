@@ -12,11 +12,14 @@ using ECommons;
 using Microsoft.Extensions.DependencyInjection;
 using Model;
 using System;
+using System.Net;
 using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Commands;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Chat.Signs;
+using TruthOrDareHelper.Modules.Prompting;
+using TruthOrDareHelper.Modules.Prompting.Interface;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Modules.TimeKeeping;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
@@ -53,7 +56,7 @@ public sealed class Plugin : IDalamudPlugin
         logService = serviceProvider.GetRequiredService<ILogService>();
         configuration = serviceProvider.GetRequiredService<IConfigurationService<Configuration>>().GetConfiguration();
         InitializeServices(serviceProvider);
-
+        
         Session = serviceProvider.GetRequiredService<ITruthOrDareSession>();
 
         if (configuration.UseTestData)
@@ -116,6 +119,7 @@ public sealed class Plugin : IDalamudPlugin
         serviceCollection.AddSingleton<IRunnerActions, RunnerActions>();
         serviceCollection.AddSingleton<ISignManager, SignManager>();
         serviceCollection.AddSingleton<ITimeKeeper, TimeKeeper>();
+        serviceCollection.AddSingleton<IPrompter, Prompter>();
         return serviceCollection.BuildServiceProvider();
     }
 
@@ -128,6 +132,9 @@ public sealed class Plugin : IDalamudPlugin
         serviceProvider.GetRequiredService<HookManager>();
         serviceProvider.GetRequiredService<IToDChatListener>().AttachCommandDetector();
         serviceProvider.GetRequiredService<ITimeKeeper>().AttachToGameLogicLoop(framework);
+        var prompter = serviceProvider.GetRequiredService<IPrompter>();
+        prompter.SeedIfNeeded();
+        prompter.LoadPromptsToMemory();
     }
 
     private void OnCommand(string command, string args)

@@ -4,11 +4,14 @@ using DalamudBasics.Configuration;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
+using ImGuiNET;
 using Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using TruthOrDareHelper.Modules.Chat.Interface;
+using TruthOrDareHelper.Modules.Prompting.Interface;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
@@ -27,10 +30,11 @@ namespace TruthOrDareHelper.GameActions
         private readonly ILogService log;
         private readonly IClientChatGui chatGui;
         private readonly ITimeKeeper timeKeeper;
+        private readonly IPrompter prompter;
         private readonly Configuration configuration;
 
         public RunnerActions(ITruthOrDareSession session, IConfigurationService<Configuration> configService, IToDChatOutput chatOutput, IRollManager rollManager, ISignManager signManager,
-            ITargetingService targetingManager, ILogService log, IClientChatGui chatGui, ITimeKeeper timeKeeper)
+            ITargetingService targetingManager, ILogService log, IClientChatGui chatGui, ITimeKeeper timeKeeper, IPrompter prompter)
         {
             this.session = session;
             this.chatOutput = chatOutput;
@@ -40,6 +44,7 @@ namespace TruthOrDareHelper.GameActions
             this.log = log;
             this.chatGui = chatGui;
             this.timeKeeper = timeKeeper;
+            this.prompter = prompter;
             this.configuration = configService.GetConfiguration();
         }
 
@@ -137,6 +142,20 @@ namespace TruthOrDareHelper.GameActions
         {
             log.Info($"[ACTION] Wake up through tell. Player: {player.FullName}.");
             chatOutput.TellWakeUp(player);
+        }
+
+        public void ReloadPrompts()
+        {
+            log.Info($"[ACTION] Reload prompts.");
+            prompter.LoadPromptsToMemory();
+            var statsDescription = prompter.GetStatsString();
+            chatGui.Print(statsDescription);            
+        }
+
+        public void OpenPromptsFolder()
+        {
+            log.Info($"[ACTION] Open prompt folder.");
+            prompter.OpenFolder();
         }
 
         private void AddParticipationRecords(IEnumerable<PlayerInfo> players, List<PlayerPair> pairs)
