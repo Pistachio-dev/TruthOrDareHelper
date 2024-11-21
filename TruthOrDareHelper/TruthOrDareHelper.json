@@ -1,8 +1,8 @@
 {
     "Author": "Pistachio Herald",
     "Name": "ToD Howard",
-    "Punchline": "See that player? You can dare them!",
-    "Description": "Make Truth or Dare easier and faster. Type /tod to launch. It just works!",
+    "Punchline": "Truth or Dare, made easier and faster.",
+    "Description": "Make Truth or Dare easier and faster. Type /tod to launch. It just works.",
     "ApplicableVersion": "any",
     "Tags": [
         "tod",
@@ -11,6 +11,10 @@
         "dare",
         "party",
         "chat",
-        "game"
+        "game",
+        "todd",
+        "howard",
+        "just",
+        "works"
     ]
 }
