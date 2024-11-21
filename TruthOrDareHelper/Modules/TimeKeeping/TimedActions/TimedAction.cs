@@ -1,3 +1,4 @@
+using Model;
 using System;
 
 namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
@@ -12,6 +13,7 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         protected DateTime StartTime { get; set; } = DateTime.Now; // Useful for logging, even if it's not really used on the RoundTimedAction
 
         public abstract bool HasElapsed();
+        public abstract void Update(ITruthOrDareSession session);
 
         public void OnElapsed()
         {

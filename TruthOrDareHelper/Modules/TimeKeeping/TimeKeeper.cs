@@ -1,4 +1,6 @@
+using Dalamud.Plugin.Services;
 using DalamudBasics.Logging;
+using Model;
 using System;
 using System.Collections.Generic;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
@@ -8,45 +10,55 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
 {
     public class TimeKeeper : ITimeKeeper
     {
-        private int currentRound = 0;
+        private int currentRound => session.Round;
         private LinkedList<TimedAction> timedActions = new();
-        private ILogService log;
+        private readonly ITruthOrDareSession session;
+        private ILogService logsService;
+        private bool initialized = false;
 
-        public TimeKeeper()
+        public TimeKeeper(ITruthOrDareSession session, ILogService logService)
         {
-            log = Plugin.Resolve<ILogService>();
+            this.session = session;
+            logsService = logService;
+        }
+
+        public void AttachToGameLogicLoop(IFramework frameworK)
+        {
+            frameworK.Update += Tick;
+            initialized = true;
+            logsService.Info($"{nameof(TimeKeeper)} initialized.");
         }
 
         public void AddTimedAction(TimedAction action)
         {
+            if (!initialized)
+            {
+                logsService.Error($"{nameof(TimeKeeper)} was not initialized!");
+            }
+
             timedActions.AddLast(action);
         }
 
-        public void Tick(int updatedCurrentRound)
+        private void Tick(IFramework dalamudFramework)
         {
-            currentRound = updatedCurrentRound;
             List<TimedAction> nodesToRemove = new();
             foreach (TimedAction action in timedActions)
             {
-                if (action is RoundTimedAction roundTimedAction)
-                {
-                    roundTimedAction.UpdateRoundCounter(currentRound);
-                }
+                action.Update(session);
                 if (action.HasElapsed())
                 {
                     try
                     {
-                        log.Debug($"Executing action with ID {action.Id}");
+                        logsService.Debug($"Executing action with ID {action.Id}");
                         action.OnElapsed();
                     }
                     catch (Exception ex)
                     {
-                        log.Error(ex, $"Timed action with Id {action.Id} failed.");
+                        logsService.Error(ex, $"Timed action with Id {action.Id} failed.");
                     }
                     finally
                     {
                         nodesToRemove.Add(action);
-                        log.Debug($"Removed timed action with ID {action.Id}");
                     }
                 }
             }
@@ -54,6 +66,7 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
             foreach (TimedAction action in nodesToRemove)
             {
                 timedActions.Remove(action);
+                logsService.Debug($"Removed timed action with ID {action.Id}");
             }
         }
     }

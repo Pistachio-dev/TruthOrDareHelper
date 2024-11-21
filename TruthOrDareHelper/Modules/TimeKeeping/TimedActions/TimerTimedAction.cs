@@ -1,3 +1,4 @@
+using Model;
 using System;
 
 namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
@@ -15,6 +16,11 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         public override bool HasElapsed()
         {
             return DateTime.Now - StartTime >= duration;
+        }
+
+        public override void Update(ITruthOrDareSession session)
+        {
+            return;
         }
     }
 }
