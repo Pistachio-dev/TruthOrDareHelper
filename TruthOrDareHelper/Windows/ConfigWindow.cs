@@ -64,7 +64,7 @@ public class ConfigWindow : PluginWindowBase, IDisposable
         DrawTooltip("For big groups, you can have as many pairs of asker->asked as you want on every round.");
 
         formFactory.AddValidationText(formFactory.DrawIntInput("Maximum participation streak", nameof(Configuration.MaxParticipationStreak), EnforcePositiveInt));
-        DrawTooltip("Players that have won or lost these amount of rounds in a row won't roll for the next round");
+        DrawTooltip("Players that have participated on either role this amount of rounds in a row won't roll for the next round");
 
         formFactory.DrawTextInput("Confirmation keyword", nameof(Configuration.ConfirmationKeyword), 50);
         DrawTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");
