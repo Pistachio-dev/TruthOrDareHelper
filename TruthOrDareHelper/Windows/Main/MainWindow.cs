@@ -20,6 +20,8 @@ namespace TruthOrDareHelper.Windows.Main;
 
 public partial class MainWindow : PluginWindowBase, IDisposable
 {
+    private bool compactMode;
+
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
     private static readonly Vector4 Gray = new Vector4(0.3f, 0.3f, 0.3f, 1f);
@@ -39,7 +41,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private IPrompter prompter;
 
     public MainWindow(Plugin plugin, ILogService logService, IServiceProvider serviceProvider)
-        : base(logService, "Truth or Dare helper")
+        : base(logService, "Truth or Dare helper", ImGuiWindowFlags.AlwaysAutoResize)
     {
         SizeConstraints = new WindowSizeConstraints
         {
@@ -79,7 +81,8 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0.5f, 0, 0.7f));
             ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));
 
-            DrawActionButton(() => runnerActions.Roll(), " Roll a new round ");
+            string rollText = compactMode ? "" : " Roll a new round ";
+            DrawActionButton(() => runnerActions.Roll(), rollText);
             DrawTooltip("Start a new round and form new player pairs. Rolling type can be changed in Configuration.");
             ImGui.PopStyleColor(3);
             ImGui.PopID();
@@ -93,7 +96,8 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         bool targetingAPlayer = targetManager.IsTargetingAPlayer();
         DrawWithinDisableBlock(targetingAPlayer, () =>
         {
-            DrawActionButton(() => AddTargetPlayer(), " Add target to game");
+            string addPlayerText = compactMode ? "" : " Add target to game";
+            DrawActionButton(() => AddTargetPlayer(), addPlayerText);
         });
         if (!targetingAPlayer)
         {
@@ -108,11 +112,17 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         ImGui.PopID();
 
         ImGui.SameLine();
-        DrawActionButton(() => plugin.ToggleConfigUI(), " Configuration");
+        string configText = compactMode ? "" : " Configuration";
+        DrawActionButton(() => plugin.ToggleConfigUI(), configText);
+        DrawTooltip("Configuration");
 
         ImGui.SameLine();
-        DrawActionButton(() => openPrompsPopup = true, "¶ Prompts");
+        string promptButtonText = compactMode ? "¶" : "¶ Prompts";
+        DrawActionButton(() => openPrompsPopup = true, promptButtonText);
         DrawTooltip("Prompts are ideas players can get if they can't come with one themselves.");
+
+        ImGui.SameLine();
+        DrawActionButton(() => compactMode = !compactMode, compactMode ? " Grow" : " Lala mode");
 
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
@@ -135,7 +145,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private void DrawPlayingPairsTable()
     {
         var check = session.PlayingPairs.Select(p => p.Done).ToArray();
-        const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
+        const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;        
         if (ImGui.BeginTable("##PairedPlayerTable", 5, flags))
         {
             ImGui.TableSetupColumn("Asker", ImGuiTableColumnFlags.WidthStretch, 0.3f);
@@ -207,11 +217,17 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         var player = isLoser ? pair.Loser : pair.Winner;
         var playerNotChosenByRoll = player == null;
         var playerName = playerNotChosenByRoll ? "Not autodetected yet" : player.FullName.WithoutWorldName();
+        if (compactMode)
+        {
+            playerName = playerName.GetFirstName();
+        }
+
         ImGui.TextUnformatted(playerName);
         if (!playerNotChosenByRoll)
         {
             ImGui.SameLine();
-            DrawActionButton(() => runnerActions.ReRoll(pair, isLoser), $"##{row}{isLoser}");
+            string rerollButtonText = compactMode ? "" : "";
+            DrawActionButton(() => runnerActions.ReRoll(pair, isLoser), $"{rerollButtonText}##{row}{isLoser}");
             DrawTooltip("Reroll player, if this one is afk or passes.");
         }
     }
@@ -219,15 +235,19 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private void DrawPlayerTable()
     {
         const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
-        if (ImGui.BeginTable("##PlayerTable", 7, flags))
+        int amountOfColumns = compactMode ? 2 : 7;
+        if (ImGui.BeginTable("##PlayerTable", amountOfColumns, flags))
         {
             ImGui.TableSetupColumn("Player", ImGuiTableColumnFlags.WidthStretch, 0.8f);
-            ImGui.TableSetupColumn("NSFW?", ImGuiTableColumnFlags.WidthFixed, 0.2f);
-            ImGui.TableSetupColumn("Wins", ImGuiTableColumnFlags.WidthStretch, 0.1f);
-            ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.1f);
-            ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
-            ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
-            ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+            if (!compactMode)
+            {
+                ImGui.TableSetupColumn("NSFW?", ImGuiTableColumnFlags.WidthFixed, 0.2f);
+                ImGui.TableSetupColumn("Wins", ImGuiTableColumnFlags.WidthStretch, 0.1f);
+                ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.1f);
+                ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
+                ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+                ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+            }            
 
             ImGui.TableHeadersRow();
 
@@ -235,7 +255,8 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted(player.FullName.WithoutWorldName());
+                string playerName = compactMode ? player.FullName.GetFirstName() : player.FullName.WithoutWorldName();
+                ImGui.TextUnformatted(playerName);
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                 {
                     if (targetManager.TargetPlayer(player.FullName))
@@ -254,28 +275,30 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                     toDChatOutput.WriteChat($"{player.FullName} leaves the game.");
                 }
                 DrawTooltip("Click to target the player, shift + right click to remove them.");
-
-                ImGui.TableNextColumn();
-                DrawAcceptedTopicsCell(player);
-
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted(player.Wins.ToString());
-
-                ImGui.TableNextColumn();
-                ImGui.TextUnformatted(player.Losses.ToString());
-
-                ImGui.TableNextColumn();
-                DrawRoundHistory(player);
-
-                ImGui.TableNextColumn();
-                if (session.IsPlayerPlaying(player))
+                if (!compactMode)
                 {
-                    ImGui.TextColored(Green, "✓");
-                }
-                else
-                {
-                    ImGui.TextColored(Gray, "x");
-                }
+                    ImGui.TableNextColumn();
+                    DrawAcceptedTopicsCell(player);
+
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(player.Wins.ToString());
+
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(player.Losses.ToString());
+
+                    ImGui.TableNextColumn();
+                    DrawRoundHistory(player);
+
+                    ImGui.TableNextColumn();
+                    if (session.IsPlayerPlaying(player))
+                    {
+                        ImGui.TextColored(Green, "✓");
+                    }
+                    else
+                    {
+                        ImGui.TextColored(Gray, "x");
+                    }
+                }                
 
                 ImGui.TableNextColumn();
                 Vector2 buttonSize = new Vector2(18, 18);
