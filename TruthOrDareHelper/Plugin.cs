@@ -22,6 +22,7 @@ using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
 using TruthOrDareHelper.Windows;
+using TruthOrDareHelper.Windows.Main;
 
 namespace TruthOrDareHelper;
 

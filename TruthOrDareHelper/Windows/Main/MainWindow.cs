@@ -6,6 +6,7 @@ using DalamudBasics.Extensions;
 using DalamudBasics.GUI.Windows;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
+using ECommons.GameHelpers;
 using ImGuiNET;
 using Microsoft.Extensions.DependencyInjection;
 using Model;
@@ -19,13 +20,16 @@ using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Settings;
 
-namespace TruthOrDareHelper.Windows;
+namespace TruthOrDareHelper.Windows.Main;
 
-public class MainWindow : PluginWindowBase, IDisposable
+public partial class MainWindow : PluginWindowBase, IDisposable
 {
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
     private static readonly Vector4 Gray = new Vector4(0.3f, 0.3f, 0.3f, 1f);
+    private static readonly Vector4 LightGreen = new Vector4(162 / 255f, 1, 153 / 255f, 1);
+    private static readonly Vector4 Pink = new Vector4(1, 160f/255, 160 / 255f, 1);
+    private static readonly Vector4 Yellow = new Vector4(1, 1, 153 / 255f, 1);
     private Plugin plugin;
     private ITruthOrDareSession session;
     private IRollManager rollManager;
@@ -57,6 +61,8 @@ public class MainWindow : PluginWindowBase, IDisposable
         targetManager = serviceProvider.GetRequiredService<ITargetingService>();
         runnerActions = serviceProvider.GetRequiredService<IRunnerActions>();
 
+        InitializeFormFactory();
+
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(20), () => Plugin.Chat.PrintError("20s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(10), () => Plugin.Chat.PrintError("10s have passed")));
         //Plugin.timeKeeper.AddTimedAction(new TimerTimedAction(TimeSpan.FromSeconds(5), () => session.TryRemovePlayer("Player4")));
@@ -64,11 +70,13 @@ public class MainWindow : PluginWindowBase, IDisposable
     }
 
     public void Dispose()
-    { } 
+    { }
 
     protected override void SafeDraw()
     {
-        if (ImGui.Button("Test chat")) {
+        DrawPlayerAcceptedTopicsPopup();
+        if (ImGui.Button("Test chat"))
+        {
             chatOutput.WriteChat(Guid.NewGuid().ToString(), XivChatType.Say);
         };
         DrawPlayerTable();
@@ -119,7 +127,7 @@ public class MainWindow : PluginWindowBase, IDisposable
 
     private void DrawPlayingPairsTable()
     {
-        bool[] check = session.PlayingPairs.Select(p => p.Done).ToArray();
+        var check = session.PlayingPairs.Select(p => p.Done).ToArray();
         const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
         if (ImGui.BeginTable("##PairedPlayerTable", 4, flags))
         {
@@ -130,7 +138,7 @@ public class MainWindow : PluginWindowBase, IDisposable
 
             ImGui.TableHeadersRow();
 
-            for (int i = 0; i < session.PlayingPairs.Count; i++)
+            for (var i = 0; i < session.PlayingPairs.Count; i++)
             {
                 var pair = session.PlayingPairs[i];
 
@@ -142,7 +150,7 @@ public class MainWindow : PluginWindowBase, IDisposable
                 DrawPairedPlayerCell(pair, isLoser: true, row: i);
 
                 ImGui.TableNextColumn();
-                string challengeText = pair.ChallengeType switch
+                var challengeText = pair.ChallengeType switch
                 {
                     ChallengeType.None => "?",
                     ChallengeType.DealersChoice => "Any",
@@ -154,7 +162,7 @@ public class MainWindow : PluginWindowBase, IDisposable
 
                 ImGui.TableNextColumn();
 
-                bool referenceableDone = pair.Done;
+                var referenceableDone = pair.Done;
                 ImGui.Checkbox("## " + i, ref referenceableDone);
                 pair.Done = referenceableDone;
             }
@@ -165,9 +173,9 @@ public class MainWindow : PluginWindowBase, IDisposable
 
     private void DrawPairedPlayerCell(PlayerPair pair, bool isLoser, int row)
     {
-        PlayerInfo? player = isLoser ? pair.Loser : pair.Winner;
-        bool playerNotChosenByRoll = player == null;
-        string playerName = playerNotChosenByRoll ? "Not autodetected yet" : player.FullName.WithoutWorldName();
+        var player = isLoser ? pair.Loser : pair.Winner;
+        var playerNotChosenByRoll = player == null;
+        var playerName = playerNotChosenByRoll ? "Not autodetected yet" : player.FullName.WithoutWorldName();
         ImGui.TextUnformatted(playerName);
         if (!playerNotChosenByRoll)
         {
@@ -180,11 +188,12 @@ public class MainWindow : PluginWindowBase, IDisposable
     private void DrawPlayerTable()
     {
         const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
-        if (ImGui.BeginTable("##PlayerTable", 5, flags))
+        if (ImGui.BeginTable("##PlayerTable", 6, flags))
         {
             ImGui.TableSetupColumn("Player", ImGuiTableColumnFlags.WidthStretch, 0.8f);
-            ImGui.TableSetupColumn("Wins", ImGuiTableColumnFlags.WidthStretch, 0.2f);
-            ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+            ImGui.TableSetupColumn("NSFW?", ImGuiTableColumnFlags.WidthFixed, 0.2f);
+            ImGui.TableSetupColumn("Wins", ImGuiTableColumnFlags.WidthStretch, 0.1f);
+            ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.1f);
             ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
             ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
 
@@ -215,6 +224,12 @@ public class MainWindow : PluginWindowBase, IDisposable
                 DrawTooltip("Click to target the player, shift + right click to remove them.");
 
                 ImGui.TableNextColumn();
+                DrawActionButton(() => {
+                    playerSelectedForTopicsAcceptedMenu = player;
+                    openAcceptedTopicsDialogue = true;
+                    }, $"Check##{player.FullName}");                
+
+                ImGui.TableNextColumn();
                 ImGui.TextUnformatted(player.Wins.ToString());
 
                 ImGui.TableNextColumn();
@@ -233,7 +248,7 @@ public class MainWindow : PluginWindowBase, IDisposable
                     ImGui.TextColored(Gray, "x");
                 }
             }
-
+            
             ImGui.EndTable();
         }
     }
@@ -246,7 +261,7 @@ public class MainWindow : PluginWindowBase, IDisposable
             return false;
         }
 
-        string targetFullName = targetReference.GetFullName();
+        var targetFullName = targetReference.GetFullName();
         if (session.GetPlayer(targetFullName) != null)
         {
             chatGui.Print("Target player is already in the game.");
@@ -261,11 +276,11 @@ public class MainWindow : PluginWindowBase, IDisposable
 
     private void DrawRoundHistory(PlayerInfo player)
     {
-        int roundsToSkip = Math.Max(player.ParticipationRecords.Count - RoundsToShowInHistory, 0);
+        var roundsToSkip = Math.Max(player.ParticipationRecords.Count - RoundsToShowInHistory, 0);
         ImGui.BeginGroup();
-        foreach (RoundParticipationRecord roundRecord in player.ParticipationRecords.Skip(roundsToSkip))
+        foreach (var roundRecord in player.ParticipationRecords.Skip(roundsToSkip))
         {
-            Vector4 color = roundRecord.Participation switch
+            var color = roundRecord.Participation switch
             {
                 RoundParticipation.Winner => Green,
                 RoundParticipation.Loser => Red,
