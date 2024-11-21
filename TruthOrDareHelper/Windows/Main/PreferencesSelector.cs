@@ -1,7 +1,9 @@
+using Dalamud.Game.Text.SeStringHandling.Payloads;
 using DalamudBasics.Extensions;
 using DalamudBasics.GUI.Forms;
 using ImGuiNET;
 using Model;
+using System;
 using System.Numerics;
 
 namespace TruthOrDareHelper.Windows.Main
@@ -18,16 +20,31 @@ namespace TruthOrDareHelper.Windows.Main
             acceptedTopicsFormFactory = new ImGuiFormFactory<PlayerInfo>(() => playerSelectedForTopicsAcceptedMenu!, (player) => { });
         }
 
-        private void DrawAcceptedTopicsCell(PlayerInfo player)
+        private void DrawAcceptedTopicsPopupButton(PlayerInfo player)
         {
-            string text = $"T: {GetAcceptedTopicText(player.AcceptsSfwTruth, player.AcceptsNsfwTruth)} D: {GetAcceptedTopicText(player.AcceptsSfwDare, player.AcceptsNsfwDare)}";
-            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0, 0));
-            if (ImGui.Button($"{text}##{player.FullName}")){
+            if (ImGui.Button($"##{player.FullName}"))
+            {
                 playerSelectedForTopicsAcceptedMenu = player;
                 openAcceptedTopicsDialogue = true;
             }
-            ImGui.PopStyleColor();
-            DrawTooltip("Click to edit. T = Truth, D = Dare, S = SFW, N = NSFW, A = Any, ? = None");
+            DrawTooltip("Edit SFW/NSFW preferences.");
+        }
+
+        private void DrawAcceptedTopicsCell(PlayerInfo player)
+        {
+            ImGui.BeginChild($"prefsDisplay##{player.FullName}", new Vector2(ImGui.GetFontSize()*15, ImGui.GetFontSize() * 1f));
+            ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1, 0));
+            ImGui.TextColored(LightGreen, "T:");
+            ImGui.SameLine(0);
+            ImGui.TextColored(Yellow, GetAcceptedTopicText(player.AcceptsSfwTruth, player.AcceptsNsfwTruth));
+            ImGui.SameLine(0);
+            ImGui.TextColored(LightGreen, " D:");
+            ImGui.SameLine();
+            ImGui.TextColored(Yellow, GetAcceptedTopicText(player.AcceptsSfwDare, player.AcceptsNsfwDare));
+            ImGui.PopStyleVar();
+            ImGui.EndChild();            
+            
+            DrawTooltip("T = Truth, D = Dare, S = SFW, N = NSFW, A = Any, ? = None");
         }
 
         private string GetAcceptedTopicText(bool sfwFlag, bool nsfwFlag)

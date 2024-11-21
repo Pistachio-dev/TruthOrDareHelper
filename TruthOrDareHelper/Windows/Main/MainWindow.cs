@@ -260,6 +260,8 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                     TriggerTimersPopupOpening(player);
                 }
                 DrawTooltip("Start a timer");
+                ImGui.SameLine();
+                DrawAcceptedTopicsPopupButton(player);
             }
             
             ImGui.EndTable();
