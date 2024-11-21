@@ -158,24 +158,24 @@ namespace TruthOrDareHelper.GameActions
             prompter.OpenFolder();
         }
 
-        public void WritePrompt(PlayerInfo player, ChallengeType challengeType)
+        public void WritePrompt(PlayerInfo loser, ChallengeType challengeType)
         {
-            log.Info($"[ACTION] Requesting prompt for player {player.FullName}.");
+            log.Info($"[ACTION] Requesting prompt for player {loser.FullName}.");
             var prompt = "I've got nothing";
             if (challengeType == ChallengeType.Truth)
             {
-                prompt = prompter.GetPrompt(player.AcceptsSfwTruth, player.AcceptsNsfwTruth, false, false);
+                prompt = prompter.GetPrompt(loser.AcceptsSfwTruth, loser.AcceptsNsfwTruth, false, false);
             }
             else if (challengeType == ChallengeType.Dare)
             {
-                prompt = prompter.GetPrompt(false, false, player.AcceptsSfwDare, player.AcceptsNsfwTruth);
+                prompt = prompter.GetPrompt(false, false, loser.AcceptsSfwDare, loser.AcceptsNsfwDare);
             }
             else
             {
-                prompt = prompter.GetPrompt(player.AcceptsSfwTruth, player.AcceptsNsfwTruth, player.AcceptsSfwDare, player.AcceptsNsfwTruth);
+                prompt = prompter.GetPrompt(loser.AcceptsSfwTruth, loser.AcceptsNsfwTruth, loser.AcceptsSfwDare, loser.AcceptsNsfwDare);
             }
 
-            chatOutput.WriteChat($"{Plugin.MessageMark}[PROMPT]{prompt}");
+            chatOutput.WriteChat($"{Plugin.MessageMark}{prompt}");
         }
 
         private void AddParticipationRecords(IEnumerable<PlayerInfo> players, List<PlayerPair> pairs)

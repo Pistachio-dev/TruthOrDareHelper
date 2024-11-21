@@ -5,5 +5,6 @@ namespace TruthOrDareHelper.Modules.Prompting.DefaultPrompts
         public string FileName { get; init; }
         public string[] LoadedPromts { get; set; }
         public string[] DefaultPrompts { get; }
+        public string Tag { get; }
     }
 }

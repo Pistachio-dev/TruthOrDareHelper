@@ -9,6 +9,7 @@ namespace TruthOrDareHelper.Modules.Prompting.DefaultPrompts
 
         public string FileName { get; init; }
         public string[] LoadedPromts { get; set; } = [];
+        public string Tag { get; } = "[NSFW dare prompt]";
 
         public string[] DefaultPrompts => [
             "NSFW Dare Prompt placeholder 1",

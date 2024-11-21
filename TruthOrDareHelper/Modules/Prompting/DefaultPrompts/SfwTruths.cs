@@ -9,6 +9,7 @@ namespace TruthOrDareHelper.Modules.Prompting.DefaultPrompts
 
         public string FileName { get; init; }
         public string[] LoadedPromts { get; set; } = [];
+        public string Tag { get; } = "[SFW truth prompt]";
 
         public string[] DefaultPrompts => [
             "SFW Truth Prompt placeholder 1",

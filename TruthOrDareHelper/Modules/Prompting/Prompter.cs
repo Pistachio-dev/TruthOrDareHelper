@@ -16,7 +16,7 @@ namespace TruthOrDareHelper.Modules.Prompting
         private const string NsfwTruthFileName = "NSFWTRUTHS.txt";
         private const string SfwDareFileName = "SFWDARES.txt";
         private const string NsfwDareFileName = "NSFWDARES.txt";
-        private readonly IPromptCollection[] promptsCollections;
+        private readonly IPromptCollection[] promptCollections;
         private readonly ILogService logService;
         private readonly string folderRoute;
         private DateTime lastLoaded = DateTime.MinValue;
@@ -25,7 +25,7 @@ namespace TruthOrDareHelper.Modules.Prompting
         {
             this.folderRoute = pluginInterface.GetPluginConfigDirectory() + Path.DirectorySeparatorChar + PromptFilesFolderName + Path.DirectorySeparatorChar;
             this.logService = logService;
-            promptsCollections = [
+            promptCollections = [
                 new SfwTruths(SfwTruthFileName),
                 new NsfwTruths(NsfwTruthFileName),
                 new SfwDares(SfwDareFileName),
@@ -33,18 +33,18 @@ namespace TruthOrDareHelper.Modules.Prompting
             ];
         }
 
-        private IPromptCollection SfwTruths => promptsCollections[0];
-        private IPromptCollection NsfwTruths => promptsCollections[1];
-        private IPromptCollection SfwDares => promptsCollections[2];
-        private IPromptCollection NsfwDares => promptsCollections[3];
+        private IPromptCollection SfwTruths => promptCollections[0];
+        private IPromptCollection NsfwTruths => promptCollections[1];
+        private IPromptCollection SfwDares => promptCollections[2];
+        private IPromptCollection NsfwDares => promptCollections[3];
 
         public string GetStatsString()
         {
             var stats = new PromptsLoadedStats(lastLoaded,
-                promptsCollections[0].LoadedPromts.Length,
-                promptsCollections[1].LoadedPromts.Length,
-                promptsCollections[2].LoadedPromts.Length,
-                promptsCollections[3].LoadedPromts.Length);
+                promptCollections[0].LoadedPromts.Length,
+                promptCollections[1].LoadedPromts.Length,
+                promptCollections[2].LoadedPromts.Length,
+                promptCollections[3].LoadedPromts.Length);
 
             int truthAmount = stats.SfwTruthAmount + stats.NsfwTruthAmount;
             int dareAmount = stats.SfwDareAmount + stats.NsfwDareAmount;
@@ -65,7 +65,7 @@ namespace TruthOrDareHelper.Modules.Prompting
                 Directory.CreateDirectory(folderRoute);
             }
 
-            foreach (var promptCollection in promptsCollections)
+            foreach (var promptCollection in promptCollections)
             {
                 SeedFileIfMissing(promptCollection);
             }            
@@ -73,7 +73,7 @@ namespace TruthOrDareHelper.Modules.Prompting
 
         public void LoadPromptsToMemory()
         {
-            foreach (var promptCollection in promptsCollections)
+            foreach (var promptCollection in promptCollections)
             {
                 List<string> prompts = new() ;
                 using var sr = new StreamReader(folderRoute + promptCollection.FileName);
@@ -99,7 +99,7 @@ namespace TruthOrDareHelper.Modules.Prompting
             {
                 if (flags[i])
                 {
-                    count += promptsCollections[i].LoadedPromts.Length;
+                    count += promptCollections[i].LoadedPromts.Length;
                 }
             }
 
@@ -107,12 +107,15 @@ namespace TruthOrDareHelper.Modules.Prompting
             int cursor = 0;
             for (int i = 0; i < flags.Length; i++)
             {
-                if (index < cursor + promptsCollections[i].LoadedPromts.Length)
+                if (flags[i])
                 {
-                    return promptsCollections[i].LoadedPromts[index - cursor];
-                }
+                    if (index < cursor + promptCollections[i].LoadedPromts.Length)
+                    {                        
+                        return promptCollections[i].Tag + promptCollections[i].LoadedPromts[index - cursor];
+                    }
 
-                cursor += promptsCollections[i].LoadedPromts.Length;
+                    cursor += promptCollections[i].LoadedPromts.Length;
+                }
             }
 
             return "No prompt available. Oh no.";

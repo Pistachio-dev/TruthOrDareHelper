@@ -3,13 +3,14 @@ using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using Model;
 using System.Linq;
+using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Modules.Chat.Commands
 {
     internal class PasswordCommand : ChatCommandBase
     {
-        public PasswordCommand(ITruthOrDareSession session, Configuration configuration, IChatOutput chatOutput, ILogService logService)
+        public PasswordCommand(ITruthOrDareSession session, Configuration configuration, IToDChatOutput chatOutput, ILogService logService)
             : base(session, configuration, chatOutput, logService) { }
 
         protected override bool IsMatch(string message)

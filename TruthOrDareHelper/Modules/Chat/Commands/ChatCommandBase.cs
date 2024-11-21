@@ -1,14 +1,9 @@
 using Dalamud.Utility;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Logging;
-using FFXIVClientStructs;
 using Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Modules.Chat.Commands
@@ -17,10 +12,10 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
     {
         protected readonly ITruthOrDareSession session;
         protected readonly Configuration configuration;
-        protected readonly IChatOutput chatOutput;
+        protected readonly IToDChatOutput chatOutput;
         protected readonly ILogService logService;
 
-        protected ChatCommandBase(ITruthOrDareSession session, Configuration configuration, IChatOutput chatOutput, ILogService logService)
+        protected ChatCommandBase(ITruthOrDareSession session, Configuration configuration, IToDChatOutput chatOutput, ILogService logService)
         {
             this.session = session;
             this.configuration = configuration;

@@ -16,12 +16,12 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
     {
         private readonly ITruthOrDareSession session;
         private readonly Configuration configuration;
-        private readonly IChatOutput chatOutput;
+        private readonly IToDChatOutput chatOutput;
         private readonly ILogService logService;
 
         private ChatCommandBase[] commands;
 
-        public CommandRunner(ITruthOrDareSession session, IConfigurationService<Configuration> configurationService, IChatOutput chatOutput, ILogService logService)
+        public CommandRunner(ITruthOrDareSession session, IConfigurationService<Configuration> configurationService, IToDChatOutput chatOutput, ILogService logService)
         {
             this.session = session;
             this.configuration = configurationService.GetConfiguration();

@@ -1,16 +1,16 @@
-using DalamudBasics.Chat.Output;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using Model;
 using System;
 using System.Linq;
+using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Modules.Chat.Commands
 {
     internal class ConflipCommand : ChatCommandBase
     {
-        public ConflipCommand(ITruthOrDareSession session, Configuration configuration, IChatOutput chatOutput, ILogService logService)
+        public ConflipCommand(ITruthOrDareSession session, Configuration configuration, IToDChatOutput chatOutput, ILogService logService)
             : base(session, configuration, chatOutput, logService) { }
 
         protected override bool IsMatch(string message)

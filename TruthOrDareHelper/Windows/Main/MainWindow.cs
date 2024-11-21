@@ -1,5 +1,4 @@
 using DalamudBasics.Chat.ClientOnlyDisplay;
-using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Extensions;
 using DalamudBasics.GUI.Windows;
@@ -30,7 +29,6 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private Plugin plugin;
     private ITruthOrDareSession session;
     private IRollManager rollManager;
-    private IChatOutput chatOutput;
     private Configuration configuration;
     private IToDChatOutput toDChatOutput;
     private IClientChatGui chatGui;
@@ -52,7 +50,6 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         this.plugin = plugin;
         session = serviceProvider.GetRequiredService<ITruthOrDareSession>();
         rollManager = serviceProvider.GetRequiredService<IRollManager>();
-        chatOutput = serviceProvider.GetRequiredService<IChatOutput>();
         configuration = serviceProvider.GetRequiredService<IConfigurationService<Configuration>>().GetConfiguration();
         toDChatOutput = serviceProvider.GetRequiredService<IToDChatOutput>();
         chatGui = serviceProvider.GetRequiredService<IClientChatGui>();
@@ -191,7 +188,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                     });
 
                     ImGui.SameLine();
-                    DrawActionButton(() => runnerActions.WritePrompt(pair.Winner, pair.ChallengeType), "");
+                    DrawActionButton(() => runnerActions.WritePrompt(pair.Loser ?? pair.Winner, pair.ChallengeType), $"##{pair.Winner.FullName}");
                 }
                 finally
                 {
@@ -254,7 +251,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 {
                     session.TryRemovePlayer(player.FullName);
                     targetManager.RemovePlayerReference(player.FullName);
-                    chatOutput.WriteChat($"{player.FullName} leaves the game.");
+                    toDChatOutput.WriteChat($"{player.FullName} leaves the game.");
                 }
                 DrawTooltip("Click to target the player, shift + right click to remove them.");
 
@@ -332,7 +329,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         }
 
         session.AddNewPlayer(targetFullName, configuration.DefaultTruthAcceptance, configuration.DefaultDareAcceptance);
-        chatOutput.WriteChat($"{targetFullName} joins the game.");
+        toDChatOutput.WriteChat($"{targetFullName} joins the game.");
 
         return true;
     }
