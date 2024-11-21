@@ -35,6 +35,8 @@ namespace TruthOrDareHelper.Modules.Chat
                     s.Append(" [");
                     s.Append(p.Loser.LastRollResult);
                     s.Append("]");
+                    s.Append($"Accepts: Truth: {GetAcceptanceMessage(p.Loser.AcceptsSfwTruth, p.Loser.AcceptsNsfwTruth)}" +
+                        $" Dare: {GetAcceptanceMessage(p.Loser.AcceptsSfwDare, p.Loser.AcceptsNsfwDare)}");
                 }
                 else
                 {
@@ -56,6 +58,25 @@ namespace TruthOrDareHelper.Modules.Chat
 
                 WriteChat(s.ToString(), null, 1000);
             }
+        }
+
+        private string GetAcceptanceMessage(bool sfwFlag, bool nsfwFlag)
+        {
+            if (sfwFlag)
+            {
+                if (nsfwFlag)
+                {
+                    return "Any";
+                }
+
+                return "SFW only";
+            }
+            if (nsfwFlag)
+            {
+                return "NSFW only";
+            }
+
+            return "Hasn't decided yet";
         }
     }
 }
