@@ -108,21 +108,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         DrawPlayerTable();
         DrawHelpPopup();
 
-        ImGui.TextColored(Yellow, $"Round {session.Round}");
-        if (session.PlayerData.Count >= 2)
-        {
-            ImGui.SameLine();
-            ImGui.PushID("RollButton");
-            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0.5f, 0, 0.6f));
-            ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0.5f, 0, 0.7f));
-            ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));
-
-            string rollText = compactMode ? "" : " Roll a new round ";
-            DrawActionButton(() => runnerActions.Roll(), rollText);
-            DrawTooltip("Start a new round and form new player pairs. Rolling type can be changed in Configuration.");
-            ImGui.PopStyleColor(3);
-            ImGui.PopID();
-        }
+        ImGui.TextColored(Yellow, $"Round {session.Round}");        
 
         ImGui.SameLine();
         ImGui.PushID("AddTarget##1");
@@ -146,6 +132,21 @@ public partial class MainWindow : PluginWindowBase, IDisposable
 
         ImGui.PopStyleColor(3);
         ImGui.PopID();
+
+        if (session.PlayerData.Count >= 2)
+        {
+            ImGui.SameLine();
+            ImGui.PushID("RollButton");
+            ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0.5f, 0, 0.6f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0.5f, 0, 0.7f));
+            ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));
+
+            string rollText = compactMode ? "" : " Roll a new round ";
+            DrawActionButton(() => runnerActions.Roll(), rollText);
+            DrawTooltip("Start a new round and form new player pairs. Rolling type can be changed in Configuration.");
+            ImGui.PopStyleColor(3);
+            ImGui.PopID();
+        }
 
         ImGui.SameLine();
         string configText = compactMode ? "" : " Configuration";
