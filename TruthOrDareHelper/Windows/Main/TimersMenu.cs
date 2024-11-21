@@ -43,9 +43,9 @@ namespace TruthOrDareHelper.Windows.Main
                 ImGui.InputTextWithHint("Description", "What is this timer for (optional)", ref timedActionDescription, 240);
                 ImGui.PopItemWidth();
                 
-                ImGui.RadioButton("Count rounds", ref timedActionType, (int)TimedActionType.Rounds);                                
+                ImGui.RadioButton(" Count rounds", ref timedActionType, (int)TimedActionType.Rounds);                                
                 ImGui.SameLine();
-                ImGui.RadioButton("Stopwatch", ref timedActionType, (int)TimedActionType.Time);
+                ImGui.RadioButton(" Stopwatch", ref timedActionType, (int)TimedActionType.Time);
 
                 if (timedActionType == (int)TimedActionType.Rounds)
                 {
