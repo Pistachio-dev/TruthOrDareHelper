@@ -1,4 +1,3 @@
-using Dalamud.Game.Text;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
@@ -6,17 +5,15 @@ using DalamudBasics.Extensions;
 using DalamudBasics.GUI.Windows;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
-using ECommons.GameHelpers;
 using ImGuiNET;
 using Microsoft.Extensions.DependencyInjection;
 using Model;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
-using System.Text;
 using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat.Interface;
+using TruthOrDareHelper.Modules.Prompting.Interface;
 using TruthOrDareHelper.Modules.Rolling;
 using TruthOrDareHelper.Settings;
 
@@ -41,6 +38,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private const string RoundSymbol = "♦";
     private const int RoundsToShowInHistory = 8;
     private IRunnerActions runnerActions;
+    private IPrompter prompter;
 
     public MainWindow(Plugin plugin, ILogService logService, IServiceProvider serviceProvider)
         : base(logService, "Truth or Dare helper")
@@ -60,6 +58,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         chatGui = serviceProvider.GetRequiredService<IClientChatGui>();
         targetManager = serviceProvider.GetRequiredService<ITargetingService>();
         runnerActions = serviceProvider.GetRequiredService<IRunnerActions>();
+        prompter = serviceProvider.GetRequiredService<IPrompter>();
 
         InitializeFormFactory();
 
@@ -76,6 +75,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     {
         DrawPlayerAcceptedTopicsPopup();
         DrawTimersPopup();
+        DrawPromptsPopup();
         DrawPlayerTable();
 
         ImGui.TextColored(Yellow, $"Round {session.Round}");
@@ -117,6 +117,10 @@ public partial class MainWindow : PluginWindowBase, IDisposable
 
         ImGui.SameLine();
         DrawActionButton(() => plugin.ToggleConfigUI(), " Configuration");
+
+        ImGui.SameLine();
+        DrawActionButton(() => openPrompsPopup = true, "¶ Prompts");
+        DrawTooltip("Prompts are ideas players can get if they can't come with one themselves.");
 
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
