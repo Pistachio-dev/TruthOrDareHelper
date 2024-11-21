@@ -7,7 +7,7 @@ namespace DalamudBasics.Targeting
         void ClearTarget();
 
         string GetTargetName();
-
+        bool IsTargetingAPlayer();
         void RemovePlayerReference(string playerFullName);
 
         bool TargetPlayer(string fullPlayerName);

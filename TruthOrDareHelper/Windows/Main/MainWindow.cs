@@ -78,7 +78,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         DrawTimersPopup();
         DrawPlayerTable();
 
-        ImGui.TextUnformatted($"Round {session.Round}");
+        ImGui.TextColored(Yellow, $"Round {session.Round}");
         if (session.PlayerData.Count >= 2)
         {
             ImGui.SameLine();
@@ -87,7 +87,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0.5f, 0, 0.7f));
             ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0.5f, 0, 0.7f));
 
-            DrawActionButton(() => runnerActions.Roll(), "New round, rrrrrolll the dice!");
+            DrawActionButton(() => runnerActions.Roll(), " Roll a new round ");
             ImGui.PopStyleColor(3);
             ImGui.PopID();
         }
@@ -97,12 +97,15 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(0, 0, 0.5f, 0.6f));
         ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(0, 0, 0.5f, 0.7f));
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(0, 0, 0.5f, 0.7f));
-        DrawActionButton(() => AddTargetPlayer(), "Add target player to the game");
+        DrawWithinDisableBlock(targetManager.IsTargetingAPlayer(), () =>
+        {
+            DrawActionButton(() => AddTargetPlayer(), " Add target to game");
+        });
         ImGui.PopStyleColor(3);
         ImGui.PopID();
 
         ImGui.SameLine();
-        DrawActionButton(() => plugin.ToggleConfigUI(), "Configuration");
+        DrawActionButton(() => plugin.ToggleConfigUI(), " Configuration");
 
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
@@ -110,7 +113,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         if (session.ArePlayersPaired())
         {
             ImGui.SameLine();
-            if (ImGui.Button($"Print player pairs to chat"))
+            if (ImGui.Button($" Write pairs to chat"))
             {
                 toDChatOutput.WritePairs(session.PlayingPairs);
             }

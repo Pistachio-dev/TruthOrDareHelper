@@ -94,6 +94,12 @@ namespace DalamudBasics.Targeting
             return BuildFullPlayerName(pc);
         }
 
+        public bool IsTargetingAPlayer()
+        {
+            var target = dalamudTargetManager.Target;
+            return target != null && target is IPlayerCharacter;
+        }
+
         private IPlayerCharacter? GetPlayerReferenceFromObjectTable(string name, string world)
         {
             return (IPlayerCharacter?)gameObjectTable.FirstOrDefault(o => o is IPlayerCharacter player && player.Matches(name, world));
