@@ -1,8 +1,6 @@
-using DalamudBasics.Chat.Output;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using Model;
-using System;
 using System.Linq;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Settings;
@@ -30,7 +28,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         {
             var relevantPair = session.PlayingPairs.First(pp => pp.Loser?.FullName == sender);
             relevantPair.ChallengeType = ChallengeType.Truth;
-            chatOutput.WriteChat($"{Plugin.MessageMark} {relevantPair.Loser?.FullName.GetFirstName()} chooses Truth!");            
+            chatOutput.WriteChat($"{Plugin.MessageMark} {relevantPair.Loser?.FullName.GetFirstName()} chooses Truth!");
         }
     }
 }

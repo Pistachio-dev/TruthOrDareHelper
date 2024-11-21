@@ -26,7 +26,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
     private static readonly Vector4 Gray = new Vector4(0.3f, 0.3f, 0.3f, 1f);
     private static readonly Vector4 LightGreen = new Vector4(162 / 255f, 1, 153 / 255f, 1);
-    private static readonly Vector4 Pink = new Vector4(1, 160f/255, 160 / 255f, 1);
+    private static readonly Vector4 Pink = new Vector4(1, 160f / 255, 160 / 255f, 1);
     private static readonly Vector4 Yellow = new Vector4(1, 1, 153 / 255f, 1);
     private Plugin plugin;
     private ITruthOrDareSession session;
@@ -59,7 +59,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         runnerActions = serviceProvider.GetRequiredService<IRunnerActions>();
         prompter = serviceProvider.GetRequiredService<IPrompter>();
 
-        InitializeFormFactory();        
+        InitializeFormFactory();
     }
 
     public void Dispose()
@@ -108,7 +108,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         {
             DrawTooltip("Add your target to the players.");
         }
-        
+
         ImGui.PopStyleColor(3);
         ImGui.PopID();
 
@@ -150,7 +150,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private void DrawPlayingPairsTable()
     {
         var check = session.PlayingPairs.Select(p => p.Done).ToArray();
-        const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;        
+        const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
         if (ImGui.BeginTable("##PairedPlayerTable", 5, flags))
         {
             ImGui.TableSetupColumn("Asker", ImGuiTableColumnFlags.WidthStretch, 0.3f);
@@ -252,7 +252,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
                 ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
                 ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.2f);
-            }            
+            }
 
             ImGui.TableHeadersRow();
 
@@ -303,7 +303,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                     {
                         ImGui.TextColored(Gray, "x");
                     }
-                }                
+                }
 
                 ImGui.TableNextColumn();
                 Vector2 buttonSize = new Vector2(18, 18);
@@ -317,7 +317,6 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 ImGui.SameLine();
                 DrawAcceptedTopicsPopupButton(player);
                 ImGui.SameLine();
-                
 
                 ImGui.PushID($"SmallWakeUpButton#{player.FullName}");
                 ImGui.SameLine();
@@ -336,7 +335,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 DrawTooltip("Send a wake up /tell");
                 ImGui.PopStyleVar(2);
             }
-            
+
             ImGui.EndTable();
         }
     }
@@ -378,9 +377,9 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             };
             if (!firstIteration)
             {
-                ImGui.SameLine();                
+                ImGui.SameLine();
             }
-            
+
             ImGui.TextColored(color, RoundSymbol);
             firstIteration = false;
         }
@@ -388,5 +387,4 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         ImGui.EndGroup();
         DrawTooltip("Last 8 rounds. Green means being the asker, red the asked, gray not participating.");
     }
-
 }

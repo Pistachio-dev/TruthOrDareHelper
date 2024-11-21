@@ -12,7 +12,6 @@ using ECommons;
 using Microsoft.Extensions.DependencyInjection;
 using Model;
 using System;
-using System.Net;
 using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat;
 using TruthOrDareHelper.Modules.Chat.Commands;
@@ -56,7 +55,7 @@ public sealed class Plugin : IDalamudPlugin
         logService = serviceProvider.GetRequiredService<ILogService>();
         configuration = serviceProvider.GetRequiredService<IConfigurationService<Configuration>>().GetConfiguration();
         InitializeServices(serviceProvider);
-        
+
         Session = serviceProvider.GetRequiredService<ITruthOrDareSession>();
 
         if (configuration.UseTestData)

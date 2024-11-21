@@ -15,7 +15,7 @@ namespace TruthOrDareHelper.Modules.Chat
     internal class ToDChatOutput : ChatOutput, IToDChatOutput
     {
         public ToDChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
-            : base(configuration,logService, chatGui, clientState, targetingService)
+            : base(configuration, logService, chatGui, clientState, targetingService)
         {
         }
 

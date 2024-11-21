@@ -30,7 +30,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
             var relevantPair = session.PlayingPairs.First(pp => pp.Loser?.FullName == sender);
             relevantPair.ChallengeType = FlipCoin();
             string resultText = GetCoinflipResult(relevantPair.ChallengeType);
-            chatOutput.WriteChat($"{Plugin.MessageMark} {relevantPair.Loser?.FullName.GetFirstName()} flips a coin and {resultText}");            
+            chatOutput.WriteChat($"{Plugin.MessageMark} {relevantPair.Loser?.FullName.GetFirstName()} flips a coin and {resultText}");
         }
 
         private ChallengeType FlipCoin()
@@ -57,6 +57,5 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
                 _ => "lands on it's side. What the hell. Dealer's choice then, I guess..."
             };
         }
-
     }
 }

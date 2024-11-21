@@ -1,4 +1,3 @@
-using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
@@ -16,6 +15,7 @@ namespace TruthOrDareHelper.Modules.Chat.Signs
         private const int TargetCommandDelay = 200;
 
         private static FfxivSign[] WinnerSigns = ((int[])[1, 2, 3, 4, 5, 6, 7, 6]).Select(number => new FfxivSign() { Text = $"attack{number}" }).ToArray();
+
         private static FfxivSign[] LoserSigns = [
             new FfxivSign() { Text = "bind1" },
             new FfxivSign() { Text = "bind2" },
@@ -116,6 +116,5 @@ namespace TruthOrDareHelper.Modules.Chat.Signs
                 sign.InUse = false;
             }
         }
-
     }
 }

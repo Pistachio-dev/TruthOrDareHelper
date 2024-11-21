@@ -60,7 +60,5 @@ namespace Model
 
             return false;
         }
-
-
     }
 }

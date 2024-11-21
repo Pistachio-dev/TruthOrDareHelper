@@ -119,13 +119,17 @@ namespace DalamudBasics.Chat.Output
 
         private bool IsMessageNotSentErrorMessage(string text)
         {
-            switch (clientState.ClientLanguage) {
+            switch (clientState.ClientLanguage)
+            {
                 case ClientLanguage.English:
                     return text.Equals("Your message was not heard. You must wait before using /tell, /say, /yell, or /shout again.");
+
                 case ClientLanguage.French:
                     return text.Equals("Impossible de murmurer/dire/crier/hurler plusieurs fois de suite.");
+
                 case ClientLanguage.German:
                     return text.Equals("Nachricht wurde nicht gesendet. Rufen, Schreien, Sagen und Flüstern ist nicht mehrmals hintereinander möglich. ");
+
                 case ClientLanguage.Japanese:
                     return text.Equals("送信できませんでした。Tell/Say/Yell/Shoutは連続して実行できません。");
             }
@@ -144,7 +148,7 @@ namespace DalamudBasics.Chat.Output
             if (arellRetryMessagesProcessed)
             {
                 SendMessagesFromQueueAllowedOnThisTick(chatQueue);
-            }            
+            }
         }
 
         // Returns true if all messages were processed, or false if we are waiting on one.
@@ -169,7 +173,7 @@ namespace DalamudBasics.Chat.Output
                 {
                     ActuallyWriteChat(nextChatPayload);
                     lastTimeChatWasWritten = DateTime.Now;
-                }                
+                }
             }
 
             return true;
@@ -205,7 +209,7 @@ namespace DalamudBasics.Chat.Output
                 if (!messagePrefix.IsNullOrEmpty())
                 {
                     fullChatString = $"{messagePrefix} {sanitizedText}";
-                }                 
+                }
 
                 ECommons.Automation.Chat.Instance.SendMessage(fullChatString);
                 if (configuration.LogOutgoingChatOutput)
@@ -264,7 +268,6 @@ namespace DalamudBasics.Chat.Output
 
         private bool IsLimitedChatChannel(XivChatType? chatEntryChannel)
         {
-
             return (chatEntryChannel is XivChatType.Shout or XivChatType.Yell or XivChatType.Say or XivChatType.TellOutgoing)
                 || (chatEntryChannel == null && configuration.DefaultOutputChatType is XivChatType.Shout or XivChatType.Yell or XivChatType.Say or XivChatType.TellOutgoing);
         }

@@ -1,5 +1,4 @@
 using Dalamud.Utility;
-using DalamudBasics.Chat.Output;
 using DalamudBasics.Logging;
 using Model;
 using System.Text.RegularExpressions;
@@ -27,8 +26,8 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         {
             bool isMatch = IsMatch(message.ToLower());
             if (!isMatch) { return false; }
-            bool isApplicable = IsApplicable(sender);            
-            if (!isApplicable) { return false;  }
+            bool isApplicable = IsApplicable(sender);
+            if (!isApplicable) { return false; }
             Execute(sender);
             return true;
         }

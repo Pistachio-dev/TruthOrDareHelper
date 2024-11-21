@@ -4,11 +4,9 @@ using DalamudBasics.Configuration;
 using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
-using ImGuiNET;
 using Model;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Prompting.Interface;
@@ -53,15 +51,17 @@ namespace TruthOrDareHelper.GameActions
             log.Info($"[ACTION] Create timer: Roll. Type: {configuration.RollingType}");
             signManager.ClearMarks(session.PlayingPairs);
             session.Round++;
-            
+
             switch (configuration.RollingType)
             {
                 case RollingType.PluginRng:
                     session.PlayingPairs = rollManager.RollStandard(session.PlayerData.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
                     break;
+
                 case RollingType.PluginWeightedRng:
                     session.PlayingPairs = rollManager.RollWeighted(session.PlayerData.Select(kvp => kvp.Value).ToList(), configuration.MaxParticipationStreak, configuration.SimultaneousPlays);
                     break;
+
                 default:
                     chatGui.Print($"Rolling type not supported");
                     return;
@@ -81,7 +81,7 @@ namespace TruthOrDareHelper.GameActions
             PlayerInfo? replaced = rerollTheLoser ? pair.Loser : pair.Winner;
             string rerrolledName = replaced?.FullName ?? "Nobody? This should not be possible.";
             chatOutput.WriteChat($"Rerolling {rerrolledName}.");
-            
+
             PlayerInfo? replacement = rollManager.Reroll(session);
             if (replacement == null)
             {
@@ -90,7 +90,7 @@ namespace TruthOrDareHelper.GameActions
 
             if (rerollTheLoser && pair.Loser != null)
             {
-                signManager.UnmarkPlayer(pair.Loser);                
+                signManager.UnmarkPlayer(pair.Loser);
                 pair.Loser = replacement;
                 signManager.MarkPlayer(pair.Loser, false);
             }
@@ -122,9 +122,9 @@ namespace TruthOrDareHelper.GameActions
         }
 
         private OnTimedActionElapsed CreateTimedActionCallback(PlayerInfo target, string description)
-        {            
-            string descriptionSection = description.IsNullOrWhitespace() 
-                ? string.Empty 
+        {
+            string descriptionSection = description.IsNullOrWhitespace()
+                ? string.Empty
                 : $"\"{description}\" ";
             return () =>
             {
@@ -149,7 +149,7 @@ namespace TruthOrDareHelper.GameActions
             log.Info($"[ACTION] Reload prompts.");
             prompter.LoadPromptsToMemory();
             var statsDescription = prompter.GetStatsString();
-            chatGui.Print(statsDescription);            
+            chatGui.Print(statsDescription);
         }
 
         public void OpenPromptsFolder()

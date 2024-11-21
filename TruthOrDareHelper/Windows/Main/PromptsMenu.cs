@@ -9,7 +9,7 @@ namespace TruthOrDareHelper.Windows.Main
         private bool openPrompsPopup = false;
 
         private void DrawPromptsPopup()
-        {            
+        {
             if (openPrompsPopup)
             {
                 ImGui.OpenPopup(PromptsPopupName);
@@ -29,8 +29,8 @@ namespace TruthOrDareHelper.Windows.Main
                 {
                     ImGui.PopStyleColor(3);
                 }
-                
-                ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(220/255f, 40/255f, 40 / 255f, 1));
+
+                ImGui.PushStyleColor(ImGuiCol.Button, new Vector4(220 / 255f, 40 / 255f, 40 / 255f, 1));
                 ImGui.PushStyleColor(ImGuiCol.ButtonHovered, new Vector4(220 / 255f, 40 / 255f, 40 / 255f, 1));
                 ImGui.PushStyleColor(ImGuiCol.ButtonActive, new Vector4(220 / 255f, 40 / 255f, 40 / 255f, 1));
                 ImGui.SameLine();
@@ -42,7 +42,7 @@ namespace TruthOrDareHelper.Windows.Main
                 {
                     ImGui.PopStyleColor(3);
                 }
-                
+
                 ImGui.TextColored(Yellow, "Every line on each file is read as a prompt, feel free to add your own or remove some");
 
                 ImGui.EndPopup();

@@ -1,4 +1,3 @@
-using FFXIVClientStructs.FFXIV.Common.Math;
 using ImGuiNET;
 
 namespace TruthOrDareHelper.Windows.Main
@@ -9,7 +8,7 @@ namespace TruthOrDareHelper.Windows.Main
         private bool openHelpPopup = false;
 
         private void DrawHelpPopup()
-        {            
+        {
             if (openHelpPopup)
             {
                 ImGui.OpenPopup(HelpMenuName);

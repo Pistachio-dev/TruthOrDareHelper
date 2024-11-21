@@ -68,14 +68,14 @@ namespace TruthOrDareHelper.Modules.Prompting
             foreach (var promptCollection in promptCollections)
             {
                 SeedFileIfMissing(promptCollection);
-            }            
+            }
         }
 
         public void LoadPromptsToMemory()
         {
             foreach (var promptCollection in promptCollections)
             {
-                List<string> prompts = new() ;
+                List<string> prompts = new();
                 using var sr = new StreamReader(folderRoute + promptCollection.FileName);
                 while (!sr.EndOfStream)
                 {
@@ -110,7 +110,7 @@ namespace TruthOrDareHelper.Modules.Prompting
                 if (flags[i])
                 {
                     if (index < cursor + promptCollections[i].LoadedPromts.Length)
-                    {                        
+                    {
                         return promptCollections[i].Tag + promptCollections[i].LoadedPromts[index - cursor];
                     }
 

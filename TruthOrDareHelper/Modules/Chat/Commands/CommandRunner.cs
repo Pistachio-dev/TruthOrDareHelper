@@ -47,6 +47,5 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
 
             return false;
         }
-
     }
 }

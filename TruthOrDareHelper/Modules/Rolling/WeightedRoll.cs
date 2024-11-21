@@ -6,7 +6,7 @@ namespace TruthOrDareHelper.Modules.Rolling
     public class WeightedRoll : Roll
     {
         private readonly int numberOfPlayers;
-        
+
         public WeightedRoll(PlayerInfo player, int numberOfPlayers) : base(player)
         {
             Player = player;
@@ -14,7 +14,7 @@ namespace TruthOrDareHelper.Modules.Rolling
             RollResult = CalculateWeightedRoll();
         }
 
-        // The calculation is: (winPercentage / (1 / numberOfPlayers) * (how much we'd have to add/remove to get the lowest/highest score guaranteed);        
+        // The calculation is: (winPercentage / (1 / numberOfPlayers) * (how much we'd have to add/remove to get the lowest/highest score guaranteed);
         private int CalculateWeightedRoll()
         {
             int naturalRoll = rng.Next(1, RollExclusiveCeiling);
@@ -23,7 +23,7 @@ namespace TruthOrDareHelper.Modules.Rolling
             {
                 return naturalRoll;
             }
-            
+
             double expectedParticipationRateForRole = 1f / numberOfPlayers;
             double startingWeight = CalculateStartingWeight();
             if (naturalRoll >= RollExclusiveCeiling / 2)
@@ -57,7 +57,7 @@ namespace TruthOrDareHelper.Modules.Rolling
                 return 0;
             }
 
-            return cappedRoundsParticipated/roundsBeforeGuaranteedRole;
+            return cappedRoundsParticipated / roundsBeforeGuaranteedRole;
         }
     }
 }

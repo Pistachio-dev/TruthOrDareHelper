@@ -24,6 +24,7 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         }
 
         public abstract bool HasElapsed();
+
         public abstract void Update(ITruthOrDareSession session);
 
         public void OnElapsed()

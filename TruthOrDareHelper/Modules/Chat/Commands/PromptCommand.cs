@@ -33,7 +33,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         {
             var relevantPlayingPair = session.PlayingPairs.FirstOrDefault(pp => pp.Winner.FullName == sender);
             if (relevantPlayingPair == null) { return; }
-            runnerActions.WritePrompt(relevantPlayingPair.Winner, relevantPlayingPair.ChallengeType);              
+            runnerActions.WritePrompt(relevantPlayingPair.Winner, relevantPlayingPair.ChallengeType);
         }
     }
 }

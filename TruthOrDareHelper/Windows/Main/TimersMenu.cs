@@ -1,8 +1,5 @@
-using DalamudBasics.Extensions;
-using DalamudBasics.GUI.Forms;
 using ImGuiNET;
 using Model;
-using System.Numerics;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 
 namespace TruthOrDareHelper.Windows.Main
@@ -17,7 +14,6 @@ namespace TruthOrDareHelper.Windows.Main
         private int timedActionRounds = 0;
         private int timedActionMinutes = 0;
         private int timedActionSeconds = 0;
-               
 
         private void TriggerTimersPopupOpening(PlayerInfo target)
         {
@@ -34,16 +30,16 @@ namespace TruthOrDareHelper.Windows.Main
             }
             if (ImGui.BeginPopup($"{TimersPopupName}"))
             {
-                var player = playerSelectedAsTimerTarget;               
-                ImGui.TextColored(Yellow, player?.FullName ?? "Nobody");                
+                var player = playerSelectedAsTimerTarget;
+                ImGui.TextColored(Yellow, player?.FullName ?? "Nobody");
                 ImGui.SameLine();
                 ImGui.TextUnformatted("Target");
 
                 ImGui.PushItemWidth(ImGui.GetFontSize() * 15);
                 ImGui.InputTextWithHint("Description", "What is this timer for (optional)", ref timedActionDescription, 240);
                 ImGui.PopItemWidth();
-                
-                ImGui.RadioButton(" Count rounds", ref timedActionType, (int)TimedActionType.Rounds);                                
+
+                ImGui.RadioButton(" Count rounds", ref timedActionType, (int)TimedActionType.Rounds);
                 ImGui.SameLine();
                 ImGui.RadioButton(" Stopwatch", ref timedActionType, (int)TimedActionType.Time);
 
@@ -64,8 +60,8 @@ namespace TruthOrDareHelper.Windows.Main
                 {
                     CreateTimer();
                     ImGui.CloseCurrentPopup();
-                }              
-                
+                }
+
                 ImGui.EndPopup();
             }
         }
@@ -80,6 +76,5 @@ namespace TruthOrDareHelper.Windows.Main
 
             runnerActions.CreateAndStartTimer(playerSelectedAsTimerTarget, timedActionDescription, timedActionMinutes, timedActionSeconds);
         }
-
     }
 }

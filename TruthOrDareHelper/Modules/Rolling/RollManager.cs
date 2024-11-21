@@ -1,5 +1,4 @@
 using DalamudBasics.Chat.ClientOnlyDisplay;
-using Lumina.Excel.Sheets;
 using Model;
 using System;
 using System.Collections.Generic;
@@ -40,6 +39,7 @@ namespace TruthOrDareHelper.Modules.Rolling
         {
             foreach (var roll in rolls) { roll.Player.LastRollResult = roll.RollResult; }
         }
+
         private void CheckPlayerAmount(List<PlayerInfo> players)
         {
             if (players.Count < 2)

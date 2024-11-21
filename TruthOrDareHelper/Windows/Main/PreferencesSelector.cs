@@ -1,9 +1,7 @@
-using Dalamud.Game.Text.SeStringHandling.Payloads;
 using DalamudBasics.Extensions;
 using DalamudBasics.GUI.Forms;
 using ImGuiNET;
 using Model;
-using System;
 using System.Numerics;
 
 namespace TruthOrDareHelper.Windows.Main
@@ -32,7 +30,7 @@ namespace TruthOrDareHelper.Windows.Main
 
         private void DrawAcceptedTopicsCell(PlayerInfo player)
         {
-            ImGui.BeginChild($"prefsDisplay##{player.FullName}", new Vector2(ImGui.GetFontSize()*15, ImGui.GetFontSize() * 1f));
+            ImGui.BeginChild($"prefsDisplay##{player.FullName}", new Vector2(ImGui.GetFontSize() * 15, ImGui.GetFontSize() * 1f));
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(1, 0));
             ImGui.TextColored(LightGreen, "T:");
             ImGui.SameLine(0);
@@ -42,8 +40,8 @@ namespace TruthOrDareHelper.Windows.Main
             ImGui.SameLine();
             ImGui.TextColored(Yellow, GetAcceptedTopicText(player.AcceptsSfwDare, player.AcceptsNsfwDare));
             ImGui.PopStyleVar();
-            ImGui.EndChild();            
-            
+            ImGui.EndChild();
+
             DrawTooltip("T = Truth, D = Dare, S = SFW, N = NSFW, A = Any, ? = None");
         }
 
@@ -51,7 +49,7 @@ namespace TruthOrDareHelper.Windows.Main
         {
             if (sfwFlag)
             {
-                if(nsfwFlag)
+                if (nsfwFlag)
                 {
                     return "A";
                 }
@@ -64,7 +62,7 @@ namespace TruthOrDareHelper.Windows.Main
                 return "N";
             }
 
-            return "?";            
+            return "?";
         }
 
         private void DrawPlayerAcceptedTopicsPopup()
