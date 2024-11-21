@@ -7,10 +7,10 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
     {
         private TimeSpan duration;
 
-        public TimerTimedAction(TimeSpan duration, TimeEndActionDelegate action)
+        public TimerTimedAction(TimeSpan duration, PlayerInfo target, string description, OnTimedActionElapsed action)
+            : base(target, description, action)
         {
             this.duration = duration;
-            this.timeEndAction = action;
         }
 
         public override bool HasElapsed()

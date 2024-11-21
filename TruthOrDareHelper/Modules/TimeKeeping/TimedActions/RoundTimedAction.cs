@@ -8,11 +8,11 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         private int durationInRounds;
         private int currentRound;
 
-        public RoundTimedAction(int startRound, int durationInRounds, TimeEndActionDelegate action)
+        public RoundTimedAction(int startRound, int durationInRounds, PlayerInfo target, string description, OnTimedActionElapsed action)
+            : base(target, description, action)
         {
             this.startRound = startRound;
             this.durationInRounds = durationInRounds;
-            this.timeEndAction = action;
         }
 
         public override bool HasElapsed()
