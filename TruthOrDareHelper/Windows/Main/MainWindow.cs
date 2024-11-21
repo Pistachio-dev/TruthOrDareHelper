@@ -75,10 +75,6 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     protected override void SafeDraw()
     {
         DrawPlayerAcceptedTopicsPopup();
-        if (ImGui.Button("Test chat"))
-        {
-            chatOutput.WriteChat(Guid.NewGuid().ToString(), XivChatType.Say);
-        };
         DrawPlayerTable();
 
         ImGui.TextUnformatted($"Round {session.Round}");
