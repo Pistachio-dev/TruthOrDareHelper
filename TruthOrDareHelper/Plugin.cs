@@ -3,7 +3,6 @@ using Dalamud.Interface.Windowing;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 using DalamudBasics.Chat.Listener;
-using DalamudBasics.Chat.Output;
 using DalamudBasics.Configuration;
 using DalamudBasics.Debugging;
 using DalamudBasics.DependencyInjection;
@@ -19,6 +18,8 @@ using TruthOrDareHelper.Modules.Chat.Commands;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Chat.Signs;
 using TruthOrDareHelper.Modules.Rolling;
+using TruthOrDareHelper.Modules.TimeKeeping;
+using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Settings;
 using TruthOrDareHelper.TestData;
 using TruthOrDareHelper.Windows;
@@ -114,6 +115,7 @@ public sealed class Plugin : IDalamudPlugin
         serviceCollection.AddSingleton<ICommandRunner, CommandRunner>();
         serviceCollection.AddSingleton<IRunnerActions, RunnerActions>();
         serviceCollection.AddSingleton<ISignManager, SignManager>();
+        serviceCollection.AddSingleton<ITimeKeeper, TimeKeeper>();
         return serviceCollection.BuildServiceProvider();
     }
 
@@ -124,7 +126,8 @@ public sealed class Plugin : IDalamudPlugin
         serviceProvider.GetRequiredService<IChatListener>().InitializeAndRun(MessageMark);
         serviceProvider.GetRequiredService<IToDChatOutput>().AttachToGameLogicLoop(framework);
         serviceProvider.GetRequiredService<HookManager>();
-        serviceProvider.GetRequiredService<IToDChatListener>().AttachCommandDetector();        
+        serviceProvider.GetRequiredService<IToDChatListener>().AttachCommandDetector();
+        serviceProvider.GetRequiredService<ITimeKeeper>().AttachToGameLogicLoop(framework);
     }
 
     private void OnCommand(string command, string args)

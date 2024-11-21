@@ -1,13 +1,19 @@
+using Dalamud.Utility;
 using DalamudBasics.Chat.ClientOnlyDisplay;
 using DalamudBasics.Configuration;
+using DalamudBasics.Extensions;
 using DalamudBasics.Logging;
 using DalamudBasics.Targeting;
 using Model;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Rolling;
+using TruthOrDareHelper.Modules.TimeKeeping.Interface;
+using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 using TruthOrDareHelper.Settings;
+using static TruthOrDareHelper.Modules.TimeKeeping.TimedActions.TimedAction;
 
 namespace TruthOrDareHelper.GameActions
 {
@@ -20,10 +26,11 @@ namespace TruthOrDareHelper.GameActions
         private readonly ITargetingService targetingManager;
         private readonly ILogService log;
         private readonly IClientChatGui chatGui;
+        private readonly ITimeKeeper timeKeeper;
         private readonly Configuration configuration;
 
         public RunnerActions(ITruthOrDareSession session, IConfigurationService<Configuration> configService, IToDChatOutput chatOutput, IRollManager rollManager, ISignManager signManager,
-            ITargetingService targetingManager, ILogService log, IClientChatGui chatGui)
+            ITargetingService targetingManager, ILogService log, IClientChatGui chatGui, ITimeKeeper timeKeeper)
         {
             this.session = session;
             this.chatOutput = chatOutput;
@@ -32,6 +39,7 @@ namespace TruthOrDareHelper.GameActions
             this.targetingManager = targetingManager;
             this.log = log;
             this.chatGui = chatGui;
+            this.timeKeeper = timeKeeper;
             this.configuration = configService.GetConfiguration();
         }
 
@@ -89,6 +97,30 @@ namespace TruthOrDareHelper.GameActions
             MoveParticipations(replaced, replacement, !rerollTheLoser);
 
             chatOutput.WriteChat($"Rerroll! {replacement.FullName} replaces {rerrolledName}.");
+        }
+
+        public void CreateAndStartTimer(PlayerInfo target, string description, int minutes, int seconds)
+        {
+            var duration = new TimeSpan(0, minutes, seconds);
+            var timer = new TimerTimedAction(duration, target, description, CreateTimedActionCallback(target, description));
+            timeKeeper.AddTimedAction(timer);
+        }
+
+        public void CreateAndStartTimer(PlayerInfo target, string description, int roundAmount)
+        {
+            var timer = new RoundTimedAction(session.Round, roundAmount, target, description, CreateTimedActionCallback(target, description));
+            timeKeeper.AddTimedAction(timer);
+        }
+
+        private OnTimedActionElapsed CreateTimedActionCallback(PlayerInfo target, string description)
+        {            
+            string descriptionSection = description.IsNullOrWhitespace() 
+                ? string.Empty 
+                : $"\"{description}\" ";
+            return () =>
+            {
+                chatOutput.WriteChat($"{target.FullName.GetFirstName()}, you can stop {descriptionSection}now. <se.7>");
+            };
         }
 
         private void AddParticipationRecords(IEnumerable<PlayerInfo> players, List<PlayerPair> pairs)

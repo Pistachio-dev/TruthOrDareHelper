@@ -20,6 +20,7 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
         {
             Target = target;
             Description = description;
+            this.onElapsedAction = onElapsedAction;
         }
 
         public abstract bool HasElapsed();
