@@ -1,9 +1,6 @@
 using Dalamud.Game.Text;
 using DalamudBasics.Chat.Listener;
-using DalamudBasics.Logging;
-using Model;
 using System;
-using System.Linq;
 using TruthOrDareHelper.Modules.Chat.Interface;
 
 namespace TruthOrDareHelper.Modules.Chat
@@ -11,17 +8,11 @@ namespace TruthOrDareHelper.Modules.Chat
     public class ToDChatListener : IToDChatListener
     {
         private readonly IChatListener chatListener;
-        private readonly ILogService logService;
-        private readonly ITruthOrDareSession session;
         private readonly ICommandRunner commandRunner;
 
-        private XivChatType[] channelsToReadCommandsIn = [XivChatType.Say, XivChatType.Shout, XivChatType.Yell, XivChatType.Party, XivChatType.Alliance];
-
-        public ToDChatListener(IChatListener chatListener, ILogService logService, ITruthOrDareSession session, ICommandRunner commandRunner)
+        public ToDChatListener(IChatListener chatListener, ICommandRunner commandRunner)
         {
             this.chatListener = chatListener;
-            this.logService = logService;
-            this.session = session;
             this.commandRunner = commandRunner;
         }
 
@@ -32,11 +23,6 @@ namespace TruthOrDareHelper.Modules.Chat
 
         private void DetectAndHandleCommands(XivChatType type, string senderFullName, string message, DateTime receivedAt)
         {
-            if (!channelsToReadCommandsIn.Contains(type))
-            {
-                return;
-            }
-
             commandRunner.RunRelevantCommand(senderFullName, message);
         }
     }
