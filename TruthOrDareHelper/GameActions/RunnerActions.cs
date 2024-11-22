@@ -46,6 +46,19 @@ namespace TruthOrDareHelper.GameActions
             this.configuration = configService.GetConfiguration();
         }
 
+        public void CompletePair(PlayerPair pair)
+        {
+            pair.Done = true;
+            if (configuration.AutoRollOnAllComplete && !session.PlayingPairs.Any(p => !p.Done))
+            {
+                chatOutput.WriteChat($"Everyone is done! Starting new round in 3", null, 1000);
+                chatOutput.WriteChat($"2", null, 1000);
+                chatOutput.WriteChat($"1", null, 1000);
+                chatOutput.WriteChat($"Go!", null, 1000);                
+                Roll();
+            }
+        }
+
         public void Roll()
         {
             log.Info($"[ACTION] Create timer: Roll. Type: {configuration.RollingType}");

@@ -222,7 +222,10 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 ImGui.TableNextColumn();
 
                 var referenceableDone = pair.Done;
-                ImGui.Checkbox("## " + i, ref referenceableDone);
+                if (ImGui.Checkbox("## " + i, ref referenceableDone) && referenceableDone)
+                {
+                    runnerActions.CompletePair(pair);
+                }
                 pair.Done = referenceableDone;
 
                 ImGui.TableNextColumn();

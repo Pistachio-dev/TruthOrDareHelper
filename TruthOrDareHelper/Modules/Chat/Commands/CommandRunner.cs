@@ -29,7 +29,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
                 new DareCommand(session, configuration, chatOutput, logService),
                 new DealersChoiceCommand(session, configuration, chatOutput, logService),
                 new ConflipCommand(session, configuration, chatOutput, logService),
-                new PasswordCommand(session, configuration, chatOutput, logService),
+                new PasswordCommand(session, configuration, chatOutput, logService, runnerActions),
                 new PromptCommand(runnerActions, session, configuration, chatOutput, logService)
             ];
         }

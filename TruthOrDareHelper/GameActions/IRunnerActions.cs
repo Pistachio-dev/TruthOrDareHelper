@@ -5,7 +5,7 @@ namespace TruthOrDareHelper.GameActions
     public interface IRunnerActions
     {
         void ChatSoundWakeUp(PlayerInfo player);
-
+        void CompletePair(PlayerPair pair);
         void CreateAndStartTimer(PlayerInfo target, string description, int minutes, int seconds);
 
         void CreateAndStartTimer(PlayerInfo target, string description, int roundAmount);
