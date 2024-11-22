@@ -9,7 +9,7 @@ namespace TruthOrDareHelper.GameActions
         void CreateAndStartTimer(PlayerInfo target, string description, int minutes, int seconds);
 
         void CreateAndStartTimer(PlayerInfo target, string description, int roundAmount);
-
+        void EndGame();
         void OpenPromptsFolder();
         void PrintChatCommands();
         void ReloadPrompts();

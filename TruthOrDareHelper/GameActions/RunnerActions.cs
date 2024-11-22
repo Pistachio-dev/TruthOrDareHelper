@@ -92,6 +92,18 @@ namespace TruthOrDareHelper.GameActions
             chatOutput.WriteChat($"{player.FullName} leaves the game.");
         }
 
+        public void EndGame()
+        {           
+            foreach (var player in session.PlayerData.Values)
+            {
+                signManager.UnmarkPlayer(player);
+                targetingManager.RemovePlayerReference(player.FullName);
+            }
+
+            session.Reset();
+            chatGui.Print("Game finished and players removed");
+        }
+
         public void Roll()
         {
             log.Info($"[ACTION] Create timer: Roll. Type: {configuration.RollingType}");

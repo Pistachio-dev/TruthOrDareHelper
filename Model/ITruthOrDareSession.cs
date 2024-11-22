@@ -15,6 +15,8 @@ namespace Model
 
         bool IsPlayerPlaying(PlayerInfo player);
 
+        void Reset();
+
         void TryRemovePlayer(string fullName);
     }
 }

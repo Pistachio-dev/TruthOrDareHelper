@@ -193,6 +193,11 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         DrawActionButton(() => openHelpPopup = true, "");
         DrawTooltip("Help");
 
+        ImGui.SameLine();
+
+        DrawWithinDisableBlock(ImGui.GetIO().KeyShift, () => DrawActionButton(() => runnerActions.EndGame(), ""));
+        DrawTooltip("Shift+Click to unmark and remove all players");
+
         ImGui.Separator();
         ImGui.TextUnformatted("This round");
 

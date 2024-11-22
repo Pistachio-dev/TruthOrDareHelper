@@ -34,5 +34,13 @@ namespace Model
         }
 
         public bool ArePlayersPaired() => PlayingPairs.Any();
+
+        public void Reset()
+        {
+            SessionId = Guid.NewGuid();
+            Round = 0;
+            PlayerData.Clear();
+            PlayingPairs.Clear();
+        }
     }
 }
