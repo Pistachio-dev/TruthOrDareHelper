@@ -53,20 +53,25 @@ namespace DalamudBasics.Chat.Output
                 command = "/" + command;
             }
 
-            WriteChat(command, XivChatType.None, delay, targetFullName);
+            EnqueueMessage(command, XivChatType.None, delay, targetFullName);
         }
 
         public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0, string? targetFullName = null)
+        {
+            if (waterMark != null)
+            {
+                message = waterMark + message;
+            }
+
+            EnqueueMessage(message, chatChannel, minSpacingBeforeInMs, targetFullName);
+        }
+
+        private void EnqueueMessage(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0, string? targetFullName = null)
         {
             if (!initialized)
             {
                 NotifyNotAttachedToGame();
                 return;
-            }
-
-            if (waterMark != null)
-            {
-                message = waterMark + message;
             }
 
             chatQueue.Enqueue(new ChatOutputQueuedMessage(message, chatChannel, minSpacingBeforeInMs, targetFullName));
