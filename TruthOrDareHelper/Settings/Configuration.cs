@@ -15,7 +15,7 @@ public class Configuration : IToDConfiguration
 
     public int MaxParticipationStreak { get; set; } = 3;
 
-    public string ConfirmationKeyword { get; set; } = "#nova";
+    public string ConfirmationKeyword { get; set; } = "kthxbye";
 
     public bool UseTestData { get; set; } = false;
 
