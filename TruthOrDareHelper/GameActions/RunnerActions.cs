@@ -175,7 +175,7 @@ namespace TruthOrDareHelper.GameActions
                 prompt = prompter.GetPrompt(loser.AcceptsSfwTruth, loser.AcceptsNsfwTruth, loser.AcceptsSfwDare, loser.AcceptsNsfwDare);
             }
 
-            chatOutput.WriteChat($"{Plugin.MessageMark}{prompt}");
+            chatOutput.WriteChat($"{prompt}");
         }
 
         public void ToggleAFK(PlayerInfo player)

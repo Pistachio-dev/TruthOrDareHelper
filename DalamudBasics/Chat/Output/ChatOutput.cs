@@ -17,6 +17,7 @@ namespace DalamudBasics.Chat.Output
     {
         private const int ExtraDelayOnRetry = 500;
 
+        private string? waterMark = null;
         private bool initialized = false;
         private ConcurrentQueue<ChatOutputQueuedMessage> chatQueue = new();
         private ConcurrentQueue<ChatOutputQueuedMessage> retryQueue = new();
@@ -63,6 +64,11 @@ namespace DalamudBasics.Chat.Output
                 return;
             }
 
+            if (waterMark != null)
+            {
+                message = waterMark + message;
+            }
+
             chatQueue.Enqueue(new ChatOutputQueuedMessage(message, chatChannel, minSpacingBeforeInMs, targetFullName));
         }
 
@@ -80,11 +86,13 @@ namespace DalamudBasics.Chat.Output
 
         private void NotifyNotAttachedToGame()
         {
-            logService.Error($"You forgot to call {this.GetType()}.{nameof(AttachToGameLogicLoop)}!");
+            logService.Error($"You forgot to call {this.GetType()}.{nameof(InitializeAndAttachToGameLogicLoop)}!");
         }
 
-        public void AttachToGameLogicLoop(IFramework framework)
+        // Leave waterMark as null if you don't want to attach a mark to your messages
+        public void InitializeAndAttachToGameLogicLoop(IFramework framework, string? waterMark = null)
         {
+            this.waterMark = waterMark;
             framework.Update += Tick;
             chatGui.AddOnChatUIListener(MessageNotSentDetector);
             initialized = true;

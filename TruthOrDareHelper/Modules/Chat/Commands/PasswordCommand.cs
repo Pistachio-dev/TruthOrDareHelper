@@ -28,7 +28,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         {
             var relevantPair = session.PlayingPairs.First(pp => pp.Winner.FullName == sender);
             relevantPair.Done = true;
-            chatOutput.WriteChat($"{Plugin.MessageMark} {relevantPair.Winner.FullName.GetFirstName()} accepts the {ChallengeTypeText(relevantPair.ChallengeType)}!");
+            chatOutput.WriteChat($"{relevantPair.Winner.FullName.GetFirstName()} accepts the {ChallengeTypeText(relevantPair.ChallengeType)}!");
         }
 
         private string ChallengeTypeText(ChallengeType challengeType)
