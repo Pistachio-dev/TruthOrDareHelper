@@ -21,6 +21,7 @@ namespace TruthOrDareHelper.Windows.Main;
 public partial class MainWindow : PluginWindowBase, IDisposable
 {
     private bool compactMode;
+    private bool manualResizing = false;
 
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
@@ -96,6 +97,20 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             GoLalaMode();
         }
     }
+    
+    private void ToggleManualResizing()
+    {
+        if (manualResizing)
+        {
+            manualResizing = false;
+            Flags = ImGuiWindowFlags.AlwaysAutoResize;
+        }
+        else
+        {
+            manualResizing = true;
+            Flags = ImGuiWindowFlags.None;
+        }
+    }
 
     public void Dispose()
     { }
@@ -162,6 +177,18 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         DrawActionButton(() => ToggleSize(), compactMode ? " Grow" : " Lala mode");
 
         ImGui.SameLine();
+        DrawActionButton(() => ToggleManualResizing(), "⇔");
+        if (manualResizing)
+        {
+            DrawTooltip("Automatic window size");
+        }
+        else
+        {
+            DrawTooltip("Allow manual window resizing");
+        }
+        
+
+        ImGui.SameLine();
         DrawActionButton(() => openHelpPopup = true, "");
         DrawTooltip("Help");
 
@@ -184,7 +211,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     }
 
     private void DrawPlayingPairsTable()
-    {
+    {        
         var check = session.PlayingPairs.Select(p => p.Done).ToArray();
         const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
         if (ImGui.BeginTable("##PairedPlayerTable", 5, flags))
