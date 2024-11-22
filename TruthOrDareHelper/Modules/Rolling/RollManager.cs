@@ -79,7 +79,7 @@ namespace TruthOrDareHelper.Modules.Rolling
 
         private (List<PlayerInfo> elegiblePlayers, int pairsToForm) GetElegiblePlayers(List<PlayerInfo> players, int maxParticipationStreak, int pairsToForm)
         {
-            List<PlayerInfo> elegiblePlayers = players.Where(p => !p.IsOnStreak(maxParticipationStreak)).ToList();
+            List<PlayerInfo> elegiblePlayers = players.Where(p => !p.IsOnStreak(maxParticipationStreak) && !p.AFK).ToList();
             if (elegiblePlayers.Count < pairsToForm * 2)
             {
                 chatGui.PrintError($"Not enough players to form {pairsToForm} pairs, reducing amount to {elegiblePlayers.Count / 2}.");
@@ -87,7 +87,7 @@ namespace TruthOrDareHelper.Modules.Rolling
                 if (pairsToForm == 0)
                 {
                     chatGui.PrintError($"Not enough playes to form a single pair! Let's lift streak restrictions.");
-                    elegiblePlayers = new List<PlayerInfo>(players);
+                    elegiblePlayers = new List<PlayerInfo>(players.Where(p => !p.AFK)) ;
                     pairsToForm = elegiblePlayers.Count / 2;
                 }
             }

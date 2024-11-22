@@ -45,7 +45,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     {
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(700, 330),
+            MinimumSize = new Vector2(800, 330),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
 
@@ -78,7 +78,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         compactMode = false;
         SizeConstraints = new WindowSizeConstraints
         {
-            MinimumSize = new Vector2(700, 330),
+            MinimumSize = new Vector2(800, 330),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue)
         };
     }
@@ -287,7 +287,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 ImGui.TableSetupColumn("Losses", ImGuiTableColumnFlags.WidthStretch, 0.1f);
                 ImGui.TableSetupColumn("History", ImGuiTableColumnFlags.WidthStretch, 0.5f);
                 ImGui.TableSetupColumn("Playing", ImGuiTableColumnFlags.WidthStretch, 0.2f);
-                ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.2f);
+                ImGui.TableSetupColumn("Actions", ImGuiTableColumnFlags.WidthStretch, 0.3f);
             }
 
             ImGui.TableHeadersRow();
@@ -297,6 +297,10 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
                 string playerName = compactMode ? player.FullName.GetFirstName() : player.FullName.WithoutWorldName();
+                if (player.AFK)
+                {
+                    playerName = $"{playerName} (AFK)";
+                }
                 ImGui.TextUnformatted(playerName);
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Left))
                 {
@@ -369,6 +373,11 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                     runnerActions.TellWakeUp(player);
                 }
                 DrawTooltip("Send a wake up /tell");
+
+                ImGui.SameLine();
+                DrawActionButton(() => runnerActions.ToggleAFK(player), "");
+                DrawTooltip("Toogle AFK status");
+
                 ImGui.PopStyleVar(2);
             }
 

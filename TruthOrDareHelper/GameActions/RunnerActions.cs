@@ -178,6 +178,20 @@ namespace TruthOrDareHelper.GameActions
             chatOutput.WriteChat($"{Plugin.MessageMark}{prompt}");
         }
 
+        public void ToggleAFK(PlayerInfo player)
+        {
+            log.Info($"[ACTION] Toggle AFK. Player: {player.FullName}.");
+            player.AFK = !player.AFK;
+            if (player.AFK)
+            {
+                chatOutput.WriteChat($"{player.FullName.WithoutWorldName()} is AFK.");
+            }
+            else
+            {
+                chatOutput.WriteChat($"{player.FullName.WithoutWorldName()} is no longer AFK.");
+            }
+        }
+
         private void AddParticipationRecords(IEnumerable<PlayerInfo> players, List<PlayerPair> pairs)
         {
             foreach (var player in session.PlayerData.Select(p => p.Value))

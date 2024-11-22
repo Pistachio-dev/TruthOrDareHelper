@@ -19,7 +19,7 @@ namespace TruthOrDareHelper.GameActions
         void Roll();
 
         void TellWakeUp(PlayerInfo player);
-
+        void ToggleAFK(PlayerInfo player);
         void WritePrompt(PlayerInfo player, ChallengeType challengeType);
     }
 }
