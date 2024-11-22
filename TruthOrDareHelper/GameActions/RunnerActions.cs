@@ -72,6 +72,26 @@ namespace TruthOrDareHelper.GameActions
             chatOutput.WriteChat(line4);
         }
 
+        public void RemovePlayer(PlayerInfo player)
+        {            
+            signManager.UnmarkPlayer(player);
+            
+            PlayerPair? pairIncludingPlayer = session.PlayingPairs.FirstOrDefault(pp => pp.Winner == player || pp.Loser == player);
+            if (pairIncludingPlayer != null)
+            {
+                signManager.UnmarkPlayer(pairIncludingPlayer.Winner);
+                if (pairIncludingPlayer.Loser != null)
+                {
+                    signManager.UnmarkPlayer(pairIncludingPlayer.Loser);
+                }
+                session.PlayingPairs.Remove(pairIncludingPlayer);
+            }
+
+            targetingManager.RemovePlayerReference(player.FullName);
+            session.TryRemovePlayer(player.FullName);
+            chatOutput.WriteChat($"{player.FullName} leaves the game.");
+        }
+
         public void Roll()
         {
             log.Info($"[ACTION] Create timer: Roll. Type: {configuration.RollingType}");

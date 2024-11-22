@@ -22,6 +22,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
 {
     private bool compactMode;
     private bool manualResizing = false;
+    private PlayerInfo? playerToRemove = null;
 
     private static readonly Vector4 Green = new Vector4(0, 1, 0, 0.6f);
     private static readonly Vector4 Red = new Vector4(1, 0, 0, 0.6f);
@@ -212,6 +213,12 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         {
             ImGui.TextUnformatted("Player pairs not yet formed.");
         }
+
+        if (playerToRemove != null)
+        {
+            runnerActions.RemovePlayer(playerToRemove);
+            playerToRemove = null;
+        }
     }
 
     private void DrawPlayingPairsTable()
@@ -349,9 +356,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                 }
                 if (ImGui.IsItemClicked(ImGuiMouseButton.Right) && ImGui.GetIO().KeyShift)
                 {
-                    session.TryRemovePlayer(player.FullName);
-                    targetManager.RemovePlayerReference(player.FullName);
-                    toDChatOutput.WriteChat($"{player.FullName} leaves the game.");
+                    playerToRemove = player;
                 }
                 DrawTooltip("Click to target the player, shift + right click to remove them.");
                 if (!compactMode)

@@ -13,7 +13,7 @@ namespace TruthOrDareHelper.GameActions
         void OpenPromptsFolder();
         void PrintChatCommands();
         void ReloadPrompts();
-
+        void RemovePlayer(PlayerInfo player);
         void ReRoll(PlayerPair pair, bool rerollTheLoser);
 
         void Roll();
