@@ -48,5 +48,10 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         {
             return new Regex($"^[^\\w\\d]*{word}[^\\w\\d]*$").IsMatch(message);
         }
+
+        protected bool IsForbiddenReChoice(PlayerPair pair)
+        {
+            return pair.Loser != null && pair.ChallengeType != ChallengeType.None && !configuration.AllowChangeDecision;
+        }
     }
 }

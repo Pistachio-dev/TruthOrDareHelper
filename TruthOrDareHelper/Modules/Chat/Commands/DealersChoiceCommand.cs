@@ -31,6 +31,11 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
         protected override void Execute(string sender)
         {
             var relevantPair = session.PlayingPairs.First(pp => pp.Loser?.FullName == sender);
+            if (IsForbiddenReChoice(relevantPair))
+            {
+                logService.Info($"Rechoice of \"dealer's choice\" for player {relevantPair.Loser.FullName} blocked.");
+                return;
+            }
             relevantPair.ChallengeType = ChallengeType.DealersChoice;
             chatOutput.WriteChat($"{relevantPair.Loser?.FullName.GetFirstName()} lets {relevantPair.Winner.FullName.GetFirstName()} decide!");
         }
