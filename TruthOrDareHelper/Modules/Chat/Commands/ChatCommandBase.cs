@@ -43,5 +43,10 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
             var matches = new Regex($"[^\\w\\d\\s]*(\\w*)({word})(\\w*)[^\\w\\d\\s]*").Match(message);
             return matches.Success && matches.Groups[1].Value.IsNullOrWhitespace() && matches.Groups[3].Value.IsNullOrWhitespace();
         }
+
+        protected bool IsMatchWithNoOtherWords(string word, string message)
+        {
+            return new Regex($"^[^\\w\\d]*{word}[^\\w\\d]*$").IsMatch(message);
+        }
     }
 }

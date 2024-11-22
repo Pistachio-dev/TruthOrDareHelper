@@ -14,7 +14,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
 
         protected override bool IsMatch(string message)
         {
-            return IsMatchAsSeparateWordInPhrase("t", message) || IsMatchAsSeparateWordInPhrase("truth", message);
+            return IsMatchWithNoOtherWords("t", message) || IsMatchAsSeparateWordInPhrase("truth", message);
         }
 
         protected override bool IsApplicable(string sender)
