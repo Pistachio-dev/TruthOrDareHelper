@@ -198,10 +198,14 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         if (session.ArePlayersPaired())
         {
             ImGui.SameLine();
-            if (ImGui.Button($" Write pairs to chat"))
+            if (ImGui.Button(compactMode ? $" Write pairs" : $" Write pairs to chat"))
             {
                 toDChatOutput.WritePairs(session.PlayingPairs);
             }
+
+            ImGui.SameLine();
+            DrawActionButton(() => runnerActions.PrintChatCommands(), compactMode ? " Commands" : " Write chat commands list");
+            DrawTooltip("Write a list of what each chat command does to chat.");
             DrawPlayingPairsTable();
         }
         else

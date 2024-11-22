@@ -59,6 +59,19 @@ namespace TruthOrDareHelper.GameActions
             }
         }
 
+        public void PrintChatCommands()
+        {
+            log.Info($"[ACTION] Print chat commands.");
+            string line1 = "\"truth\", \"dare\", \"dealer's choice\" (or \"t\", \"d\", \"dch\") to choose truth or dare.";
+            string line2 = "\"coinflip\" to have the plogon decide for you";
+            string line3 = $"\"{configuration.ConfirmationKeyword}\" as asker to confirm whatever you asked was done";
+            string line4 = $"\"hint\" to get a random suggestion. You can also narrow it like \"hint nsfw dare\" or \"hint sfw truth\"";
+            chatOutput.WriteChat(line1);
+            chatOutput.WriteChat(line2);
+            chatOutput.WriteChat(line3);
+            chatOutput.WriteChat(line4);
+        }
+
         public void Roll()
         {
             log.Info($"[ACTION] Create timer: Roll. Type: {configuration.RollingType}");

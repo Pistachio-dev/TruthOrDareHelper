@@ -11,7 +11,7 @@ namespace TruthOrDareHelper.GameActions
         void CreateAndStartTimer(PlayerInfo target, string description, int roundAmount);
 
         void OpenPromptsFolder();
-
+        void PrintChatCommands();
         void ReloadPrompts();
 
         void ReRoll(PlayerPair pair, bool rerollTheLoser);
