@@ -18,6 +18,7 @@ public class ConfigWindow : PluginWindowBase, IDisposable
     private IClientChatGui chatGui;
     private ImGuiFormFactory<Configuration> formFactory;
     private Configuration configuration;
+    private readonly Vector4 lightGreen = new Vector4(162 / 255f, 1, 153 / 255f, 1);
 
     // We give this window a constant ID using ###
     // This allows for labels being dynamic, like "{FPS Counter}fps###XYZ counter window",
@@ -70,7 +71,13 @@ public class ConfigWindow : PluginWindowBase, IDisposable
         DrawTooltip("If the pair winner says this word, it is considered the answer was valid and the next roll is done automatically.");
 
         formFactory.DrawCheckbox("Put marks on players", nameof(Configuration.MarkPlayers));
-        DrawTooltip("If true, party markers will be applied to playes depending on their role");
+        DrawTooltip("If checked, party markers will be applied to playes depending on their role");
+
+        formFactory.DrawCheckbox("Allow changing the decision after it's made", nameof(Configuration.AllowChangeDecision));
+        DrawTooltip("If checked, players can choose \"truth\" or \"dare\" again after they have already chosen, changing it.");
+        
+        formFactory.DrawCheckbox("Automatically roll when all are done", nameof(Configuration.AutoRollOnAllComplete));
+        DrawTooltip("If checked, when all pairs of player have validated the truth/dare, the plugin will immediately roll the next round.");
 
         DrawSectionHeader("Default player preferences");
         formFactory.DrawComboBox("Truth", nameof(Configuration.DefaultTruthAcceptance), ["None", "SFW only", "NSFW only", "Both SFW and NSFW"]);
@@ -89,6 +96,6 @@ public class ConfigWindow : PluginWindowBase, IDisposable
     private void DrawSectionHeader(string title)
     {
         ImGui.Separator();
-        ImGui.TextUnformatted(title);
+        ImGui.TextColored(lightGreen,title);
     }
 }

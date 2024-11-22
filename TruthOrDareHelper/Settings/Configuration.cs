@@ -28,10 +28,8 @@ public class Configuration : IToDConfiguration
     public AskedAcceptedType DefaultTruthAcceptance { get; set; } = AskedAcceptedType.SFW;
     public AskedAcceptedType DefaultDareAcceptance { get; set; } = AskedAcceptedType.SFW;
 
-    public bool MarkPlayers { get; set; } = true;
+    public bool AllowChangeDecision { get; set; } = false;
+    public bool AutoRollOnAllComplete { get; set; } = false;
 
-    public void Save()
-    {
-        throw new NotImplementedException();
-    }
+    public bool MarkPlayers { get; set; } = true;
 }

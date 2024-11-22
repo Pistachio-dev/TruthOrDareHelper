@@ -10,7 +10,5 @@ namespace TruthOrDareHelper.Settings
         int MaxParticipationStreak { get; set; }
         string ConfirmationKeyword { get; set; }
         bool UseTestData { get; set; }
-
-        void Save();
     }
 }
