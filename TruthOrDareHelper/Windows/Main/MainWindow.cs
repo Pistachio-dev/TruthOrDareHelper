@@ -288,7 +288,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
                     });
 
                     ImGui.SameLine();
-                    DrawActionButton(() => runnerActions.WritePrompt(pair.Loser ?? pair.Winner, pair.ChallengeType), $"##{pair.Winner.FullName}");
+                    DrawActionButton(() => runnerActions.WritePrompt(pair.Loser ?? pair.Winner, pair.ChallengeType, null), $"##{pair.Winner.FullName}");
                 }
                 finally
                 {

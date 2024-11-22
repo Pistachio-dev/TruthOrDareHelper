@@ -29,11 +29,35 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
             return !relevantPlayingPair.Done;
         }
 
-        protected override void Execute(string sender)
+        protected override void Execute(string sender, string message)
         {
             var relevantPlayingPair = session.PlayingPairs.FirstOrDefault(pp => pp.Winner.FullName == sender);
             if (relevantPlayingPair == null) { return; }
-            runnerActions.WritePrompt(relevantPlayingPair.Winner, relevantPlayingPair.ChallengeType);
+            SafetyType? safetyType = null;
+            if (message.Contains("nsfw"))
+            {
+                safetyType = SafetyType.Nsfw;
+            }
+            else if (message.Contains("sfw"))
+            {
+                safetyType = SafetyType.Sfw;
+            }
+
+            ChallengeType challengeType;
+            if (message.Contains("truth"))
+            {
+                challengeType = ChallengeType.Truth;
+            }
+            else if (message.Contains("dare"))
+            {
+                challengeType = ChallengeType.Dare;
+            }
+            else
+            {
+                challengeType = relevantPlayingPair.ChallengeType;
+            }
+
+            runnerActions.WritePrompt(relevantPlayingPair.Winner, challengeType, safetyType);
         }
     }
 }

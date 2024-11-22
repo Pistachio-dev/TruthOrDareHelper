@@ -226,21 +226,36 @@ namespace TruthOrDareHelper.GameActions
             prompter.OpenFolder();
         }
 
-        public void WritePrompt(PlayerInfo loser, ChallengeType challengeType)
+        public void WritePrompt(PlayerInfo loser, ChallengeType challengeType, SafetyType? safetyType)
         {
             log.Info($"[ACTION] Requesting prompt for player {loser.FullName}.");
             var prompt = "I've got nothing";
             if (challengeType == ChallengeType.Truth)
             {
-                prompt = prompter.GetPrompt(loser.AcceptsSfwTruth, loser.AcceptsNsfwTruth, false, false);
+                switch (safetyType)
+                {
+                    case null: prompt = prompter.GetPrompt(loser.AcceptsSfwTruth, loser.AcceptsNsfwTruth, false, false); break;
+                    case SafetyType.Nsfw: prompt = prompter.GetPrompt(false, true, false, false); break;
+                    case SafetyType.Sfw: prompt = prompter.GetPrompt(true, false, false, false); break;
+                }
             }
             else if (challengeType == ChallengeType.Dare)
             {
-                prompt = prompter.GetPrompt(false, false, loser.AcceptsSfwDare, loser.AcceptsNsfwDare);
+                switch (safetyType)
+                {
+                    case null: prompt = prompter.GetPrompt(false, false, loser.AcceptsSfwDare, loser.AcceptsNsfwDare); break;
+                    case SafetyType.Nsfw: prompt = prompter.GetPrompt(false, false, false, true); break;
+                    case SafetyType.Sfw: prompt = prompter.GetPrompt(false, false, true, false); break;
+                }
             }
             else
             {
-                prompt = prompter.GetPrompt(loser.AcceptsSfwTruth, loser.AcceptsNsfwTruth, loser.AcceptsSfwDare, loser.AcceptsNsfwDare);
+                switch (safetyType)
+                {
+                    case null: prompt = prompter.GetPrompt(loser.AcceptsSfwTruth, loser.AcceptsNsfwTruth, loser.AcceptsSfwDare, loser.AcceptsNsfwDare); break;
+                    case SafetyType.Nsfw: prompt = prompter.GetPrompt(false, true, false, true); break;
+                    case SafetyType.Sfw: prompt = prompter.GetPrompt(true, false, true, false); break;
+                }                
             }
 
             chatOutput.WriteChat($"{prompt}");

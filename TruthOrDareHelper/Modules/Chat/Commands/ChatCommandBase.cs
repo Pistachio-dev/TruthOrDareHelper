@@ -28,7 +28,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
             if (!isMatch) { return false; }
             bool isApplicable = IsApplicable(sender);
             if (!isApplicable) { return false; }
-            Execute(sender);
+            Execute(sender, message);
             return true;
         }
 
@@ -36,7 +36,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
 
         protected abstract bool IsApplicable(string sender);
 
-        protected abstract void Execute(string sender);
+        protected abstract void Execute(string sender, string message);
 
         protected bool IsMatchAsSeparateWordInPhrase(string word, string message)
         {

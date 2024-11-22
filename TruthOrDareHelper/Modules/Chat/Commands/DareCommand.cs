@@ -24,7 +24,7 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
             return !relevantPlayingPair.Done;
         }
 
-        protected override void Execute(string sender)
+        protected override void Execute(string sender, string message)
         {
             var relevantPair = session.PlayingPairs.First(pp => pp.Loser?.FullName == sender);
             if (IsForbiddenReChoice(relevantPair)){
