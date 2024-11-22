@@ -3,6 +3,7 @@ using DalamudBasics.Logging;
 using Model;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 
@@ -15,6 +16,8 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
         private readonly ITruthOrDareSession session;
         private ILogService logsService;
         private bool initialized = false;
+
+        public LinkedList<TimedAction> Timers => timedActions;
 
         public TimeKeeper(ITruthOrDareSession session, ILogService logService)
         {
@@ -37,6 +40,20 @@ namespace TruthOrDareHelper.Modules.TimeKeeping
             }
 
             timedActions.AddLast(action);
+        }
+
+        public void RemoveTimedAction(TimedAction action)
+        {
+            timedActions.Remove(action);
+        }
+
+        public void RemoveTimersForPlayer(PlayerInfo playerInfo)
+        {
+            var toRemove = timedActions.Where(t => t.Target == playerInfo).ToList();
+            foreach (var t in toRemove)
+            {
+                RemoveTimedAction(t);
+            }
         }
 
         private void Tick(IFramework dalamudFramework)

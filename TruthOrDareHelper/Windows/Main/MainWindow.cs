@@ -14,6 +14,7 @@ using TruthOrDareHelper.GameActions;
 using TruthOrDareHelper.Modules.Chat.Interface;
 using TruthOrDareHelper.Modules.Prompting.Interface;
 using TruthOrDareHelper.Modules.Rolling;
+using TruthOrDareHelper.Modules.TimeKeeping.Interface;
 using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Windows.Main;
@@ -41,6 +42,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     private const int RoundsToShowInHistory = 8;
     private IRunnerActions runnerActions;
     private IPrompter prompter;
+    private ITimeKeeper timeKeeper;
 
     public MainWindow(Plugin plugin, ILogService logService, IServiceProvider serviceProvider)
         : base(logService, "Truth or Dare helper", ImGuiWindowFlags.AlwaysAutoResize)
@@ -61,6 +63,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         targetManager = serviceProvider.GetRequiredService<ITargetingService>();
         runnerActions = serviceProvider.GetRequiredService<IRunnerActions>();
         prompter = serviceProvider.GetRequiredService<IPrompter>();
+        timeKeeper = serviceProvider.GetRequiredService<ITimeKeeper>();
 
         InitializeFormFactory();
     }

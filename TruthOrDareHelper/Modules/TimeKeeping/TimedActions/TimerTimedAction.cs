@@ -5,17 +5,19 @@ namespace TruthOrDareHelper.Modules.TimeKeeping.TimedActions
 {
     public class TimerTimedAction : TimedAction
     {
-        private TimeSpan duration;
+        public TimeSpan Duration;
+
+        public TimeSpan Remaining => (StartTime + Duration) - DateTime.Now;
 
         public TimerTimedAction(TimeSpan duration, PlayerInfo target, string description, OnTimedActionElapsed action)
             : base(target, description, action)
         {
-            this.duration = duration;
+            this.Duration = duration;
         }
 
         public override bool HasElapsed()
         {
-            return DateTime.Now - StartTime >= duration;
+            return DateTime.Now - StartTime >= Duration;
         }
 
         public override void Update(ITruthOrDareSession session)

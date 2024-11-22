@@ -89,6 +89,7 @@ namespace TruthOrDareHelper.GameActions
 
             targetingManager.RemovePlayerReference(player.FullName);
             session.TryRemovePlayer(player.FullName);
+            timeKeeper.RemoveTimersForPlayer(player);
             chatOutput.WriteChat($"{player.FullName} leaves the game.");
         }
 
@@ -170,6 +171,7 @@ namespace TruthOrDareHelper.GameActions
             var duration = new TimeSpan(0, minutes, seconds);
             var timer = new TimerTimedAction(duration, target, description, CreateTimedActionCallback(target, description));
             timeKeeper.AddTimedAction(timer);
+            chatGui.Print("Timer created and started");
         }
 
         public void CreateAndStartTimer(PlayerInfo target, string description, int roundAmount)
@@ -177,6 +179,14 @@ namespace TruthOrDareHelper.GameActions
             log.Info($"[ACTION] Create timer: round based.");
             var timer = new RoundTimedAction(session.Round, roundAmount, target, description, CreateTimedActionCallback(target, description));
             timeKeeper.AddTimedAction(timer);
+            chatGui.Print("Timer created and started");
+        }
+
+        public void RemoveTimer(TimedAction timer)
+        {
+            log.Info($"[ACTION] Remove timer with id {timer.Id} and description {timer.Description}.");
+            timeKeeper.RemoveTimedAction(timer);
+            chatGui.Print($"Timer for \"{timer.Description}\" cancelled");
         }
 
         private OnTimedActionElapsed CreateTimedActionCallback(PlayerInfo target, string description)

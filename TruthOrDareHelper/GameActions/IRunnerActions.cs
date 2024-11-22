@@ -1,4 +1,5 @@
 using Model;
+using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 
 namespace TruthOrDareHelper.GameActions
 {
@@ -14,6 +15,7 @@ namespace TruthOrDareHelper.GameActions
         void PrintChatCommands();
         void ReloadPrompts();
         void RemovePlayer(PlayerInfo player);
+        void RemoveTimer(TimedAction timer);
         void ReRoll(PlayerPair pair, bool rerollTheLoser);
 
         void Roll();

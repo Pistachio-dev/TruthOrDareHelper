@@ -1,5 +1,8 @@
+using DalamudBasics.Extensions;
 using ImGuiNET;
 using Model;
+using System.Collections.Generic;
+using TruthOrDareHelper.Modules.TimeKeeping;
 using TruthOrDareHelper.Modules.TimeKeeping.TimedActions;
 
 namespace TruthOrDareHelper.Windows.Main
@@ -28,7 +31,7 @@ namespace TruthOrDareHelper.Windows.Main
                 openTimersPopup = false;
                 ImGui.OpenPopup(TimersPopupName);
             }
-            if (ImGui.BeginPopup($"{TimersPopupName}"))
+            if (ImGui.BeginPopup($"{TimersPopupName}", ImGuiWindowFlags.AlwaysAutoResize))
             {
                 var player = playerSelectedAsTimerTarget;
                 ImGui.TextColored(Yellow, player?.FullName ?? "Nobody");
@@ -62,7 +65,78 @@ namespace TruthOrDareHelper.Windows.Main
                     ImGui.CloseCurrentPopup();
                 }
 
+                DrawTimersTable(timeKeeper.Timers);
+
                 ImGui.EndPopup();
+            }
+        }
+
+        private void DrawTimersTable(ICollection<TimedAction> timedActions)
+        {
+            if (timedActions.Count == 0)
+            {
+                return;
+            }
+
+            const ImGuiTableFlags flags = ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Resizable | ImGuiTableFlags.Borders;
+            if (ImGui.BeginTable("##timers", 6, flags, new System.Numerics.Vector2(500, 20)))
+            {
+                ImGui.TableSetupColumn("Start time", ImGuiTableColumnFlags.WidthStretch, 0.25f);
+                ImGui.TableSetupColumn("Description", ImGuiTableColumnFlags.WidthStretch, 0.8f);
+                ImGui.TableSetupColumn("Player", ImGuiTableColumnFlags.WidthStretch, 0.5f);
+                ImGui.TableSetupColumn("Duration", ImGuiTableColumnFlags.WidthStretch, 0.25f);
+                ImGui.TableSetupColumn("Left", ImGuiTableColumnFlags.WidthStretch, 0.25f);
+                ImGui.TableSetupColumn("", ImGuiTableColumnFlags.WidthStretch, 0.1f);
+                ImGui.TableHeadersRow();
+
+                foreach (var action in timedActions)
+                {
+                    string text = "";
+                    ImGui.TableNextRow();
+                    ImGui.TableNextColumn();
+                    text = action.StartTime.ToShortTimeString();
+                    ImGui.TextUnformatted(text);
+                    DrawTooltip(text);
+
+                    ImGui.TableNextColumn();
+                    ImGui.TextUnformatted(action.Description);
+                    DrawTooltip(action.Description);
+
+                    ImGui.TableNextColumn();
+                    text = action.Target.FullName.WithoutWorldName();
+                    ImGui.TextUnformatted(text);
+                    DrawTooltip(text);
+
+                    ImGui.TableNextColumn();
+                    if (action is TimerTimedAction tAction)
+                    {
+                        text = tAction.Duration.ToShortString();
+                        ImGui.TextUnformatted(text);
+                        DrawTooltip(text);
+
+                        ImGui.TableNextColumn();
+                        text = tAction.Remaining.ToShortString();
+                        ImGui.TextUnformatted(text);
+                        DrawTooltip(text);
+                    }
+                    else if (action is RoundTimedAction roundAction)
+                    {
+                        text = $"{roundAction.DurationInRounds} rnds";
+                        ImGui.TextUnformatted(text);
+                        DrawTooltip(text);
+
+                        ImGui.TableNextColumn();
+                        text = $"{roundAction.Remaining} rnds";
+                        ImGui.TextUnformatted(text);
+                        DrawTooltip(text);
+                    }
+
+                    ImGui.TableNextColumn();
+                    DrawActionButton(() => runnerActions.RemoveTimer(action), "");
+                    DrawTooltip("Cancel");
+                }
+
+                ImGui.EndTable();
             }
         }
 
