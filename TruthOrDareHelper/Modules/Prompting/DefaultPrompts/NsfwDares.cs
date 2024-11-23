@@ -12,11 +12,16 @@ namespace TruthOrDareHelper.Modules.Prompting.DefaultPrompts
         public string Tag { get; } = "[NSFW dare prompt]";
 
         public string[] DefaultPrompts => [
-            "NSFW Dare Prompt placeholder 1",
-            "NSFW Dare Prompt placeholder 2",
-            "NSFW Dare Prompt placeholder 3",
-            "NSFW Dare Prompt placeholder 4",
-            "NSFW Dare Prompt placeholder 5",
+            "Give X a lap dance",
+            "Get naked",
+            "You get 7 minutes in heaven with X",
+            "Put on the closest thing you have to BSDM gear",
+            "Bend over and let the room line up to spank you",
+            "Make out with X for Y minutes",
+            "Go down on X for Y minutes",
+            "You are a noir detective and X just entered into your office. Write the scene",
+            "Change Y body part to X size with C+",
+            "Open Eorzea Nightlife, roll a dice, and use whichever animation number that you rolled on someone",
         ];
     }
 }
