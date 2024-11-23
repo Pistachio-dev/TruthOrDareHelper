@@ -58,6 +58,21 @@ namespace TruthOrDareHelper.Modules.Prompting
             Process.Start(new ProcessStartInfo(folderRoute) { UseShellExecute = true });
         }
 
+        public void CombineCurrentWithDefault()
+        {
+            LoadPromptsToMemory();
+
+            if (!Directory.Exists(folderRoute))
+            {
+                Directory.CreateDirectory(folderRoute);
+            }
+
+            foreach (var promptCollection in promptCollections)
+            {
+                CreateOrCombinePromptsToFile(promptCollection);
+            }
+        }
+
         public void SeedIfNeeded()
         {
             if (!Directory.Exists(folderRoute))
@@ -132,6 +147,20 @@ namespace TruthOrDareHelper.Modules.Prompting
                     sw.WriteLine(promptCollection.DefaultPrompts[i]);
                 }
             }
+        }
+
+        private void CreateOrCombinePromptsToFile(IPromptCollection promptCollection)
+        {
+            HashSet<string> existingPrompts = new HashSet<string>(promptCollection.LoadedPromts);
+            string fullRoute = folderRoute + promptCollection.FileName;
+            using var sw = new StreamWriter(fullRoute, true);
+            for (int i = 0; i < promptCollection.DefaultPrompts.Length; i++)
+            {
+                if (!existingPrompts.Contains(promptCollection.DefaultPrompts[i]))
+                {
+                    sw.WriteLine(promptCollection.DefaultPrompts[i]);
+                }                
+            }            
         }
     }
 }

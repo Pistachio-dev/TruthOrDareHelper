@@ -17,7 +17,7 @@ namespace TruthOrDareHelper.GameActions
         void RemovePlayer(PlayerInfo player);
         void RemoveTimer(TimedAction timer);
         void ReRoll(PlayerPair pair, bool rerollTheLoser);
-
+        void ReaddPromptFiles();
         void Roll();
 
         void TellWakeUp(PlayerInfo player);

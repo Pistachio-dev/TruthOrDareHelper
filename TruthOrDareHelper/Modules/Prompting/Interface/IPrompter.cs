@@ -9,7 +9,7 @@ namespace TruthOrDareHelper.Modules.Prompting.Interface
         void LoadPromptsToMemory();
 
         void OpenFolder();
-
+        void CombineCurrentWithDefault();
         void SeedIfNeeded();
     }
 }

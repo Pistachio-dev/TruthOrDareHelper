@@ -226,6 +226,12 @@ namespace TruthOrDareHelper.GameActions
             prompter.OpenFolder();
         }
 
+        public void ReaddPromptFiles()
+        {
+            log.Info($"[ACTION] Reset prompt files.");
+            prompter.CombineCurrentWithDefault();
+        }
+
         public void WritePrompt(PlayerInfo loser, ChallengeType challengeType, SafetyType? safetyType)
         {
             log.Info($"[ACTION] Requesting prompt for player {loser.FullName}.");
