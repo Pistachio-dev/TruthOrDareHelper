@@ -58,7 +58,7 @@ namespace DalamudBasics.Chat.Output
 
         public void WriteChat(string message, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0, string? targetFullName = null)
         {
-            if (waterMark != null)
+            if (waterMark != null && chatChannel != XivChatType.TellIncoming && chatChannel != XivChatType.TellOutgoing)
             {
                 message = waterMark + message;
             }
@@ -75,6 +75,14 @@ namespace DalamudBasics.Chat.Output
             }
 
             chatQueue.Enqueue(new ChatOutputQueuedMessage(message, chatChannel, minSpacingBeforeInMs, targetFullName));
+        }
+
+        public void SendTell(string message, string playerFullNameWithWorld, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
+        {
+            var split = playerFullNameWithWorld.Split("@");
+            string player = split[0];
+            string world = split.Length > 1 ? split[1] : string.Empty;
+            SendTell(message, player, world, chatChannel, minSpacingBeforeInMs);
         }
 
         public void SendTell(string message, string playerFullName, string playerHomeWorld, XivChatType? chatChannel = null, int minSpacingBeforeInMs = 0)
