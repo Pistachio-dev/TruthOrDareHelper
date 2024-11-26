@@ -23,6 +23,12 @@ namespace TruthOrDareHelper.Modules.Prompting.DefaultPrompts
             "What was your best moment in the game?",
             "Have you ever been blacklisted?",
             "What Is your favourite place to hangout?",
+            "What is the most underrated part of this game?",
+            "Who is your best friend and how did you meet?",
+            "What is the worst moment in this game?",
+            "What is your hot-take about this game?",
+            "Who is the most attractive person here?",
+            "What is the most expensive thing you have bought?",
             "You're in a desert, walking along in the sand, when all of a sudden you look down and see a tortoise, crawling towards you. You reach down and you flip the tortoise over on its back." +
             "The tortoise lays on its back, its belly baking in the hot sun, beating its legs trying to turn itself over, but it can't. Not without your help. But you're not helping. Why is that?",
             "What's your honest opinion on <someone>",
@@ -32,6 +38,7 @@ namespace TruthOrDareHelper.Modules.Prompting.DefaultPrompts
             "Is there a topic that you find interesting but can't really understand?",
             "Is there something you have put too much time on and are embarrased to admit it?",
             "Google your character name, what's the first result in image search?",
+
         ];
     }
 }

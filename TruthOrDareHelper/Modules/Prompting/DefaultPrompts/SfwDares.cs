@@ -28,6 +28,20 @@ namespace TruthOrDareHelper.Modules.Prompting.DefaultPrompts
             "Change your race to X for 2 rounds",
             "Become a bald white roegadyn man for 2 rounds",
             "Use SimpleHeels to bury yourself up to the neck, and communicate using only the word \"Digglet\" for one round",
+            "Roleplay as a Limsan pirate until your next dare.",
+            "Speak only in FF14 Story Quotes until your next dare.",
+            "Dance until your next dare.",
+            "Tell the worst joke you know.",
+            "Change your glam to something you haven't used in a long time.",
+            "Show us your worst glam.",
+            "Take a silly gpose and share it with the group.",
+            "Use only gobbiespeak until your next dare.",
+            "End every sentence with \"yes, yes\" for a few rounds.",
+            "Stand on the highest object on the room.",
+            "Do a performance for two minutes to your best ability.",
+            "Roll a dice to determine another player and then become their most supportive cheerleader until your next dare.",
+            "Roll a dice to determine another player and give them your best compliment about them.",
+            "Speak like a fae until your next dare.",
         ];
     }
 }
