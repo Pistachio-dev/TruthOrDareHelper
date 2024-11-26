@@ -232,6 +232,12 @@ namespace TruthOrDareHelper.GameActions
             prompter.CombineCurrentWithDefault();
         }
 
+        public void ReadyCheck()
+        {
+            log.Info($"[ACTION] Reset prompt files.");
+            chatOutput.WriteCommand("/readycheck");
+        }
+
         public void WritePrompt(PlayerInfo loser, ChallengeType challengeType, SafetyType? safetyType)
         {
             log.Info($"[ACTION] Requesting prompt for player {loser.FullName}.");

@@ -23,5 +23,6 @@ namespace TruthOrDareHelper.GameActions
         void TellWakeUp(PlayerInfo player);
         void ToggleAFK(PlayerInfo player);
         void WritePrompt(PlayerInfo player, ChallengeType challengeType, SafetyType? safetyType);
+        void ReadyCheck();
     }
 }

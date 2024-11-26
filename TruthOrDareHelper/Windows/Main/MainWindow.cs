@@ -181,6 +181,10 @@ public partial class MainWindow : PluginWindowBase, IDisposable
         DrawActionButton(() => ToggleSize(), compactMode ? " Grow" : " Lala mode");
 
         ImGui.SameLine();
+        DrawActionButton(() => runnerActions.ReadyCheck(), "✓");
+        DrawTooltip("Start a Ready Check");
+
+        ImGui.SameLine();
         DrawActionButton(() => ToggleManualResizing(), "⇔");
         if (manualResizing)
         {
