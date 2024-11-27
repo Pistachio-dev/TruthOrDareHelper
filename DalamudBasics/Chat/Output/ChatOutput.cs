@@ -94,7 +94,7 @@ namespace DalamudBasics.Chat.Output
             }
 
             string messageWithRecipient = $"{playerFullName}@{playerHomeWorld} {message}";
-            WriteChat(messageWithRecipient, chatChannel, minSpacingBeforeInMs);
+            WriteChat(messageWithRecipient, chatChannel ?? XivChatType.TellOutgoing, minSpacingBeforeInMs);
         }
 
         private void NotifyNotAttachedToGame()
@@ -238,9 +238,10 @@ namespace DalamudBasics.Chat.Output
                     logService.Info("[Chat]" + fullChatString);
                 }
             }
-            catch
+            catch (Exception ex)
             {
                 chatGui.PrintError("Invalid chat channel (or some odd error) for message: " + payload.Message + " with prefix " + payload.ChatChannel.ToString());
+                logService.Error(ex, $"Error when sending message \"{payload.Message}\" with prefix \"{payload.ChatChannel}\"");
             }
 
             if (payload.TargetFullName != null)
