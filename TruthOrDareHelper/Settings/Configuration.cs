@@ -13,7 +13,7 @@ public class Configuration : IToDConfiguration
 
     public int SimultaneousPlays { get; set; } = 3;
 
-    public int MaxParticipationStreak { get; set; } = 3;
+    public int MaxParticipationStreak { get; set; } = 999;
 
     public string ConfirmationKeyword { get; set; } = "kthxbye";
 
@@ -25,11 +25,15 @@ public class Configuration : IToDConfiguration
     public bool LogClientOnlyChatOutput { get; set; } = true;
     public int LimitedChatChannelsMessageDelayInMs { get; set; } = 1500;
 
-    public AskedAcceptedType DefaultTruthAcceptance { get; set; } = AskedAcceptedType.SFW;
-    public AskedAcceptedType DefaultDareAcceptance { get; set; } = AskedAcceptedType.SFW;
+    public AskedAcceptedType DefaultTruthAcceptance { get; set; } = AskedAcceptedType.Any;
+    public AskedAcceptedType DefaultDareAcceptance { get; set; } = AskedAcceptedType.Any;
 
     public bool AllowChangeDecision { get; set; } = false;
     public bool AutoRollOnAllComplete { get; set; } = false;
 
     public bool MarkPlayers { get; set; } = true;
+
+    public bool ConfirmChallengeChoice { get; set; } = false;
+
+    public bool WriteAcceptedChallenges { get; set; } = false;
 }

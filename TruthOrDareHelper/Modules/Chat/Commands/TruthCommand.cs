@@ -30,10 +30,12 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
             if (IsForbiddenReChoice(relevantPair))
             {
                 logService.Info($"Rechoice of truth for player {relevantPair.Loser.FullName} blocked.");
-                return;
             }
             relevantPair.ChallengeType = ChallengeType.Truth;
-            chatOutput.WriteChat($"{relevantPair.Loser?.FullName.GetFirstName()} chooses Truth!");
+            if (configuration.ConfirmChallengeChoice)
+            {
+                chatOutput.WriteChat($"{relevantPair.Loser?.FullName.GetFirstName()} chooses Truth!");
+            }
         }
     }
 }

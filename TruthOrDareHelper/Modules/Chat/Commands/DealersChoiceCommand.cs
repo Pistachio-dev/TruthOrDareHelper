@@ -37,7 +37,10 @@ namespace TruthOrDareHelper.Modules.Chat.Commands
                 return;
             }
             relevantPair.ChallengeType = ChallengeType.DealersChoice;
-            chatOutput.WriteChat($"{relevantPair.Loser?.FullName.GetFirstName()} lets {relevantPair.Winner.FullName.GetFirstName()} decide!");
+            if (configuration.ConfirmChallengeChoice)
+            {
+                chatOutput.WriteChat($"{relevantPair.Loser?.FullName.GetFirstName()} lets {relevantPair.Winner.FullName.GetFirstName()} decide!");
+            }
         }
     }
 }
