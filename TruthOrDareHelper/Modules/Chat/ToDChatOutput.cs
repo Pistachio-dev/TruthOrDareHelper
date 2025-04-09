@@ -9,14 +9,18 @@ using Model;
 using System.Collections.Generic;
 using System.Text;
 using TruthOrDareHelper.Modules.Chat.Interface;
+using TruthOrDareHelper.Settings;
 
 namespace TruthOrDareHelper.Modules.Chat
 {
     internal class ToDChatOutput : ChatOutput, IToDChatOutput
     {
-        public ToDChatOutput(IConfiguration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
+        private readonly Configuration configuration;
+
+        public ToDChatOutput(Configuration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
             : base(configuration, logService, chatGui, clientState, targetingService)
         {
+            this.configuration = configuration;
         }
 
         public void ChatSoundWakeUp(PlayerInfo player)
@@ -44,8 +48,11 @@ namespace TruthOrDareHelper.Modules.Chat
                     s.Append(" [");
                     s.Append(p.Loser.LastRollResult);
                     s.Append("]");
-                    s.Append($"Accepts: Truth: {GetAcceptanceMessage(p.Loser.AcceptsSfwTruth, p.Loser.AcceptsNsfwTruth)}" +
+                    if (configuration.WriteAcceptedChallenges)
+                    {
+                        s.Append($"Accepts: Truth: {GetAcceptanceMessage(p.Loser.AcceptsSfwTruth, p.Loser.AcceptsNsfwTruth)}" +
                         $" Dare: {GetAcceptanceMessage(p.Loser.AcceptsSfwDare, p.Loser.AcceptsNsfwDare)}");
+                    }
                 }
                 else
                 {

@@ -73,6 +73,10 @@ public class ConfigWindow : PluginWindowBase, IDisposable
         formFactory.DrawCheckbox("Put marks on players", nameof(Configuration.MarkPlayers));
         DrawTooltip("If checked, party markers will be applied to playes depending on their role");
 
+
+        formFactory.DrawCheckbox("Write to chat when someone picks truth or dare", nameof(Configuration.ConfirmChallengeChoice));
+        DrawTooltip("If checked, it will print a confirmation message when a choice is detected.");
+
         formFactory.DrawCheckbox("Allow changing the decision after it's made", nameof(Configuration.AllowChangeDecision));
         DrawTooltip("If checked, players can choose \"truth\" or \"dare\" again after they have already chosen, changing it.");
         
@@ -80,8 +84,14 @@ public class ConfigWindow : PluginWindowBase, IDisposable
         DrawTooltip("If checked, when all pairs of player have validated the truth/dare, the plugin will immediately roll the next round.");
 
         DrawSectionHeader("Default player preferences");
+        ImGui.BeginGroup();
         formFactory.DrawComboBox("Truth", nameof(Configuration.DefaultTruthAcceptance), ["None", "SFW only", "NSFW only", "Both SFW and NSFW"]);
         formFactory.DrawComboBox("Dare", nameof(Configuration.DefaultDareAcceptance), ["None", "SFW only", "NSFW only", "Both SFW and NSFW"]);
+        ImGui.EndGroup();
+        DrawTooltip("Helps you keep track of what kind of challenges a player accepts/wants. It also determines which kind of prompts they get.");
+
+        formFactory.DrawCheckbox("Print player preferences when they get picked to play", nameof(Configuration.AutoRollOnAllComplete));
+        DrawTooltip("If checked, it will say which kind of truths and dares the player accepts (SFW/NSFW).");
 
         DrawSectionHeader("Testing");
         formFactory.DrawCheckbox("Use test data", nameof(Configuration.UseTestData));
