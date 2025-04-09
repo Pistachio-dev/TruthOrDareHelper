@@ -17,10 +17,10 @@ namespace TruthOrDareHelper.Modules.Chat
     {
         private readonly Configuration configuration;
 
-        public ToDChatOutput(Configuration configuration, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
-            : base(configuration, logService, chatGui, clientState, targetingService)
+        public ToDChatOutput(IConfigurationService<Configuration> configService, ILogService logService, IClientChatGui chatGui, IClientState clientState, ITargetingService targetingService)
+            : base(configService.GetConfiguration(), logService, chatGui, clientState, targetingService)
         {
-            this.configuration = configuration;
+            this.configuration = configService.GetConfiguration();
         }
 
         public void ChatSoundWakeUp(PlayerInfo player)
