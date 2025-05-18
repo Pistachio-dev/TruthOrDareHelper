@@ -1,6 +1,6 @@
 {
-    "AssemblyVersion" : "0.3.3.1",
+    "AssemblyVersion" : "0.3.3.2",
     "DalamudApiLevel" : 12,
     "ChangeLog": "- Added to release pipeline",
-    "IsTest": false
+    "IsTest": true
 }
