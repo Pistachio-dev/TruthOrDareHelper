@@ -4,6 +4,10 @@
         <Version>1.0.0.0</Version>
         <Description>A plugin to make Truth or Dare games safer and easier.</Description>
         <PackageProjectUrl>https://github.com/Pistachio-dev/TruthOrDareHelper</PackageProjectUrl>
+        <RootNamespace>TruthOrDareHelper</RootNamespace>
+        <AssemblyName>TruthOrDareHelper</AssemblyName>
+        <FileVersion>9.0.0.1</FileVersion>
+        <AssemblyVersion>9.0.0.1</AssemblyVersion>
     </PropertyGroup>
 
     <PropertyGroup>
