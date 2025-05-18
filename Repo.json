@@ -1,0 +1,27 @@
+[
+  {
+    "Author": "Pistachio Herald",
+    "Name": "ToD Howard",
+    "Punchline": "Truth or Dare, made easier and faster.",
+    "Description": "Make Truth or Dare easier and faster. Type /tod to launch. It just works.",
+    "ApplicableVersion": "any",
+    "Tags": [
+      "tod",
+      "truth",
+      "or",
+      "dare",
+      "party",
+      "chat",
+      "game",
+      "todd",
+      "howard",
+      "just",
+      "works"
+    ],
+    "TestingDalamudApiLevel": 12,
+    "TestingAssemblyVersion": "0.3.3.2",
+    "TestingChangelog": "- Added to release pipeline",
+    "DownloadLinkTesting": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.3.2_testing/latest.zip",
+    "LastUpdate": 1747574570
+  }
+]
