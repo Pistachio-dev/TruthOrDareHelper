@@ -19,9 +19,9 @@
       "works"
     ],
     "TestingDalamudApiLevel": 12,
-    "TestingAssemblyVersion": "0.3.3.2",
-    "TestingChangelog": "- Added to release pipeline",
-    "DownloadLinkTesting": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.3.2_testing/latest.zip",
-    "LastUpdate": 1747574570
+    "TestingAssemblyVersion": "0.3.3.3",
+    "TestingChangelog": "- Added meta information to the project file",
+    "DownloadLinkTesting": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.3.3_testing/latest.zip",
+    "LastUpdate": 1747574930
   }
 ]

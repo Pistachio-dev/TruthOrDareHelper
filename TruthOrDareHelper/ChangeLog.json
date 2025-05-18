@@ -1,5 +1,11 @@
 [
   {
+    "AssemblyVersion": "0.3.3.3",
+    "DalamudApiLevel": 12,
+    "ChangeLog": "- Added meta information to the project file",
+    "IsTest": true
+  },
+  {
     "AssemblyVersion": "0.3.3.2",
     "DalamudApiLevel": 12,
     "ChangeLog": "- Added to release pipeline",
