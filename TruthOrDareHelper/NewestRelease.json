@@ -1,6 +1,6 @@
 {
-    "AssemblyVersion" : "0.3.3.6",
-    "DalamudApiLevel" : 12,
-    "ChangeLog": "",
+    "AssemblyVersion" : "0.3.4.0",
+    "DalamudApiLevel" : 13,
+    "ChangeLog": "Patch 7.3",
     "IsTest": false
 }
