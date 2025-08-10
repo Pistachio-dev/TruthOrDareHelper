@@ -22,12 +22,12 @@
     "TestingAssemblyVersion": "0.3.3.3",
     "TestingChangelog": "- Added meta information to the project file",
     "DownloadLinkTesting": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.3.3_testing/latest.zip",
-    "DalamudApiLevel": 12,
-    "AssemblyVersion": "0.3.3.6",
-    "Changelog": "",
-    "DownloadLinkInstall": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.3.6_release/TruthOrDareHelper.zip",
-    "DownloadLinkUpdate": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.3.6_release/TruthOrDareHelper.zip",
-    "LastUpdate": 1747738413,
+    "DalamudApiLevel": 13,
+    "AssemblyVersion": "0.3.4.0",
+    "Changelog": "Patch 7.3",
+    "DownloadLinkInstall": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.4.0_release/TruthOrDareHelper.zip",
+    "DownloadLinkUpdate": "https://github.com/Pistachio-dev/TruthOrDareHelper/releases/download/0.3.4.0_release/TruthOrDareHelper.zip",
+    "LastUpdate": 1754825942,
     "InternalName": "TruthOrDareHelper"
   }
 ]
