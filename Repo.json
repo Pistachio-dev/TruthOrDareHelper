@@ -18,6 +18,7 @@
       "just",
       "works"
     ],
+    "IconUrl": "https://raw.githubusercontent.com/Pistachio-dev/TruthOrDareHelper/refs/heads/master/TruthOrDareHelper/ToDHoward.png",
     "TestingDalamudApiLevel": 12,
     "TestingAssemblyVersion": "0.3.3.3",
     "TestingChangelog": "- Added meta information to the project file",
