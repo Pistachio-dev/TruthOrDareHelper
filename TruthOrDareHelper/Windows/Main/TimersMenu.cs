@@ -103,7 +103,7 @@ namespace TruthOrDareHelper.Windows.Main
                     DrawTooltip(action.Description);
 
                     ImGui.TableNextColumn();
-                    text = action.Target.FullName.WithoutWorldName();
+                    text = action.Target.FullName.GetNameOnly();
                     ImGui.TextUnformatted(text);
                     DrawTooltip(text);
 

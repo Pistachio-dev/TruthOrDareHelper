@@ -25,7 +25,7 @@ namespace TruthOrDareHelper.Modules.Chat
 
         public void ChatSoundWakeUp(PlayerInfo player)
         {
-            WriteChat($"{player.FullName.WithoutWorldName()}, it's your turn! <se.9>");
+            WriteChat($"{player.FullName.GetNameOnly()}, it's your turn! <se.9>");
         }
 
         public void TellWakeUp(PlayerInfo player)
@@ -37,14 +37,14 @@ namespace TruthOrDareHelper.Modules.Chat
         {
             foreach (PlayerPair p in pairs)
             {
-                StringBuilder s = new StringBuilder(p.Winner.FullName.WithoutWorldName());
+                StringBuilder s = new StringBuilder(p.Winner.FullName.GetNameOnly());
                 s.Append(" [");
                 s.Append(p.Winner.LastRollResult);
                 s.Append(']');
                 if (p.Loser != null)
                 {
                     s.Append(" ");
-                    s.Append(p.Loser.FullName.WithoutWorldName());
+                    s.Append(p.Loser.FullName.GetNameOnly());
                     s.Append(" [");
                     s.Append(p.Loser.LastRollResult);
                     s.Append("]");

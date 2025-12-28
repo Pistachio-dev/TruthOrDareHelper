@@ -310,7 +310,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
     {
         var player = isLoser ? pair.Loser : pair.Winner;
         var playerNotChosenByRoll = player == null;
-        var playerName = playerNotChosenByRoll ? "Not autodetected yet" : player.FullName.WithoutWorldName();
+        var playerName = playerNotChosenByRoll ? "Not autodetected yet" : player.FullName.GetNameOnly();
         if (compactMode)
         {
             playerName = playerName.GetFirstName();
@@ -349,7 +349,7 @@ public partial class MainWindow : PluginWindowBase, IDisposable
             {
                 ImGui.TableNextRow();
                 ImGui.TableNextColumn();
-                string playerName = compactMode ? player.FullName.GetFirstName() : player.FullName.WithoutWorldName();
+                string playerName = compactMode ? player.FullName.GetFirstName() : player.FullName.GetNameOnly();
                 if (player.AFK)
                 {
                     playerName = $"{playerName} (AFK)";

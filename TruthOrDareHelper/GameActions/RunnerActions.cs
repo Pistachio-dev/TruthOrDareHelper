@@ -279,11 +279,11 @@ namespace TruthOrDareHelper.GameActions
             player.AFK = !player.AFK;
             if (player.AFK)
             {
-                chatOutput.WriteChat($"{player.FullName.WithoutWorldName()} is AFK.");
+                chatOutput.WriteChat($"{player.FullName.GetNameOnly()} is AFK.");
             }
             else
             {
-                chatOutput.WriteChat($"{player.FullName.WithoutWorldName()} is no longer AFK.");
+                chatOutput.WriteChat($"{player.FullName.GetNameOnly()} is no longer AFK.");
             }
         }
 
